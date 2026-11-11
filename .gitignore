@@ -5,3 +5,7 @@
 .vscode/ipch
 __pycache__/
 *.pyc
+
+# emulator estimasi siklus (artefak build, sumber luar)
+tools/emu_cycles/out/
+tools/emu_cycles/_ext/

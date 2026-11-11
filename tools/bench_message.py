@@ -43,18 +43,19 @@ if mode == "sw":
     pub = (int(pub_hex[:64], 16), int(pub_hex[64:], 16))
     s.reset_input_buffer()
     s.write(f"B{N}|{msg}\n".encode())
-    rows = []
+    rows = []; hdr_dev = None
     while True:
         line = readline(120)
         if line.startswith("#"): print(line)
+        if line.startswith("i,"): hdr_dev = line
         if line and line[0].isdigit(): rows.append(line.split(","))
         if line.startswith("# SELESAI"): break
-    hdr = "i,cyc_hash,cyc_sign,ms_hash,ms_sign,ms_total,stack_bytes,heap_delta,sign_ok,verify_ok"
+    hdr = hdr_dev or "i,cyc_hash,cyc_sign,ms_hash,ms_sign,ms_total,stack_bytes,heap_delta,sign_ok,verify_ok"
     # Verifikasi PC: beberapa tanda tangan baru dari perintah M (r||s tidak dikirim saat benchmark)
     n_valid = 0; dig_ok = True
     for _ in range(5):
         s.reset_input_buffer(); s.write(f"M{msg}\n".encode())
-        dg, sig = readline().split("|")[:2]
+        dg, sig = readline(60).split("|")[:2]
         dig_ok &= bytes.fromhex(dg) == digest_pc
         r, sv = int(sig[:64], 16), int(sig[64:], 16)
         n_valid += verify(pub, digest_pc, r, sv) and not verify(pub, digest_pc, r, sv ^ 1)
@@ -64,6 +65,7 @@ if mode == "sw":
     summary("T_sign", [float(r[4]) for r in rows], "ms")
     summary("T_total", [float(r[5]) for r in rows], "ms")
     summary("stack", [float(r[6]) for r in rows], "B")
+    if "heap_peak" in hdr.split(","): summary("heap_peak", [float(r[7]) for r in rows], "B")
     print(f"  digest board == PC : {dig_ok}")
     print(f"  verifikasi PC      : {n_valid}/5 valid (sig dirusak ditolak)")
     print(f"  contoh r||s        : {last}")

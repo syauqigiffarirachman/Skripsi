@@ -1,0 +1,14 @@
+{
+  "name": "mbedtls",
+  "version": "3.6.7",
+  "description": "Mbed TLS 3.6.7 dipangkas: hanya bignum + ECP + ECDSA (secp256r1). Sumber upstream tidak diubah; konfigurasi ada di include/mbedtls_heavy_config.h milik proyek.",
+  "keywords": "ecdsa, p-256, secp256r1, bignum",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Mbed-TLS/mbedtls/releases/tag/v3.6.7",
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "srcDir": "library",
+    "includeDir": "include"
+  }
+}
