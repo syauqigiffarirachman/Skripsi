@@ -149,6 +149,12 @@ void setup() {
   Console.println();
   Console.println(F("=== Node pembangkit permintaan - tahap 1 (pewaktu TIM3) ==="));
   printHelp();
+#ifdef ATTACKER_AUTOSTART_HZ
+  // Sejak 13 Nov konsol CH340 tidak dipakai (upload+daya lewat ST-Link/USB-B), jadi tidak ada
+  // cara mengirim 'a'/'b'. Build flag -DATTACKER_AUTOSTART_HZ=1 (mode A) atau =10 (mode B)
+  // memulai pengiriman otomatis saat boot. Tanpa flag ini perilaku tidak berubah.
+  modeStart(ATTACKER_AUTOSTART_HZ >= 10 ? MODE_B : MODE_A);
+#endif
 }
 
 void loop() {
