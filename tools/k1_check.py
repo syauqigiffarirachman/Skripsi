@@ -1,4 +1,4 @@
-"""Uji PC untuk K1 software, TAHAP 1 (base standar: ECDSA P-256 + nonce RFC 6979). Kriteria di logbook.
+"""Uji PC untuk K1 software, TAHAP 1 / 1b (ECDSA P-256; 1b = nonce hedged + zeroize). Kriteria di logbook.
 
 Pakai:  python tools/k1_check.py COM12 [n]      (n default 5; n=30 untuk uji penuh)
 
@@ -6,8 +6,10 @@ Yang diperiksa (semuanya harus lulus):
   1. firmware melaporkan clock 48 MHz dan n/n tanda tangan sukses;
   2. kunci publik firmware == d x G yang dihitung ulang di PC (bukan dipercaya begitu saja);
   3. SETIAP r||s lolos verifikasi ECDSA P-256 di PC terhadap digest konstan;
-  4. SETIAP r||s sama persis dengan referensi RFC 6979 independen (tools/rfc6979_ref.py, yang
-     sendiri lolos vektor resmi RFC 6979 A.2.5) -> bukti nonce deterministik sesuai standar;
+  4. nonce: bila firmware melaporkan RFC 6979 murni -> SETIAP r||s sama persis dengan referensi
+     independen (tools/rfc6979_ref.py, lolos vektor resmi A.2.5). Bila firmware melaporkan nonce
+     HEDGED (tahap 1b, 13 Nov) -> SEMUA r berbeda satu sama lain (bukti nonce teracak; r||s
+     memang tak bisa dibandingkan dengan referensi), keabsahan tetap dibuktikan butir 3;
   5. ms_sign konsisten dengan cyc_sign / 48 MHz;
   6. sebaran latensi kecil (max-min terhadap rata-rata <= 1%).
 Terakhir dicetak perbandingan latensi dengan DS28E38 (data/k2_hw_msg_ayah_48mhz.csv).
@@ -99,11 +101,17 @@ def main():
         n_valid += verify(px, py, DIGEST, r, s)
     cek(n_valid == len(sampel) and sampel, f"verifikasi ECDSA di PC {n_valid}/{len(sampel)} valid")
 
-    cek(rfc6979_ref.selftest(), "referensi PC lolos vektor resmi RFC 6979 A.2.5")
-    r_ref, s_ref = rfc6979_ref.sign(int.from_bytes(D, "big"), DIGEST)
-    rs_ref = f"{r_ref:064X}{s_ref:064X}"
-    n_sama = sum(rs.upper() == rs_ref for _, _, _, rs in sampel)
-    cek(n_sama == len(sampel) and sampel, f"r||s == referensi RFC 6979: {n_sama}/{len(sampel)} identik")
+    hedged = any("hedged" in b for b in info)
+    if hedged:
+        r_unik = len({rs[:64].upper() for _, _, _, rs in sampel})
+        cek(r_unik == len(sampel) and sampel,
+            f"nonce hedged: {r_unik}/{len(sampel)} nilai r berbeda (semua harus unik)")
+    else:
+        cek(rfc6979_ref.selftest(), "referensi PC lolos vektor resmi RFC 6979 A.2.5")
+        r_ref, s_ref = rfc6979_ref.sign(int.from_bytes(D, "big"), DIGEST)
+        rs_ref = f"{r_ref:064X}{s_ref:064X}"
+        n_sama = sum(rs.upper() == rs_ref for _, _, _, rs in sampel)
+        cek(n_sama == len(sampel) and sampel, f"r||s == referensi RFC 6979: {n_sama}/{len(sampel)} identik")
 
     salah_ms = sum(abs(float(ms) - cyc / 48_000) > 0.002 for _, cyc, ms, _ in sampel)
     cek(salah_ms == 0, f"ms_sign konsisten dengan cyc_sign/48MHz ({salah_ms} menyimpang)")
