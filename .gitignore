@@ -9,3 +9,6 @@ __pycache__/
 # emulator estimasi siklus (artefak build, sumber luar)
 tools/emu_cycles/out/
 tools/emu_cycles/_ext/
+
+# naskah proposal/skripsi (PDF pribadi, tidak ikut repo)
+paper/
