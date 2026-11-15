@@ -2,6 +2,8 @@
 
 // Selang konversi INA226 nominal: (1,1 ms shunt + 1,1 ms bus) = 2,2 ms (~454 cuplikan/s).
 static const uint32_t NOMINAL_US = 2200;
+static const uint32_t RECOVER_AFTER_ERR = 3;    // gagal berturut-turut sebelum bus dipulihkan
+static const uint32_t RECOVER_MIN_GAP_MS = 10;  // jarak minimum antar pemulihan (hindari berputar)
 
 bool l3_run(INA226& ina, uint32_t duration_ms, L3Stats& st) {
   const uint32_t hz = plat_hz();
@@ -13,6 +15,22 @@ bool l3_run(INA226& ina, uint32_t duration_ms, L3Stats& st) {
   const uint32_t cyc_per_us = hz / 1000000u;
   const uint32_t late_thr   = (NOMINAL_US * 3u / 2u) * cyc_per_us;   // 1,5 x nominal
   const uint32_t nom_cyc    = NOMINAL_US * cyc_per_us;
+  const uint32_t rec_gap    = RECOVER_MIN_GAP_MS * cyc_per_ms;
+  uint32_t consec_err = 0;
+  uint32_t t_last_rec = 0;
+  bool rec_once = false;
+  // Hitung satu kegagalan I2C; pulihkan bus bila gagal beruntun (dan jeda sejak pemulihan cukup).
+  auto on_err = [&]() {
+    st.i2c_err++;
+    if (++consec_err < RECOVER_AFTER_ERR) return;
+    const uint32_t now = plat_cycles();
+    if (rec_once && (uint32_t)(now - t_last_rec) < rec_gap) return;
+    st.recover++;
+    if (ina.recover()) st.recover_ok++;
+    t_last_rec = plat_cycles();
+    rec_once = true;
+    consec_err = 0;
+  };
 
   bool r = false;
   ina.ready(r);                                   // buang flag lama (membaca MASK menghapusnya)
@@ -22,11 +40,12 @@ bool l3_run(INA226& ina, uint32_t duration_ms, L3Stats& st) {
   bool have_prev = false;
   while ((uint32_t)(plat_cycles() - t0) < dur_cycles) {
     const uint32_t ts = plat_cycles();            // awal pembacaan MASK yang akan menemukan flag
-    if (!ina.ready(r)) { st.i2c_err++; continue; }
+    if (!ina.ready(r)) { on_err(); continue; }
     st.polls++;
-    if (!r) continue;
+    if (!r) { consec_err = 0; continue; }
     int16_t sh; uint16_t bus;
-    if (!ina.readShuntBus(sh, bus)) { st.i2c_err++; continue; }
+    if (!ina.readShuntBus(sh, bus)) { on_err(); continue; }
+    consec_err = 0;
 
     const uint32_t t_rel = ts - t0;
     if (have_prev) {
@@ -58,8 +77,9 @@ bool l3_run(INA226& ina, uint32_t duration_ms, L3Stats& st) {
 // Bilangan bulat saja (tanpa printf float).
 void l3_print(const L3Stats& st, Print& out, uint32_t ua_per_lsb) {
   const uint64_t hz = plat_hz();
-  out.printf("L3: n=%lu polls=%lu i2c_err=%lu elapsed=%lu ms\r\n",
+  out.printf("L3: n=%lu polls=%lu i2c_err=%lu pulih=%lu/%lu elapsed=%lu ms\r\n",
              (unsigned long)st.n, (unsigned long)st.polls, (unsigned long)st.i2c_err,
+             (unsigned long)st.recover_ok, (unsigned long)st.recover,
              (unsigned long)((uint64_t)st.elapsed * 1000u / hz));
   if (st.polls > 0) {
     out.printf("periode polling rata2 = %lu us\r\n",

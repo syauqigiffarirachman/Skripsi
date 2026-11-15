@@ -29,6 +29,10 @@
 //   (permintaan SINTETIS dari TIM4; lihat blok "Tahap 3" di bawah). Jalur sign tidak diubah.
 // TAHAP 4 (14 Nov): + perintah A = jendela dengan permintaan NYATA dari attacker lewat USART2
 //   (DMA, satu bangun per frame; lihat blok "Tahap 4"); setup() tidak lagi menunggu USB.
+// TAHAP 4a (15 Nov, HANYA env k1_sw_auto, -DK1_AUTO_WINDOW): jendela W berjalan OTOMATIS setelah
+//   boot dan berulang, tanpa perintah USB (bangku ukur: USB-C hanya daya, tanpa D+/D-). Hasil tiap
+//   jendela disimpan di g_win_* (dibaca lewat SWD); cetakan USB hanya bila PC tersambung. Jalur sign
+//   dan isi jendela TIDAK diubah. Dipakai untuk validasi pin PB1 terhadap logger (L4).
 // Belum ada: handshake "papan siap" dan RUN_START/RUN_END (tahap 5).
 //
 // Perintah (USB CDC 115200, akhiri newline):
@@ -486,6 +490,13 @@ extern "C" void DMA1_Channel6_IRQHandler(void) {
 
 static void end_isr() { g_end = true; }
 
+// Hasil jendela terakhir, untuk dibaca lewat SWD (volatile + non-static agar simbolnya ada di nm).
+volatile uint32_t g_win_n = 0;                  // jumlah jendela selesai sejak boot
+volatile uint32_t g_win_t_obs, g_win_t_sleep, g_win_act_us, g_win_sp_x100;
+volatile int32_t  g_win_resid;
+volatile uint32_t g_win_arrived, g_win_served, g_win_wfi, g_win_spurious, g_win_pin_salah;
+volatile uint32_t g_win_secs, g_win_p_ms;
+
 static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
   uint32_t K = secs * 1000UL / p_ms;
   if (K < 1 || uart) K = 1;
@@ -561,6 +572,13 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
   const int64_t resid = (int64_t)t_obs - (int64_t)t_sleep - (int64_t)act_us;
   const uint64_t sp = t_obs ? t_sleep * 10000ULL / t_obs : 0;      // persen x100
 
+  g_win_t_obs = (uint32_t)t_obs; g_win_t_sleep = (uint32_t)t_sleep; g_win_act_us = (uint32_t)act_us;
+  g_win_resid = (int32_t)resid;  g_win_sp_x100 = (uint32_t)sp;
+  g_win_arrived = g_arrived; g_win_served = served; g_win_wfi = wfi_n; g_win_spurious = spurious;
+  g_win_pin_salah = pin_salah; g_win_secs = secs; g_win_p_ms = p_ms;
+  g_win_n++;
+  if (!ser) return;                             // tanpa PC (USB hanya daya): hasil cukup di g_win_*
+
   if (uart) ser.printf("# WINDOW attacker (UART2 DMA) %lu s, akhir jendela oleh TIM4 satu-tembakan\n",
                        (unsigned long)secs);
   else      ser.printf("# WINDOW periode=%lu ms K=%lu (tik ke-K mengakhiri jendela)\n", (unsigned long)p_ms,
@@ -610,7 +628,26 @@ void setup() {
   }
 }
 
+#ifdef K1_AUTO_WINDOW
+#ifndef K1_AUTO_S
+#define K1_AUTO_S      30                       // lama jendela (s)
+#endif
+#ifndef K1_AUTO_P
+#define K1_AUTO_P      1000                     // periode permintaan sintetis (ms)
+#endif
+#ifndef K1_AUTO_GAP_MS
+#define K1_AUTO_GAP_MS 5000                     // jeda sebelum jendela pertama dan antar jendela (ms)
+#endif
+#endif
+
 void loop() {
+#ifdef K1_AUTO_WINDOW
+  if (g_ready) {
+    delay(K1_AUTO_GAP_MS);                      // PB1 rendah selama jeda (idle tanpa WFI)
+    cmd_window(K1_AUTO_S, K1_AUTO_P);
+    return;
+  }
+#endif
   static char line[CMD_MAX];
   static int n = 0;
   if (ser.available() <= 0) return;

@@ -1,0 +1,1694 @@
+LOG1 beat=722 t_ms=361011
+LOG1 beat=724 t_ms=362011
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=731 (1827 uV)  bus raw=4037 (5046 mV)
+arus raw=733 (18325 uA)  daya raw=147 (91875 uW)  arus dari shunt=18275 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2478 polls=27551 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.7 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=438 rata2=631 maks=759  (arus 10950 .. 18975 uA, rata2 15775 uA)
+bus raw min=4026 rata2=4038 maks=4050  (5032 .. 5062 mV, rata2 5047 mV)
+  #0 t=1540 us shunt=729 bus=4036
+  #1 t=3542 us shunt=728 bus=4036
+  #2 t=5543 us shunt=727 bus=4035
+  #3 t=7541 us shunt=729 bus=4035
+  #4 t=9540 us shunt=731 bus=4043
+  #5 t=11538 us shunt=730 bus=4030
+  #6 t=13539 us shunt=729 bus=4033
+  #7 t=15539 us shunt=728 bus=4040
+PA0 awal=1 akhir=1  overflow TIM2 total=403623  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660682.375 rata2=661003.777 maks=661135.013 us
+LOW     n=5 min=344221.402 rata2=344457.763 maks=344766.222 us
+periode n=4 min=1005448.597 rata2=1005520.638 maks=1005613.722 us
+duty = 65.74 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=106673838.670 us
+  #1 naik  t=107018060.073 us
+  #2 turun t=107679171.573 us
+  #3 naik  t=108023673.795 us
+  #4 turun t=108684808.809 us
+  #5 naik  t=109029238.379 us
+  #6 turun t=109690324.629 us
+  #7 naik  t=110034694.073 us
+LOG1 beat=726 t_ms=367421
+LOG1 beat=728 t_ms=367451
+LOG1 beat=730 t_ms=367481
+LOG1 beat=732 t_ms=367511
+LOG1 beat=734 t_ms=367541
+LOG1 beat=736 t_ms=368011
+LOG1 beat=738 t_ms=369011
+LOG1 beat=740 t_ms=370011
+LOG1 beat=742 t_ms=371011
+LOG1 beat=744 t_ms=372011
+LOG1 beat=746 t_ms=373011
+LOG1 beat=748 t_ms=374011
+LOG1 beat=750 t_ms=375011
+LOG1 beat=752 t_ms=376011
+LOG1 beat=754 t_ms=377011
+LOG1 beat=756 t_ms=378011
+LOG1 beat=758 t_ms=379011
+LOG1 beat=760 t_ms=380011
+LOG1 beat=762 t_ms=381011
+LOG1 beat=764 t_ms=382011
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=727 (1817 uV)  bus raw=4036 (5045 mV)
+arus raw=727 (18175 uA)  daya raw=147 (91875 uW)  arus dari shunt=18175 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.8 us  rata2=2017.2 us  maks=2156.0 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=436 rata2=630 maks=762  (arus 10900 .. 19050 uA, rata2 15750 uA)
+bus raw min=4023 rata2=4039 maks=4051  (5028 .. 5063 mV, rata2 5048 mV)
+  #0 t=462 us shunt=723 bus=4046
+  #1 t=2463 us shunt=722 bus=4037
+  #2 t=4463 us shunt=723 bus=4043
+  #3 t=6460 us shunt=723 bus=4033
+  #4 t=8611 us shunt=725 bus=4044
+  #5 t=10611 us shunt=725 bus=4037
+  #6 t=12611 us shunt=721 bus=4041
+  #7 t=14610 us shunt=725 bus=4039
+PA0 awal=1 akhir=1  overflow TIM2 total=425606  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660587.916 rata2=661124.722 maks=661650.708 us
+LOW     n=5 min=343988.500 rata2=344542.708 maks=345041.944 us
+periode n=4 min=1005629.861 rata2=1005637.611 maks=1005641.055 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=126793577.781 us
+  #1 naik  t=127138239.809 us
+  #2 turun t=127799890.517 us
+  #3 naik  t=128143879.017 us
+  #4 turun t=128805038.601 us
+  #5 naik  t=129149519.337 us
+  #6 turun t=129810620.031 us
+  #7 naik  t=130155160.392 us
+LOG1 beat=766 t_ms=387430
+LOG1 beat=768 t_ms=387460
+LOG1 beat=770 t_ms=387490
+LOG1 beat=772 t_ms=387520
+LOG1 beat=774 t_ms=387550
+LOG1 beat=776 t_ms=388010
+LOG1 beat=778 t_ms=389010
+LOG1 beat=780 t_ms=390010
+LOG1 beat=782 t_ms=391010
+LOG1 beat=784 t_ms=392010
+LOG1 beat=786 t_ms=393010
+LOG1 beat=788 t_ms=394010
+LOG1 beat=790 t_ms=395010
+LOG1 beat=792 t_ms=396010
+LOG1 beat=794 t_ms=397010
+LOG1 beat=796 t_ms=398010
+LOG1 beat=798 t_ms=399010
+LOG1 beat=800 t_ms=400010
+LOG1 beat=802 t_ms=401010
+LOG1 beat=804 t_ms=402010
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=442 (1105 uV)  bus raw=4045 (5056 mV)
+arus raw=442 (11050 uA)  daya raw=90 (56250 uW)  arus dari shunt=11050 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.9 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=434 rata2=648 maks=754  (arus 10850 .. 18850 uA, rata2 16200 uA)
+bus raw min=4016 rata2=4039 maks=4050  (5020 .. 5062 mV, rata2 5048 mV)
+  #0 t=462 us shunt=435 bus=4039
+  #1 t=2461 us shunt=443 bus=4043
+  #2 t=4458 us shunt=438 bus=4039
+  #3 t=6457 us shunt=439 bus=4039
+  #4 t=8454 us shunt=442 bus=4044
+  #5 t=10451 us shunt=438 bus=4036
+  #6 t=12603 us shunt=441 bus=4042
+  #7 t=14599 us shunt=440 bus=4043
+PA0 awal=0 akhir=0  overflow TIM2 total=447588  generator PA6=mati
+L4: tepi naik=4 turun=4 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=10.833 rata2=495691.833 maks=661714.263 us
+LOW     n=3 min=343825.875 rata2=344581.194 maks=345198.583 us
+periode n=3 min=1005448.791 rata2=1005500.027 maks=1005540.138 us
+duty = 58.99 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=146243916.795 us
+  #1 turun t=146904167.004 us
+  #2 naik  t=147249365.587 us
+  #3 turun t=147911079.851 us
+  #4 naik  t=148254905.726 us
+  #5 turun t=148915697.781 us
+  #6 naik  t=149260416.906 us
+  #7 turun t=149260427.740 us
+LOG1 beat=806 t_ms=407439
+LOG1 beat=808 t_ms=407469
+LOG1 beat=810 t_ms=407499
+LOG1 beat=812 t_ms=407529
+LOG1 beat=814 t_ms=407559
+LOG1 beat=816 t_ms=408019
+LOG1 beat=818 t_ms=409019
+LOG1 beat=820 t_ms=410019
+LOG1 beat=822 t_ms=411019
+LOG1 beat=824 t_ms=412019
+LOG1 beat=826 t_ms=413019
+LOG1 beat=828 t_ms=414019
+LOG1 beat=830 t_ms=415019
+LOG1 beat=832 t_ms=416019
+LOG1 beat=834 t_ms=417019
+LOG1 beat=836 t_ms=418019
+LOG1 beat=838 t_ms=419019
+LOG1 beat=840 t_ms=420019
+LOG1 beat=842 t_ms=421019
+LOG1 beat=844 t_ms=422019
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=437 (1092 uV)  bus raw=4044 (5055 mV)
+arus raw=437 (10925 uA)  daya raw=88 (55000 uW)  arus dari shunt=10925 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.8 us  rata2=2017.1 us  maks=2158.5 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=431 rata2=626 maks=754  (arus 10775 .. 18850 uA, rata2 15650 uA)
+bus raw min=4028 rata2=4041 maks=4051  (5035 .. 5063 mV, rata2 5051 mV)
+  #0 t=467 us shunt=444 bus=4046
+  #1 t=2465 us shunt=442 bus=4046
+  #2 t=4464 us shunt=435 bus=4042
+  #3 t=6463 us shunt=434 bus=4045
+  #4 t=8461 us shunt=437 bus=4044
+  #5 t=10457 us shunt=435 bus=4043
+  #6 t=12454 us shunt=437 bus=4042
+  #7 t=14607 us shunt=438 bus=4044
+PA0 awal=0 akhir=0  overflow TIM2 total=469571  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=659676.055 rata2=660740.194 maks=661369.597 us
+LOW     n=4 min=344046.527 rata2=344410.986 maks=344778.833 us
+periode n=4 min=1005400.291 rata2=1005417.222 maks=1005448.986 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=166363216.517 us
+  #1 turun t=167024015.795 us
+  #2 naik  t=167368620.004 us
+  #3 turun t=168029989.601 us
+  #4 naik  t=168374036.129 us
+  #5 turun t=169035222.031 us
+  #6 naik  t=169379436.420 us
+  #7 turun t=170040106.573 us
+LOG1 beat=846 t_ms=427448
+LOG1 beat=848 t_ms=427478
+LOG1 beat=850 t_ms=427508
+LOG1 beat=852 t_ms=427538
+LOG1 beat=854 t_ms=427568
+LOG1 beat=856 t_ms=428018
+LOG1 beat=858 t_ms=429018
+LOG1 beat=860 t_ms=430018
+LOG1 beat=862 t_ms=431018
+LOG1 beat=864 t_ms=432018
+LOG1 beat=866 t_ms=433018
+LOG1 beat=868 t_ms=434018
+LOG1 beat=870 t_ms=435018
+LOG1 beat=872 t_ms=436018
+LOG1 beat=874 t_ms=437018
+LOG1 beat=876 t_ms=438018
+LOG1 beat=878 t_ms=439018
+LOG1 beat=880 t_ms=440018
+LOG1 beat=882 t_ms=441018
+LOG1 beat=884 t_ms=442018
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=695 (1737 uV)  bus raw=4044 (5055 mV)
+arus raw=695 (17375 uA)  daya raw=141 (88125 uW)  arus dari shunt=17375 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.9 us  rata2=2017.2 us  maks=2156.5 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=428 rata2=639 maks=747  (arus 10700 .. 18675 uA, rata2 15975 uA)
+bus raw min=4025 rata2=4041 maks=4051  (5031 .. 5063 mV, rata2 5051 mV)
+  #0 t=463 us shunt=691 bus=4041
+  #1 t=2468 us shunt=693 bus=4038
+  #2 t=4466 us shunt=695 bus=4041
+  #3 t=6467 us shunt=696 bus=4043
+  #4 t=8466 us shunt=696 bus=4043
+  #5 t=10621 us shunt=699 bus=4037
+  #6 t=12619 us shunt=696 bus=4044
+  #7 t=14620 us shunt=698 bus=4042
+PA0 awal=0 akhir=0  overflow TIM2 total=491553  generator PA6=mati
+L4: tepi naik=2 turun=2 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=2 min=4.347 rata2=330473.361 maks=660942.388 us
+LOW     n=1 min=1005325.291 rata2=1005325.291 maks=1005325.291 us
+periode n=1 min=1005329.638 rata2=1005329.638 maks=1005329.638 us
+duty = 24.73 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=189496663.101 us
+  #1 turun t=189496667.448 us
+  #2 naik  t=190501992.740 us
+  #3 turun t=191162935.129 us
+LOG1 beat=886 t_ms=447457
+LOG1 beat=888 t_ms=447487
+LOG1 beat=890 t_ms=447517
+LOG1 beat=892 t_ms=447547
+LOG1 beat=894 t_ms=447577
+LOG1 beat=896 t_ms=448017
+LOG1 beat=898 t_ms=449017
+LOG1 beat=900 t_ms=450017
+LOG1 beat=902 t_ms=451017
+LOG1 beat=904 t_ms=452017
+LOG1 beat=906 t_ms=453017
+LOG1 beat=908 t_ms=454017
+LOG1 beat=910 t_ms=455017
+LOG1 beat=912 t_ms=456017
+LOG1 beat=914 t_ms=457017
+LOG1 beat=916 t_ms=458017
+LOG1 beat=918 t_ms=459017
+LOG1 beat=920 t_ms=460017
+LOG1 beat=922 t_ms=461017
+LOG1 beat=924 t_ms=462017
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=711 (1777 uV)  bus raw=4043 (5053 mV)
+arus raw=711 (17775 uA)  daya raw=144 (90000 uW)  arus dari shunt=17775 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.4 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=426 rata2=621 maks=748  (arus 10650 .. 18700 uA, rata2 15525 uA)
+bus raw min=4027 rata2=4039 maks=4052  (5033 .. 5065 mV, rata2 5048 mV)
+  #0 t=462 us shunt=715 bus=4043
+  #1 t=2464 us shunt=716 bus=4043
+  #2 t=4462 us shunt=719 bus=4040
+  #3 t=6460 us shunt=717 bus=4041
+  #4 t=8461 us shunt=718 bus=4043
+  #5 t=10460 us shunt=718 bus=4042
+  #6 t=12616 us shunt=715 bus=4041
+  #7 t=14614 us shunt=719 bus=4036
+PA0 awal=1 akhir=1  overflow TIM2 total=513536  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660559.527 rata2=661014.472 maks=661236.875 us
+LOW     n=5 min=344116.791 rata2=344547.458 maks=345232.736 us
+periode n=4 min=1005292.291 rata2=1005390.625 maks=1005424.888 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=206243146.448 us
+  #1 naik  t=206588379.184 us
+  #2 turun t=207249616.059 us
+  #3 naik  t=207593804.073 us
+  #4 turun t=208254890.073 us
+  #5 naik  t=208599224.976 us
+  #6 turun t=209259784.504 us
+  #7 naik  t=209604649.392 us
+LOG1 beat=926 t_ms=467466
+LOG1 beat=928 t_ms=467496
+LOG1 beat=930 t_ms=467526
+LOG1 beat=932 t_ms=467556
+LOG1 beat=934 t_ms=467586
+LOG1 beat=936 t_ms=468016
+LOG1 beat=938 t_ms=469016
+LOG1 beat=940 t_ms=470016
+LOG1 beat=942 t_ms=471016
+LOG1 beat=944 t_ms=472016
+LOG1 beat=946 t_ms=473016
+LOG1 beat=948 t_ms=474016
+LOG1 beat=950 t_ms=475016
+LOG1 beat=952 t_ms=476016
+LOG1 beat=954 t_ms=477016
+LOG1 beat=956 t_ms=478016
+LOG1 beat=958 t_ms=479016
+LOG1 beat=960 t_ms=480016
+LOG1 beat=962 t_ms=481016
+LOG1 beat=964 t_ms=482016
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=714 (1785 uV)  bus raw=4039 (5048 mV)
+arus raw=714 (17850 uA)  daya raw=144 (90000 uW)  arus dari shunt=17850 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27549 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.8 us  rata2=2017.2 us  maks=2156.2 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=426 rata2=620 maks=754  (arus 10650 .. 18850 uA, rata2 15500 uA)
+bus raw min=4027 rata2=4040 maks=4052  (5033 .. 5065 mV, rata2 5050 mV)
+  #0 t=462 us shunt=716 bus=4036
+  #1 t=2467 us shunt=715 bus=4040
+  #2 t=4463 us shunt=722 bus=4040
+  #3 t=6463 us shunt=730 bus=4036
+  #4 t=8462 us shunt=730 bus=4038
+  #5 t=10615 us shunt=732 bus=4040
+  #6 t=12615 us shunt=730 bus=4035
+  #7 t=14612 us shunt=729 bus=4037
+PA0 awal=1 akhir=1  overflow TIM2 total=535518  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660485.666 rata2=660716.833 maks=661037.958 us
+LOW     n=5 min=344276.777 rata2=344594.805 maks=345003.527 us
+periode n=4 min=1005342.861 rata2=1005391.152 maks=1005489.194 us
+duty = 65.72 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=226361926.462 us
+  #1 naik  t=226706203.240 us
+  #2 turun t=227366688.906 us
+  #3 naik  t=227711692.434 us
+  #4 turun t=228372242.184 us
+  #5 naik  t=228717065.879 us
+  #6 turun t=229378103.837 us
+  #7 naik  t=229722425.017 us
+LOG1 beat=966 t_ms=487475
+LOG1 beat=968 t_ms=487505
+LOG1 beat=970 t_ms=487535
+LOG1 beat=972 t_ms=487565
+LOG1 beat=974 t_ms=487595
+LOG1 beat=976 t_ms=488015
+LOG1 beat=978 t_ms=489015
+LOG1 beat=980 t_ms=490015
+LOG1 beat=982 t_ms=491015
+LOG1 beat=984 t_ms=492015
+LOG1 beat=986 t_ms=493015
+LOG1 beat=988 t_ms=494015
+LOG1 beat=990 t_ms=495015
+LOG1 beat=992 t_ms=496015
+LOG1 beat=994 t_ms=497015
+LOG1 beat=996 t_ms=498015
+LOG1 beat=998 t_ms=499015
+LOG1 beat=1000 t_ms=500015
+LOG1 beat=1002 t_ms=501015
+LOG1 beat=1004 t_ms=502015
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=717 (1792 uV)  bus raw=4035 (5043 mV)
+arus raw=717 (17925 uA)  daya raw=144 (90000 uW)  arus dari shunt=17925 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2157.1 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=425 rata2=621 maks=749  (arus 10625 .. 18725 uA, rata2 15525 uA)
+bus raw min=4027 rata2=4041 maks=4051  (5033 .. 5063 mV, rata2 5051 mV)
+  #0 t=309 us shunt=715 bus=4038
+  #1 t=2309 us shunt=714 bus=4042
+  #2 t=4307 us shunt=723 bus=4040
+  #3 t=6304 us shunt=723 bus=4041
+  #4 t=8300 us shunt=724 bus=4042
+  #5 t=10454 us shunt=718 bus=4041
+  #6 t=12454 us shunt=715 bus=4040
+  #7 t=14454 us shunt=721 bus=4041
+PA0 awal=1 akhir=1  overflow TIM2 total=557501  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660415.069 rata2=660806.236 maks=661214.291 us
+LOW     n=5 min=344273.180 rata2=344521.944 maks=344897.791 us
+periode n=4 min=1005312.861 rata2=1005390.375 maks=1005496.388 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=246469750.073 us
+  #1 naik  t=246814023.254 us
+  #2 turun t=247474631.004 us
+  #3 naik  t=247819382.767 us
+  #4 turun t=248480597.059 us
+  #5 naik  t=248824879.156 us
+  #6 turun t=249485866.990 us
+  #7 naik  t=249830271.920 us
+LOG1 beat=1006 t_ms=507484
+LOG1 beat=1008 t_ms=507514
+LOG1 beat=1010 t_ms=507544
+LOG1 beat=1012 t_ms=507574
+LOG1 beat=1014 t_ms=507604
+LOG1 beat=1016 t_ms=508014
+LOG1 beat=1018 t_ms=509014
+LOG1 beat=1020 t_ms=510014
+LOG1 beat=1022 t_ms=511014
+LOG1 beat=1024 t_ms=512014
+LOG1 beat=1026 t_ms=513014
+LOG1 beat=1028 t_ms=514014
+LOG1 beat=1030 t_ms=515014
+LOG1 beat=1032 t_ms=516014
+LOG1 beat=1034 t_ms=517014
+LOG1 beat=1036 t_ms=518014
+LOG1 beat=1038 t_ms=519014
+LOG1 beat=1040 t_ms=520014
+LOG1 beat=1042 t_ms=521014
+LOG1 beat=1044 t_ms=522014
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=724 (1810 uV)  bus raw=4037 (5046 mV)
+arus raw=724 (18100 uA)  daya raw=146 (91250 uW)  arus dari shunt=18100 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2157.2 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=427 rata2=620 maks=750  (arus 10675 .. 18750 uA, rata2 15500 uA)
+bus raw min=4010 rata2=4037 maks=4050  (5012 .. 5062 mV, rata2 5046 mV)
+  #0 t=309 us shunt=722 bus=4033
+  #1 t=2309 us shunt=720 bus=4040
+  #2 t=4309 us shunt=720 bus=4042
+  #3 t=6462 us shunt=711 bus=4031
+  #4 t=8460 us shunt=710 bus=4038
+  #5 t=10457 us shunt=712 bus=4040
+  #6 t=12455 us shunt=711 bus=4038
+  #7 t=14452 us shunt=716 bus=4034
+PA0 awal=1 akhir=1  overflow TIM2 total=579484  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660246.875 rata2=660703.708 maks=661276.416 us
+LOW     n=5 min=344149.083 rata2=344714.930 maks=345136.152 us
+periode n=4 min=1005356.500 rata2=1005399.750 maks=1005434.013 us
+duty = 65.71 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=10382915.646 us
+  #1 naik  t=10727706.146 us
+  #2 turun t=11388982.563 us
+  #3 naik  t=11733131.646 us
+  #4 turun t=12393378.521 us
+  #5 naik  t=12738514.674 us
+  #6 turun t=13399030.383 us
+  #7 naik  t=13743948.688 us
+LOG1 beat=1046 t_ms=527493
+LOG1 beat=1048 t_ms=527523
+LOG1 beat=1050 t_ms=527553
+LOG1 beat=1052 t_ms=527583
+LOG1 beat=1054 t_ms=527613
+LOG1 beat=1056 t_ms=528013
+LOG1 beat=1058 t_ms=529013
+LOG1 beat=1060 t_ms=530013
+LOG1 beat=1062 t_ms=531013
+LOG1 beat=1064 t_ms=532013
+LOG1 beat=1066 t_ms=533013
+LOG1 beat=1068 t_ms=534013
+LOG1 beat=1070 t_ms=535013
+LOG1 beat=1072 t_ms=536013
+LOG1 beat=1074 t_ms=537013
+LOG1 beat=1076 t_ms=538013
+LOG1 beat=1078 t_ms=539013
+LOG1 beat=1080 t_ms=540013
+LOG1 beat=1082 t_ms=541013
+LOG1 beat=1084 t_ms=542013
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=733 (1832 uV)  bus raw=4035 (5043 mV)
+arus raw=733 (18325 uA)  daya raw=147 (91875 uW)  arus dari shunt=18325 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.8 us  rata2=2017.2 us  maks=2157.4 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=424 rata2=631 maks=749  (arus 10600 .. 18725 uA, rata2 15775 uA)
+bus raw min=4029 rata2=4041 maks=4051  (5036 .. 5063 mV, rata2 5051 mV)
+  #0 t=310 us shunt=730 bus=4043
+  #1 t=2314 us shunt=727 bus=4040
+  #2 t=4314 us shunt=736 bus=4034
+  #3 t=6313 us shunt=732 bus=4037
+  #4 t=8311 us shunt=737 bus=4041
+  #5 t=10311 us shunt=728 bus=4034
+  #6 t=12464 us shunt=723 bus=4034
+  #7 t=14464 us shunt=728 bus=4037
+PA0 awal=1 akhir=0  overflow TIM2 total=601466  generator PA6=mati
+L4: tepi naik=4 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=10.833 rata2=495444.861 maks=661067.250 us
+LOW     n=4 min=344068.958 rata2=344642.750 maks=345514.888 us
+periode n=3 min=1005362.875 rata2=1005423.569 maks=1005508.944 us
+duty = 58.97 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=30490746.924 us
+  #1 naik  t=30834815.883 us
+  #2 turun t=31494809.938 us
+  #3 naik  t=31840324.827 us
+  #4 turun t=32501392.077 us
+  #5 naik  t=32845723.716 us
+  #6 turun t=33506431.049 us
+  #7 naik  t=33851086.591 us
+LOG1 beat=1086 t_ms=547502
+LOG1 beat=1088 t_ms=547532
+LOG1 beat=1090 t_ms=547562
+LOG1 beat=1092 t_ms=547592
+LOG1 beat=1094 t_ms=547622
+LOG1 beat=1096 t_ms=548012
+LOG1 beat=1098 t_ms=549012
+LOG1 beat=1100 t_ms=550012
+LOG1 beat=1102 t_ms=551012
+LOG1 beat=1104 t_ms=552012
+LOG1 beat=1106 t_ms=553012
+LOG1 beat=1108 t_ms=554012
+LOG1 beat=1110 t_ms=555012
+LOG1 beat=1112 t_ms=556012
+LOG1 beat=1114 t_ms=557012
+LOG1 beat=1116 t_ms=558012
+LOG1 beat=1118 t_ms=559012
+LOG1 beat=1120 t_ms=560012
+LOG1 beat=1122 t_ms=561012
+LOG1 beat=1124 t_ms=562012
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=716 (1790 uV)  bus raw=4036 (5045 mV)
+arus raw=716 (17900 uA)  daya raw=144 (90000 uW)  arus dari shunt=17900 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.8 us  rata2=2017.2 us  maks=2157.8 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=423 rata2=618 maks=749  (arus 10575 .. 18725 uA, rata2 15450 uA)
+bus raw min=4025 rata2=4039 maks=4050  (5031 .. 5062 mV, rata2 5048 mV)
+  #0 t=462 us shunt=719 bus=4037
+  #1 t=2462 us shunt=714 bus=4043
+  #2 t=4461 us shunt=711 bus=4040
+  #3 t=6462 us shunt=710 bus=4032
+  #4 t=8461 us shunt=714 bus=4041
+  #5 t=10460 us shunt=710 bus=4038
+  #6 t=12460 us shunt=712 bus=4044
+  #7 t=14462 us shunt=712 bus=4034
+PA0 awal=1 akhir=1  overflow TIM2 total=623448  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660633.152 rata2=660941.569 maks=661097.541 us
+LOW     n=5 min=344331.388 rata2=344521.402 maks=344860.875 us
+periode n=4 min=1005428.930 rata2=1005490.555 maks=1005584.958 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=50609234.021 us
+  #1 naik  t=50953645.105 us
+  #2 turun t=51614650.494 us
+  #3 naik  t=51959230.063 us
+  #4 turun t=52619863.216 us
+  #5 naik  t=52964724.091 us
+  #6 turun t=53625821.633 us
+  #7 naik  t=53970153.021 us
+LOG1 beat=1126 t_ms=567511
+LOG1 beat=1128 t_ms=567541
+LOG1 beat=1130 t_ms=567571
+LOG1 beat=1132 t_ms=567601
+LOG1 beat=1134 t_ms=567631
+LOG1 beat=1136 t_ms=568011
+LOG1 beat=1138 t_ms=569011
+LOG1 beat=1140 t_ms=570011
+LOG1 beat=1142 t_ms=571011
+LOG1 beat=1144 t_ms=572011
+LOG1 beat=1146 t_ms=573011
+LOG1 beat=1148 t_ms=574011
+LOG1 beat=1150 t_ms=575011
+LOG1 beat=1152 t_ms=576011
+LOG1 beat=1154 t_ms=577011
+LOG1 beat=1156 t_ms=578011
+LOG1 beat=1158 t_ms=579011
+LOG1 beat=1160 t_ms=580011
+LOG1 beat=1162 t_ms=581011
+LOG1 beat=1164 t_ms=582011
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=702 (1755 uV)  bus raw=4032 (5040 mV)
+arus raw=702 (17550 uA)  daya raw=141 (88125 uW)  arus dari shunt=17550 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.9 us  rata2=2017.2 us  maks=2156.6 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=427 rata2=639 maks=704  (arus 10675 .. 17600 uA, rata2 15975 uA)
+bus raw min=4015 rata2=4039 maks=4051  (5018 .. 5063 mV, rata2 5048 mV)
+  #0 t=462 us shunt=697 bus=4038
+  #1 t=2463 us shunt=695 bus=4036
+  #2 t=4460 us shunt=696 bus=4037
+  #3 t=6458 us shunt=697 bus=4044
+  #4 t=8458 us shunt=696 bus=4038
+  #5 t=10454 us shunt=696 bus=4042
+  #6 t=12607 us shunt=699 bus=4036
+  #7 t=14606 us shunt=701 bus=4039
+PA0 awal=0 akhir=0  overflow TIM2 total=645431  generator PA6=mati
+L4: tepi naik=1 turun=1 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=1 min=4.347 rata2=4.347 maks=4.347 us
+LOW     n=0
+periode n=0
+  #0 naik  t=74089332.785 us
+  #1 turun t=74089337.133 us
+LOG1 beat=1166 t_ms=587519
+LOG1 beat=1168 t_ms=587549
+LOG1 beat=1170 t_ms=587579
+LOG1 beat=1172 t_ms=587609
+LOG1 beat=1174 t_ms=587639
+LOG1 beat=1176 t_ms=588019
+LOG1 beat=1178 t_ms=589019
+LOG1 beat=1180 t_ms=590019
+LOG1 beat=1182 t_ms=591019
+LOG1 beat=1184 t_ms=592019
+LOG1 beat=1186 t_ms=593019
+LOG1 beat=1188 t_ms=594019
+LOG1 beat=1190 t_ms=595019
+LOG1 beat=1192 t_ms=596019
+LOG1 beat=1194 t_ms=597019
+LOG1 beat=1196 t_ms=598019
+LOG1 beat=1198 t_ms=599019
+LOG1 beat=1200 t_ms=600019
+LOG1 beat=1202 t_ms=601019
+LOG1 beat=1204 t_ms=602019
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=435 (1087 uV)  bus raw=4047 (5058 mV)
+arus raw=435 (10875 uA)  daya raw=88 (55000 uW)  arus dari shunt=10875 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2158.2 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=426 rata2=622 maks=751  (arus 10650 .. 18775 uA, rata2 15550 uA)
+bus raw min=4011 rata2=4037 maks=4050  (5013 .. 5062 mV, rata2 5046 mV)
+  #0 t=307 us shunt=430 bus=4046
+  #1 t=2305 us shunt=436 bus=4042
+  #2 t=4303 us shunt=435 bus=4048
+  #3 t=6304 us shunt=437 bus=4041
+  #4 t=8304 us shunt=430 bus=4043
+  #5 t=10303 us shunt=429 bus=4047
+  #6 t=12300 us shunt=430 bus=4041
+  #7 t=14452 us shunt=430 bus=4046
+PA0 awal=0 akhir=0  overflow TIM2 total=667413  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=660382.902 rata2=660694.944 maks=661013.416 us
+LOW     n=4 min=344420.097 rata2=344705.388 maks=344975.805 us
+periode n=4 min=1005433.513 rata2=1005478.361 maks=1005553.388 us
+duty = 65.71 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=90175969.049 us
+  #1 turun t=90836955.341 us
+  #2 naik  t=91181522.438 us
+  #3 turun t=91842035.091 us
+  #4 naik  t=92187010.896 us
+  #5 turun t=92847590.410 us
+  #6 naik  t=93192449.008 us
+  #7 turun t=93853462.424 us
+LOG1 beat=1206 t_ms=607528
+LOG1 beat=1208 t_ms=607558
+LOG1 beat=1210 t_ms=607588
+LOG1 beat=1212 t_ms=607618
+LOG1 beat=1214 t_ms=607648
+LOG1 beat=1216 t_ms=608018
+LOG1 beat=1218 t_ms=609018
+LOG1 beat=1220 t_ms=610018
+LOG1 beat=1222 t_ms=611018
+LOG1 beat=1224 t_ms=612018
+LOG1 beat=1226 t_ms=613018
+LOG1 beat=1228 t_ms=614018
+LOG1 beat=1230 t_ms=615018
+LOG1 beat=1232 t_ms=616018
+LOG1 beat=1234 t_ms=617018
+LOG1 beat=1236 t_ms=618018
+LOG1 beat=1238 t_ms=619018
+LOG1 beat=1240 t_ms=620018
+LOG1 beat=1242 t_ms=621018
+LOG1 beat=1244 t_ms=622018
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=431 (1077 uV)  bus raw=4040 (5050 mV)
+arus raw=431 (10775 uA)  daya raw=87 (54375 uW)  arus dari shunt=10775 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.9 us  rata2=2017.2 us  maks=2157.3 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=426 rata2=621 maks=751  (arus 10650 .. 18775 uA, rata2 15525 uA)
+bus raw min=4015 rata2=4038 maks=4051  (5018 .. 5063 mV, rata2 5047 mV)
+  #0 t=311 us shunt=429 bus=4043
+  #1 t=2309 us shunt=433 bus=4041
+  #2 t=4460 us shunt=431 bus=4043
+  #3 t=6458 us shunt=433 bus=4042
+  #4 t=8456 us shunt=433 bus=4041
+  #5 t=10453 us shunt=434 bus=4047
+  #6 t=12451 us shunt=431 bus=4038
+  #7 t=14449 us shunt=431 bus=4042
+PA0 awal=0 akhir=0  overflow TIM2 total=689395  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=660530.513 rata2=661214.291 maks=661749.597 us
+LOW     n=4 min=343778.930 rata2=344438.041 maks=345013.986 us
+periode n=4 min=1005528.527 rata2=1005562.347 maks=1005635.236 us
+duty = 65.74 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=110295228.133 us
+  #1 turun t=110956977.730 us
+  #2 naik  t=111300756.660 us
+  #3 turun t=111961709.619 us
+  #4 naik  t=112306391.896 us
+  #5 turun t=112966922.410 us
+  #6 naik  t=113311936.396 us
+  #7 turun t=113973200.563 us
+LOG1 beat=1246 t_ms=627537
+LOG1 beat=1248 t_ms=627567
+LOG1 beat=1250 t_ms=627597
+LOG1 beat=1252 t_ms=627627
+LOG1 beat=1254 t_ms=627657
+LOG1 beat=1256 t_ms=628017
+LOG1 beat=1258 t_ms=629017
+LOG1 beat=1260 t_ms=630017
+LOG1 beat=1262 t_ms=631017
+LOG1 beat=1264 t_ms=632017
+LOG1 beat=1266 t_ms=633017
+LOG1 beat=1268 t_ms=634017
+LOG1 beat=1270 t_ms=635017
+LOG1 beat=1272 t_ms=636017
+LOG1 beat=1274 t_ms=637017
+LOG1 beat=1276 t_ms=638017
+LOG1 beat=1278 t_ms=639017
+LOG1 beat=1280 t_ms=640017
+LOG1 beat=1282 t_ms=641017
+LOG1 beat=1284 t_ms=642017
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=434 (1085 uV)  bus raw=4044 (5055 mV)
+arus raw=434 (10850 uA)  daya raw=88 (55000 uW)  arus dari shunt=10850 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.9 us  rata2=2017.2 us  maks=2156.4 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=425 rata2=620 maks=752  (arus 10625 .. 18800 uA, rata2 15500 uA)
+bus raw min=4024 rata2=4038 maks=4049  (5030 .. 5061 mV, rata2 5047 mV)
+  #0 t=462 us shunt=430 bus=4041
+  #1 t=2464 us shunt=431 bus=4046
+  #2 t=4463 us shunt=433 bus=4042
+  #3 t=6460 us shunt=429 bus=4044
+  #4 t=8459 us shunt=434 bus=4045
+  #5 t=10456 us shunt=432 bus=4040
+  #6 t=12455 us shunt=432 bus=4047
+  #7 t=14453 us shunt=430 bus=4043
+PA0 awal=0 akhir=0  overflow TIM2 total=711378  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=660864.361 rata2=661438.166 maks=661931.777 us
+LOW     n=4 min=343611.069 rata2=344108.625 maks=344667.625 us
+periode n=4 min=1005519.708 rata2=1005532.361 maks=1005551.083 us
+duty = 65.77 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=130405783.063 us
+  #1 turun t=131067698.702 us
+  #2 naik  t=131411309.771 us
+  #3 turun t=132072174.133 us
+  #4 naik  t=132416841.758 us
+  #5 turun t=133078773.535 us
+  #6 naik  t=133422392.841 us
+  #7 turun t=134083376.035 us
+LOG1 beat=1286 t_ms=647536
+LOG1 beat=1288 t_ms=647566
+LOG1 beat=1290 t_ms=647596
+LOG1 beat=1292 t_ms=647626
+LOG1 beat=1294 t_ms=647656
+LOG1 beat=1296 t_ms=648016
+LOG1 beat=1298 t_ms=649016
+LOG1 beat=1300 t_ms=650016
+LOG1 beat=1302 t_ms=651016
+LOG1 beat=1304 t_ms=652016
+LOG1 beat=1306 t_ms=653016
+LOG1 beat=1308 t_ms=654016
+LOG1 beat=1310 t_ms=655016
+LOG1 beat=1312 t_ms=656016
+LOG1 beat=1314 t_ms=657016
+LOG1 beat=1316 t_ms=658016
+LOG1 beat=1318 t_ms=659016
+LOG1 beat=1320 t_ms=660016
+LOG1 beat=1322 t_ms=661016
+LOG1 beat=1324 t_ms=662016
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=724 (1810 uV)  bus raw=4037 (5046 mV)
+arus raw=724 (18100 uA)  daya raw=146 (91250 uW)  arus dari shunt=18100 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2157.0 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=427 rata2=620 maks=754  (arus 10675 .. 18850 uA, rata2 15500 uA)
+bus raw min=4024 rata2=4039 maks=4050  (5030 .. 5062 mV, rata2 5048 mV)
+  #0 t=467 us shunt=722 bus=4033
+  #1 t=2470 us shunt=723 bus=4043
+  #2 t=4468 us shunt=719 bus=4041
+  #3 t=6465 us shunt=719 bus=4036
+  #4 t=8462 us shunt=735 bus=4035
+  #5 t=10614 us shunt=741 bus=4034
+  #6 t=12613 us shunt=736 bus=4042
+  #7 t=14614 us shunt=737 bus=4035
+PA0 awal=1 akhir=1  overflow TIM2 total=733360  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660549.875 rata2=660847.694 maks=661006.902 us
+LOW     n=5 min=344051.861 rata2=344457.763 maks=344910.680 us
+periode n=4 min=1005346.111 rata2=1005406.944 maks=1005460.555 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=150180156.035 us
+  #1 naik  t=150524207.896 us
+  #2 turun t=151185214.799 us
+  #3 naik  t=151529554.008 us
+  #4 turun t=152190430.160 us
+  #5 naik  t=152534929.577 us
+  #6 turun t=153195887.452 us
+  #7 naik  t=153540375.160 us
+LOG1 beat=1326 t_ms=667545
+LOG1 beat=1328 t_ms=667575
+LOG1 beat=1330 t_ms=667605
+LOG1 beat=1332 t_ms=667635
+LOG1 beat=1334 t_ms=667665
+LOG1 beat=1336 t_ms=668015
+LOG1 beat=1338 t_ms=669015
+LOG1 beat=1340 t_ms=670015
+LOG1 beat=1342 t_ms=671015
+LOG1 beat=1344 t_ms=672015
+LOG1 beat=1346 t_ms=673015
+LOG1 beat=1348 t_ms=674015
+LOG1 beat=1350 t_ms=675015
+LOG1 beat=1352 t_ms=676015
+LOG1 beat=1354 t_ms=677015
+LOG1 beat=1356 t_ms=678015
+LOG1 beat=1358 t_ms=679015
+LOG1 beat=1360 t_ms=680015
+LOG1 beat=1362 t_ms=681015
+LOG1 beat=1364 t_ms=682015
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=714 (1785 uV)  bus raw=4041 (5051 mV)
+arus raw=714 (17850 uA)  daya raw=144 (90000 uW)  arus dari shunt=17850 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.9 us  rata2=2017.2 us  maks=2156.5 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=427 rata2=613 maks=746  (arus 10675 .. 18650 uA, rata2 15325 uA)
+bus raw min=4025 rata2=4039 maks=4051  (5031 .. 5063 mV, rata2 5048 mV)
+  #0 t=462 us shunt=714 bus=4034
+  #1 t=2461 us shunt=715 bus=4040
+  #2 t=4460 us shunt=717 bus=4042
+  #3 t=6459 us shunt=715 bus=4037
+  #4 t=8612 us shunt=713 bus=4035
+  #5 t=10612 us shunt=713 bus=4037
+  #6 t=12612 us shunt=715 bus=4041
+  #7 t=14611 us shunt=713 bus=4039
+PA0 awal=1 akhir=0  overflow TIM2 total=755343  generator PA6=mati
+L4: tepi naik=5 turun=6 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=10.833 rata2=528687.583 maks=661128.652 us
+LOW     n=5 min=344329.125 rata2=344598.625 maks=345175.458 us
+periode n=4 min=1005457.777 rata2=1005482.833 maks=1005499.958 us
+duty = 60.54 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=170288685.105 us
+  #1 naik  t=170633174.008 us
+  #2 turun t=171293475.202 us
+  #3 naik  t=171638650.660 us
+  #4 turun t=172299644.230 us
+  #5 naik  t=172644147.633 us
+  #6 turun t=173305151.313 us
+  #7 naik  t=173649647.591 us
+LOG1 beat=1366 t_ms=687554
+LOG1 beat=1368 t_ms=687584
+LOG1 beat=1370 t_ms=687614
+LOG1 beat=1372 t_ms=687644
+LOG1 beat=1374 t_ms=687674
+LOG1 beat=1376 t_ms=688014
+LOG1 beat=1378 t_ms=689014
+LOG1 beat=1380 t_ms=690014
+LOG1 beat=1382 t_ms=691014
+LOG1 beat=1384 t_ms=692014
+LOG1 beat=1386 t_ms=693014
+LOG1 beat=1388 t_ms=694014
+LOG1 beat=1390 t_ms=695014
+LOG1 beat=1392 t_ms=696014
+LOG1 beat=1394 t_ms=697014
+LOG1 beat=1396 t_ms=698014
+LOG1 beat=1398 t_ms=699014
+LOG1 beat=1400 t_ms=700014
+LOG1 beat=1402 t_ms=701014
+LOG1 beat=1404 t_ms=702014
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=713 (1782 uV)  bus raw=4038 (5047 mV)
+arus raw=713 (17825 uA)  daya raw=144 (90000 uW)  arus dari shunt=17825 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.9 us  rata2=2017.2 us  maks=2161.3 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=424 rata2=618 maks=751  (arus 10600 .. 18775 uA, rata2 15450 uA)
+bus raw min=4025 rata2=4039 maks=4050  (5031 .. 5062 mV, rata2 5048 mV)
+  #0 t=308 us shunt=714 bus=4038
+  #1 t=2307 us shunt=711 bus=4040
+  #2 t=4306 us shunt=715 bus=4036
+  #3 t=6304 us shunt=717 bus=4035
+  #4 t=8303 us shunt=714 bus=4034
+  #5 t=10303 us shunt=711 bus=4041
+  #6 t=12304 us shunt=716 bus=4038
+  #7 t=14457 us shunt=717 bus=4037
+PA0 awal=1 akhir=1  overflow TIM2 total=777326  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660756.805 rata2=661191.194 maks=661831.888 us
+LOW     n=5 min=343756.111 rata2=344446.250 maks=344902.013 us
+periode n=4 min=1005432.861 rata2=1005523.513 maks=1005588.000 us
+duty = 65.74 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=190407519.369 us
+  #1 naik  t=190752421.383 us
+  #2 turun t=191414253.271 us
+  #3 naik  t=191758009.383 us
+  #4 turun t=192419170.313 us
+  #5 naik  t=192763559.396 us
+  #6 turun t=193424574.563 us
+  #7 naik  t=193769082.605 us
+LOG1 beat=1406 t_ms=707563
+LOG1 beat=1408 t_ms=707593
+LOG1 beat=1410 t_ms=707623
+LOG1 beat=1412 t_ms=707653
+LOG1 beat=1414 t_ms=707683
+LOG1 beat=1416 t_ms=708013
+LOG1 beat=1418 t_ms=709013
+LOG1 beat=1420 t_ms=710013
+LOG1 beat=1422 t_ms=711013
+LOG1 beat=1424 t_ms=712013
+LOG1 beat=1426 t_ms=713013
+LOG1 beat=1428 t_ms=714013
+LOG1 beat=1430 t_ms=715013
+LOG1 beat=1432 t_ms=716013
+LOG1 beat=1434 t_ms=717013
+LOG1 beat=1436 t_ms=718013
+LOG1 beat=1438 t_ms=719013
+LOG1 beat=1440 t_ms=720013
+LOG1 beat=1442 t_ms=721013
+LOG1 beat=1444 t_ms=722013
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=668 (1670 uV)  bus raw=4029 (5036 mV)
+arus raw=668 (16700 uA)  daya raw=134 (83750 uW)  arus dari shunt=16700 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2158.5 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=431 rata2=677 maks=701  (arus 10775 .. 17525 uA, rata2 16925 uA)
+bus raw min=4025 rata2=4039 maks=4049  (5031 .. 5061 mV, rata2 5048 mV)
+  #0 t=309 us shunt=667 bus=4039
+  #1 t=2308 us shunt=671 bus=4042
+  #2 t=4307 us shunt=669 bus=4041
+  #3 t=6306 us shunt=667 bus=4038
+  #4 t=8304 us shunt=666 bus=4038
+  #5 t=10302 us shunt=668 bus=4041
+  #6 t=12455 us shunt=667 bus=4042
+  #7 t=14455 us shunt=668 bus=4040
+PA0 awal=0 akhir=0  overflow TIM2 total=799308  generator PA6=mati
+L4: tepi naik=1 turun=1 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=1 min=4.347 rata2=4.347 maks=4.347 us
+LOW     n=0
+periode n=0
+  #0 naik  t=214893320.799 us
+  #1 turun t=214893325.146 us
+LOG1 beat=1446 t_ms=727571
+LOG1 beat=1448 t_ms=727601
+LOG1 beat=1450 t_ms=727631
+LOG1 beat=1452 t_ms=727661
+LOG1 beat=1454 t_ms=727691
+LOG1 beat=1456 t_ms=728011
+LOG1 beat=1458 t_ms=729011
+LOG1 beat=1460 t_ms=730011
+LOG1 beat=1462 t_ms=731011
+LOG1 beat=1464 t_ms=732011
+LOG1 beat=1466 t_ms=733011
+LOG1 beat=1468 t_ms=734011
+LOG1 beat=1470 t_ms=735011
+LOG1 beat=1472 t_ms=736011
+LOG1 beat=1474 t_ms=737011
+LOG1 beat=1476 t_ms=738011
+LOG1 beat=1478 t_ms=739011
+LOG1 beat=1480 t_ms=740011
+LOG1 beat=1482 t_ms=741011
+LOG1 beat=1484 t_ms=742011
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=713 (1782 uV)  bus raw=4040 (5050 mV)
+arus raw=713 (17825 uA)  daya raw=144 (90000 uW)  arus dari shunt=17825 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.6 us
+laju = 495.71 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=425 rata2=619 maks=747  (arus 10625 .. 18675 uA, rata2 15475 uA)
+bus raw min=4023 rata2=4040 maks=4050  (5028 .. 5062 mV, rata2 5050 mV)
+  #0 t=463 us shunt=712 bus=4040
+  #1 t=2461 us shunt=712 bus=4039
+  #2 t=4458 us shunt=713 bus=4037
+  #3 t=6612 us shunt=713 bus=4038
+  #4 t=8610 us shunt=715 bus=4039
+  #5 t=10608 us shunt=715 bus=4033
+  #6 t=12609 us shunt=712 bus=4038
+  #7 t=14607 us shunt=713 bus=4035
+PA0 awal=1 akhir=1  overflow TIM2 total=821290  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=661161.722 rata2=661571.958 maks=662144.027 us
+LOW     n=5 min=343343.041 rata2=344042.500 maks=344401.222 us
+periode n=4 min=1005487.069 rata2=1005524.777 maks=1005552.805 us
+duty = 65.78 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=230637056.105 us
+  #1 naik  t=230981457.327 us
+  #2 turun t=231643265.452 us
+  #3 naik  t=231987006.035 us
+  #4 turun t=232648180.021 us
+  #5 naik  t=232992516.605 us
+  #6 turun t=233653678.327 us
+  #7 naik  t=233998069.410 us
+LOG1 beat=1486 t_ms=747580
+LOG1 beat=1488 t_ms=747610
+LOG1 beat=1490 t_ms=747640
+LOG1 beat=1492 t_ms=747670
+LOG1 beat=1494 t_ms=747700
+LOG1 beat=1496 t_ms=748010
+LOG1 beat=1498 t_ms=749010
+LOG1 beat=1500 t_ms=750010
+LOG1 beat=1502 t_ms=751010
+LOG1 beat=1504 t_ms=752010
+LOG1 beat=1506 t_ms=753010
+LOG1 beat=1508 t_ms=754010
+LOG1 beat=1510 t_ms=755010
+LOG1 beat=1512 t_ms=756010
+LOG1 beat=1514 t_ms=757010
+LOG1 beat=1516 t_ms=758010
+LOG1 beat=1518 t_ms=759010
+LOG1 beat=1520 t_ms=760010
+LOG1 beat=1522 t_ms=761010
+LOG1 beat=1524 t_ms=762010
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=435 (1087 uV)  bus raw=4047 (5058 mV)
+arus raw=435 (10875 uA)  daya raw=88 (55000 uW)  arus dari shunt=10875 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.4 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=425 rata2=584 maks=748  (arus 10625 .. 18700 uA, rata2 14600 uA)
+bus raw min=4027 rata2=4040 maks=4051  (5033 .. 5063 mV, rata2 5050 mV)
+  #0 t=309 us shunt=434 bus=4046
+  #1 t=2310 us shunt=430 bus=4043
+  #2 t=4306 us shunt=434 bus=4045
+  #3 t=6305 us shunt=433 bus=4046
+  #4 t=8303 us shunt=432 bus=4044
+  #5 t=10455 us shunt=435 bus=4043
+  #6 t=12456 us shunt=433 bus=4045
+  #7 t=14455 us shunt=435 bus=4045
+PA0 awal=0 akhir=1  overflow TIM2 total=843272  generator PA6=mati
+L4: tepi naik=5 turun=4 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660557.541 rata2=660971.069 maks=661306.361 us
+LOW     n=4 min=344200.652 rata2=344536.500 maks=344986.013 us
+periode n=4 min=1005455.847 rata2=1005507.583 maks=1005543.555 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=251101087.549 us
+  #1 turun t=251762334.035 us
+  #2 naik  t=252106543.396 us
+  #3 turun t=252767317.299 us
+  #4 naik  t=253112067.313 us
+  #5 turun t=253773373.674 us
+  #6 naik  t=254117574.327 us
+  #7 turun t=254778131.869 us
+LOG1 beat=1526 t_ms=767589
+LOG1 beat=1528 t_ms=767619
+LOG1 beat=1530 t_ms=767649
+LOG1 beat=1532 t_ms=767679
+LOG1 beat=1534 t_ms=767709
+LOG1 beat=1536 t_ms=768019
+LOG1 beat=1538 t_ms=769019
+LOG1 beat=1540 t_ms=770019
+LOG1 beat=1542 t_ms=771019
+LOG1 beat=1544 t_ms=772019
+LOG1 beat=1546 t_ms=773019
+LOG1 beat=1548 t_ms=774019
+LOG1 beat=1550 t_ms=775019
+LOG1 beat=1552 t_ms=776019
+LOG1 beat=1554 t_ms=777019
+LOG1 beat=1556 t_ms=778019
+LOG1 beat=1558 t_ms=779019
+LOG1 beat=1560 t_ms=780019
+LOG1 beat=1562 t_ms=781019
+LOG1 beat=1564 t_ms=782019
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=433 (1082 uV)  bus raw=4047 (5058 mV)
+arus raw=433 (10825 uA)  daya raw=87 (54375 uW)  arus dari shunt=10825 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.5 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=426 rata2=620 maks=745  (arus 10650 .. 18625 uA, rata2 15500 uA)
+bus raw min=4028 rata2=4041 maks=4050  (5035 .. 5062 mV, rata2 5051 mV)
+  #0 t=309 us shunt=432 bus=4040
+  #1 t=2307 us shunt=431 bus=4046
+  #2 t=4306 us shunt=433 bus=4047
+  #3 t=6304 us shunt=432 bus=4045
+  #4 t=8300 us shunt=432 bus=4046
+  #5 t=10454 us shunt=435 bus=4047
+  #6 t=12452 us shunt=432 bus=4046
+  #7 t=14453 us shunt=431 bus=4046
+PA0 awal=0 akhir=0  overflow TIM2 total=865255  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=660063.069 rata2=660699.541 maks=661465.236 us
+LOW     n=4 min=343957.527 rata2=344605.472 maks=345277.388 us
+periode n=4 min=1005422.763 rata2=1005464.138 maks=1005512.333 us
+duty = 65.72 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=14000369.081 us
+  #1 turun t=14660773.900 us
+  #2 naik  t=15005798.331 us
+  #3 turun t=15667263.567 us
+  #4 naik  t=16011221.095 us
+  #5 turun t=16671456.039 us
+  #6 naik  t=17016733.428 us
+  #7 turun t=17678063.123 us
+LOG1 beat=1566 t_ms=787598
+LOG1 beat=1568 t_ms=787628
+LOG1 beat=1570 t_ms=787658
+LOG1 beat=1572 t_ms=787688
+LOG1 beat=1574 t_ms=787718
+LOG1 beat=1576 t_ms=788018
+LOG1 beat=1578 t_ms=789018
+LOG1 beat=1580 t_ms=790018
+LOG1 beat=1582 t_ms=791018
+LOG1 beat=1584 t_ms=792018
+LOG1 beat=1586 t_ms=793018
+LOG1 beat=1588 t_ms=794018
+LOG1 beat=1590 t_ms=795018
+LOG1 beat=1592 t_ms=796018
+LOG1 beat=1594 t_ms=797018
+LOG1 beat=1596 t_ms=798018
+LOG1 beat=1598 t_ms=799018
+LOG1 beat=1600 t_ms=800018
+LOG1 beat=1602 t_ms=801018
+LOG1 beat=1604 t_ms=802018
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=431 (1077 uV)  bus raw=4048 (5060 mV)
+arus raw=431 (10775 uA)  daya raw=87 (54375 uW)  arus dari shunt=10775 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.8 us  rata2=2017.2 us  maks=2157.2 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=424 rata2=621 maks=751  (arus 10600 .. 18775 uA, rata2 15525 uA)
+bus raw min=4028 rata2=4041 maks=4050  (5035 .. 5062 mV, rata2 5051 mV)
+  #0 t=309 us shunt=432 bus=4046
+  #1 t=2313 us shunt=431 bus=4049
+  #2 t=4310 us shunt=434 bus=4041
+  #3 t=6308 us shunt=431 bus=4050
+  #4 t=8460 us shunt=433 bus=4045
+  #5 t=10458 us shunt=428 bus=4049
+  #6 t=12457 us shunt=430 bus=4042
+  #7 t=14453 us shunt=431 bus=4043
+PA0 awal=0 akhir=0  overflow TIM2 total=887237  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=660091.138 rata2=660902.680 maks=661305.666 us
+LOW     n=4 min=344193.625 rata2=344402.388 maks=344740.861 us
+periode n=4 min=1005487.833 rata2=1005507.958 maks=1005548.736 us
+duty = 65.74 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=34120111.442 us
+  #1 turun t=34781339.609 us
+  #2 naik  t=35125599.275 us
+  #3 turun t=35786354.428 us
+  #4 naik  t=36131095.289 us
+  #5 turun t=36792400.956 us
+  #6 naik  t=37136594.581 us
+  #7 turun t=37797727.873 us
+LOG1 beat=1606 t_ms=807607
+LOG1 beat=1608 t_ms=807637
+LOG1 beat=1610 t_ms=807667
+LOG1 beat=1612 t_ms=807697
+LOG1 beat=1614 t_ms=807727
+LOG1 beat=1616 t_ms=808017
+LOG1 beat=1618 t_ms=809017
+LOG1 beat=1620 t_ms=810017
+LOG1 beat=1622 t_ms=811017
+LOG1 beat=1624 t_ms=812017
+LOG1 beat=1626 t_ms=813017
+LOG1 beat=1628 t_ms=814017
+LOG1 beat=1630 t_ms=815017
+LOG1 beat=1632 t_ms=816017
+LOG1 beat=1634 t_ms=817017
+LOG1 beat=1636 t_ms=818017
+LOG1 beat=1638 t_ms=819017
+LOG1 beat=1640 t_ms=820017
+LOG1 beat=1642 t_ms=821017
+LOG1 beat=1644 t_ms=822017
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=431 (1077 uV)  bus raw=4044 (5055 mV)
+arus raw=431 (10775 uA)  daya raw=87 (54375 uW)  arus dari shunt=10775 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2160.6 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=424 rata2=620 maks=752  (arus 10600 .. 18800 uA, rata2 15500 uA)
+bus raw min=4027 rata2=4039 maks=4051  (5033 .. 5063 mV, rata2 5048 mV)
+  #0 t=464 us shunt=431 bus=4041
+  #1 t=2466 us shunt=430 bus=4037
+  #2 t=4467 us shunt=431 bus=4047
+  #3 t=6467 us shunt=430 bus=4045
+  #4 t=8466 us shunt=430 bus=4038
+  #5 t=10466 us shunt=432 bus=4038
+  #6 t=12467 us shunt=429 bus=4047
+  #7 t=14622 us shunt=432 bus=4046
+PA0 awal=0 akhir=0  overflow TIM2 total=909220  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=660115.638 rata2=660876.805 maks=661345.666 us
+LOW     n=4 min=343913.805 rata2=344434.680 maks=345201.986 us
+periode n=4 min=1005259.472 rata2=1005327.138 maks=1005400.694 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=54230385.803 us
+  #1 turun t=54890501.442 us
+  #2 naik  t=55235703.428 us
+  #3 turun t=55897049.095 us
+  #4 naik  t=56240962.900 us
+  #5 turun t=56901960.220 us
+  #6 naik  t=57246293.664 us
+  #7 turun t=57907404.859 us
+LOG1 beat=1646 t_ms=827616
+LOG1 beat=1648 t_ms=827646
+LOG1 beat=1650 t_ms=827676
+LOG1 beat=1652 t_ms=827706
+LOG1 beat=1654 t_ms=827736
+LOG1 beat=1656 t_ms=828016
+LOG1 beat=1658 t_ms=829016
+LOG1 beat=1660 t_ms=830016
+LOG1 beat=1662 t_ms=831016
+LOG1 beat=1664 t_ms=832016
+LOG1 beat=1666 t_ms=833016
+LOG1 beat=1668 t_ms=834016
+LOG1 beat=1670 t_ms=835016
+LOG1 beat=1672 t_ms=836016
+LOG1 beat=1674 t_ms=837016
+LOG1 beat=1676 t_ms=838016
+LOG1 beat=1678 t_ms=839016
+LOG1 beat=1680 t_ms=840016
+LOG1 beat=1682 t_ms=841016
+LOG1 beat=1684 t_ms=842016
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=714 (1785 uV)  bus raw=4041 (5051 mV)
+arus raw=714 (17850 uA)  daya raw=144 (90000 uW)  arus dari shunt=17850 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.4 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=425 rata2=618 maks=745  (arus 10625 .. 18625 uA, rata2 15450 uA)
+bus raw min=4022 rata2=4038 maks=4049  (5027 .. 5061 mV, rata2 5047 mV)
+  #0 t=464 us shunt=710 bus=4038
+  #1 t=2465 us shunt=711 bus=4034
+  #2 t=4464 us shunt=713 bus=4043
+  #3 t=6464 us shunt=712 bus=4036
+  #4 t=8463 us shunt=714 bus=4042
+  #5 t=10615 us shunt=713 bus=4032
+  #6 t=12613 us shunt=713 bus=4033
+  #7 t=14612 us shunt=713 bus=4035
+PA0 awal=1 akhir=1  overflow TIM2 total=931202  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660717.055 rata2=661022.569 maks=661794.013 us
+LOW     n=5 min=343793.916 rata2=344569.541 maks=344890.972 us
+periode n=4 min=1005585.152 rata2=1005595.416 maks=1005608.027 us
+duty = 65.73 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=74004256.970 us
+  #1 naik  t=74348813.303 us
+  #2 turun t=75009559.678 us
+  #3 naik  t=75354398.456 us
+  #4 turun t=76016192.470 us
+  #5 naik  t=76359986.387 us
+  #6 turun t=77020703.442 us
+  #7 naik  t=77365594.414 us
+LOG1 beat=1686 t_ms=847625
+LOG1 beat=1688 t_ms=847655
+LOG1 beat=1690 t_ms=847685
+LOG1 beat=1692 t_ms=847715
+LOG1 beat=1694 t_ms=847745
+LOG1 beat=1696 t_ms=848015
+LOG1 beat=1698 t_ms=849015
+LOG1 beat=1700 t_ms=850015
+LOG1 beat=1702 t_ms=851015
+LOG1 beat=1704 t_ms=852015
+LOG1 beat=1706 t_ms=853015
+LOG1 beat=1708 t_ms=854015
+LOG1 beat=1710 t_ms=855015
+LOG1 beat=1712 t_ms=856015
+LOG1 beat=1714 t_ms=857015
+LOG1 beat=1716 t_ms=858015
+LOG1 beat=1718 t_ms=859015
+LOG1 beat=1720 t_ms=860015
+LOG1 beat=1722 t_ms=861015
+LOG1 beat=1724 t_ms=862015
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=715 (1787 uV)  bus raw=4038 (5047 mV)
+arus raw=715 (17875 uA)  daya raw=144 (90000 uW)  arus dari shunt=17875 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.1 us  rata2=2017.2 us  maks=2156.8 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=421 rata2=671 maks=725  (arus 10525 .. 18125 uA, rata2 16775 uA)
+bus raw min=4023 rata2=4036 maks=4048  (5028 .. 5060 mV, rata2 5045 mV)
+  #0 t=462 us shunt=719 bus=4034
+  #1 t=2463 us shunt=718 bus=4031
+  #2 t=4464 us shunt=722 bus=4040
+  #3 t=6462 us shunt=722 bus=4041
+  #4 t=8616 us shunt=723 bus=4034
+  #5 t=10616 us shunt=723 bus=4037
+  #6 t=12617 us shunt=721 bus=4038
+  #7 t=14617 us shunt=718 bus=4035
+PA0 awal=1 akhir=0  overflow TIM2 total=953184  generator PA6=mati
+L4: tepi naik=1 turun=2 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=1 min=10.833 rata2=10.833 maks=10.833 us
+LOW     n=1 min=344978.319 rata2=344978.319 maks=344978.319 us
+periode n=0
+duty = 0.00 %
+  #0 turun t=94115222.067 us
+  #1 naik  t=94460200.387 us
+  #2 turun t=94460211.220 us
+LOG1 beat=1726 t_ms=867633
+LOG1 beat=1728 t_ms=867663
+LOG1 beat=1730 t_ms=867693
+LOG1 beat=1732 t_ms=867723
+LOG1 beat=1734 t_ms=867753
+LOG1 beat=1736 t_ms=868013
+LOG1 beat=1738 t_ms=869013
+LOG1 beat=1740 t_ms=870013
+LOG1 beat=1742 t_ms=871013
+LOG1 beat=1744 t_ms=872013
+LOG1 beat=1746 t_ms=873013
+LOG1 beat=1748 t_ms=874013
+LOG1 beat=1750 t_ms=875013
+LOG1 beat=1752 t_ms=876013
+LOG1 beat=1754 t_ms=877013
+LOG1 beat=1756 t_ms=878013
+LOG1 beat=1758 t_ms=879013
+LOG1 beat=1760 t_ms=880013
+LOG1 beat=1762 t_ms=881013
+LOG1 beat=1764 t_ms=882013
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=755 (1887 uV)  bus raw=4031 (5038 mV)
+arus raw=755 (18875 uA)  daya raw=152 (95000 uW)  arus dari shunt=18875 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.6 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=454 rata2=648 maks=774  (arus 11350 .. 19350 uA, rata2 16200 uA)
+bus raw min=4025 rata2=4037 maks=4051  (5031 .. 5063 mV, rata2 5046 mV)
+  #0 t=308 us shunt=752 bus=4036
+  #1 t=2310 us shunt=749 bus=4042
+  #2 t=4307 us shunt=750 bus=4030
+  #3 t=6305 us shunt=754 bus=4037
+  #4 t=8457 us shunt=750 bus=4035
+  #5 t=10454 us shunt=749 bus=4031
+  #6 t=12450 us shunt=747 bus=4033
+  #7 t=14449 us shunt=754 bus=4033
+PA0 awal=1 akhir=1  overflow TIM2 total=975166  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660388.180 rata2=660714.986 maks=661174.111 us
+LOW     n=5 min=344218.430 rata2=344729.458 maks=344926.347 us
+periode n=4 min=1005314.527 rata2=1005405.027 maks=1005484.527 us
+duty = 65.71 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=114235879.192 us
+  #1 naik  t=114580766.359 us
+  #2 turun t=115241940.470 us
+  #3 naik  t=115586158.900 us
+  #4 turun t=116246873.220 us
+  #5 naik  t=116591643.428 us
+  #6 turun t=117252226.803 us
+  #7 naik  t=117597071.956 us
+LOG1 beat=1766 t_ms=887642
+LOG1 beat=1768 t_ms=887672
+LOG1 beat=1770 t_ms=887702
+LOG1 beat=1772 t_ms=887732
+LOG1 beat=1774 t_ms=887762
+LOG1 beat=1776 t_ms=888012
+LOG1 beat=1778 t_ms=889012
+LOG1 beat=1780 t_ms=890012
+LOG1 beat=1782 t_ms=891012
+LOG1 beat=1784 t_ms=892012
+LOG1 beat=1786 t_ms=893012
+LOG1 beat=1788 t_ms=894012
+LOG1 beat=1790 t_ms=895012
+LOG1 beat=1792 t_ms=896012
+LOG1 beat=1794 t_ms=897012
+LOG1 beat=1796 t_ms=898012
+LOG1 beat=1798 t_ms=899012
+LOG1 beat=1800 t_ms=900012
+LOG1 beat=1802 t_ms=901012
+LOG1 beat=1804 t_ms=902012
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=702 (1755 uV)  bus raw=4040 (5050 mV)
+arus raw=702 (17550 uA)  daya raw=143 (89375 uW)  arus dari shunt=17550 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2157.8 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=442 rata2=614 maks=766  (arus 11050 .. 19150 uA, rata2 15350 uA)
+bus raw min=4022 rata2=4038 maks=4050  (5027 .. 5062 mV, rata2 5047 mV)
+  #0 t=309 us shunt=708 bus=4035
+  #1 t=2311 us shunt=707 bus=4040
+  #2 t=4309 us shunt=706 bus=4034
+  #3 t=6307 us shunt=701 bus=4035
+  #4 t=8457 us shunt=706 bus=4042
+  #5 t=10454 us shunt=704 bus=4037
+  #6 t=12452 us shunt=706 bus=4035
+  #7 t=14452 us shunt=705 bus=4029
+PA0 awal=0 akhir=1  overflow TIM2 total=997149  generator PA6=mati
+L4: tepi naik=5 turun=4 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=4.347 rata2=496137.666 maks=661945.319 us
+LOW     n=4 min=343355.750 rata2=509221.097 maks=1005435.791 us
+periode n=4 min=1005301.069 rata2=1005358.777 maks=1005440.138 us
+duty = 49.34 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=134698699.109 us
+  #1 turun t=134698703.456 us
+  #2 naik  t=135704139.248 us
+  #3 turun t=136365320.498 us
+  #4 naik  t=136709515.956 us
+  #5 turun t=137370935.720 us
+  #6 naik  t=137714833.150 us
+  #7 turun t=138376778.470 us
+LOG1 beat=1806 t_ms=907651
+LOG1 beat=1808 t_ms=907681
+LOG1 beat=1810 t_ms=907711
+LOG1 beat=1812 t_ms=907741
+LOG1 beat=1814 t_ms=907771
+LOG1 beat=1816 t_ms=908011
+LOG1 beat=1818 t_ms=909011
+LOG1 beat=1820 t_ms=910011
+LOG1 beat=1822 t_ms=911011
+LOG1 beat=1824 t_ms=912011
+LOG1 beat=1826 t_ms=913011
+LOG1 beat=1828 t_ms=914011
+LOG1 beat=1830 t_ms=915011
+LOG1 beat=1832 t_ms=916011
+LOG1 beat=1834 t_ms=917011
+LOG1 beat=1836 t_ms=918011
+LOG1 beat=1838 t_ms=919011
+LOG1 beat=1840 t_ms=920011
+LOG1 beat=1842 t_ms=921011
+LOG1 beat=1844 t_ms=922011
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=718 (1795 uV)  bus raw=4040 (5050 mV)
+arus raw=718 (17950 uA)  daya raw=146 (91250 uW)  arus dari shunt=17950 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27546 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2157.6 us
+laju = 495.73 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=434 rata2=626 maks=756  (arus 10850 .. 18900 uA, rata2 15650 uA)
+bus raw min=4026 rata2=4039 maks=4050  (5032 .. 5062 mV, rata2 5048 mV)
+  #0 t=464 us shunt=721 bus=4041
+  #1 t=2463 us shunt=721 bus=4038
+  #2 t=4462 us shunt=728 bus=4030
+  #3 t=6458 us shunt=734 bus=4039
+  #4 t=8457 us shunt=730 bus=4042
+  #5 t=10455 us shunt=734 bus=4036
+  #6 t=12451 us shunt=736 bus=4036
+  #7 t=14603 us shunt=735 bus=4035
+PA0 awal=1 akhir=1  overflow TIM2 total=1019131  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660565.972 rata2=661059.430 maks=661744.847 us
+LOW     n=5 min=343502.680 rata2=344219.305 maks=344867.319 us
+periode n=4 min=1005247.527 rata2=1005364.625 maks=1005451.500 us
+duty = 65.75 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=154462878.762 us
+  #1 naik  t=154806754.525 us
+  #2 turun t=155468499.373 us
+  #3 naik  t=155812002.053 us
+  #4 turun t=156472699.373 us
+  #5 naik  t=156817328.248 us
+  #6 turun t=157477894.220 us
+  #7 naik  t=157822761.539 us
+LOG1 beat=1846 t_ms=927659
+LOG1 beat=1848 t_ms=927689
+LOG1 beat=1850 t_ms=927719
+LOG1 beat=1852 t_ms=927749
+LOG1 beat=1854 t_ms=927779
+LOG1 beat=1856 t_ms=928019
+LOG1 beat=1858 t_ms=929019
+LOG1 beat=1860 t_ms=930019
+LOG1 beat=1862 t_ms=931019
+LOG1 beat=1864 t_ms=932019
+LOG1 beat=1866 t_ms=933019
+LOG1 beat=1868 t_ms=934019
+LOG1 beat=1870 t_ms=935019
+LOG1 beat=1872 t_ms=936019
+LOG1 beat=1874 t_ms=937019
+LOG1 beat=1876 t_ms=938019
+LOG1 beat=1878 t_ms=939019
+LOG1 beat=1880 t_ms=940019
+LOG1 beat=1882 t_ms=941019
+LOG1 beat=1884 t_ms=942019
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=721 (1802 uV)  bus raw=4042 (5052 mV)
+arus raw=721 (18025 uA)  daya raw=146 (91250 uW)  arus dari shunt=18025 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2157.3 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=430 rata2=624 maks=760  (arus 10750 .. 19000 uA, rata2 15600 uA)
+bus raw min=4013 rata2=4038 maks=4050  (5016 .. 5062 mV, rata2 5047 mV)
+  #0 t=462 us shunt=719 bus=4037
+  #1 t=2462 us shunt=718 bus=4034
+  #2 t=4462 us shunt=720 bus=4034
+  #3 t=6461 us shunt=721 bus=4038
+  #4 t=8460 us shunt=717 bus=4044
+  #5 t=10613 us shunt=717 bus=4029
+  #6 t=12609 us shunt=721 bus=4033
+  #7 t=14609 us shunt=718 bus=4039
+PA0 awal=1 akhir=1  overflow TIM2 total=1041112  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660942.777 rata2=661132.777 maks=661559.222 us
+LOW     n=5 min=343466.333 rata2=344138.694 maks=344562.597 us
+periode n=4 min=1005406.388 rata2=1005439.569 maks=1005505.375 us
+duty = 65.76 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=174581595.567 us
+  #1 naik  t=174925061.900 us
+  #2 turun t=175586621.123 us
+  #3 naik  t=175930470.081 us
+  #4 turun t=176591542.275 us
+  #5 naik  t=176935908.442 us
+  #6 turun t=177596865.387 us
+  #7 naik  t=177941314.831 us
+LOG1 beat=1886 t_ms=947668
+LOG1 beat=1888 t_ms=947698
+LOG1 beat=1890 t_ms=947728
+LOG1 beat=1892 t_ms=947758
+LOG1 beat=1894 t_ms=947788
+LOG1 beat=1896 t_ms=948018
+LOG1 beat=1898 t_ms=949018
+LOG1 beat=1900 t_ms=950018
+LOG1 beat=1902 t_ms=951018
+LOG1 beat=1904 t_ms=952018
+LOG1 beat=1906 t_ms=953018
+LOG1 beat=1908 t_ms=954018
+LOG1 beat=1910 t_ms=955018
+LOG1 beat=1912 t_ms=956018
+LOG1 beat=1914 t_ms=957018
+LOG1 beat=1916 t_ms=958018
+LOG1 beat=1918 t_ms=959018
+LOG1 beat=1920 t_ms=960018
+LOG1 beat=1922 t_ms=961018
+LOG1 beat=1924 t_ms=962018
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=725 (1812 uV)  bus raw=4039 (5048 mV)
+arus raw=725 (18125 uA)  daya raw=146 (91250 uW)  arus dari shunt=18125 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2156.5 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=428 rata2=623 maks=747  (arus 10700 .. 18675 uA, rata2 15575 uA)
+bus raw min=4017 rata2=4039 maks=4050  (5021 .. 5062 mV, rata2 5048 mV)
+  #0 t=462 us shunt=746 bus=4040
+  #1 t=2462 us shunt=747 bus=4038
+  #2 t=4461 us shunt=723 bus=4035
+  #3 t=6461 us shunt=720 bus=4040
+  #4 t=8617 us shunt=716 bus=4033
+  #5 t=10615 us shunt=713 bus=4037
+  #6 t=12615 us shunt=717 bus=4035
+  #7 t=14616 us shunt=714 bus=4037
+PA0 awal=1 akhir=0  overflow TIM2 total=1063095  generator PA6=mati
+L4: tepi naik=4 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=660521.444 rata2=660753.930 maks=660915.569 us
+LOW     n=4 min=344742.291 rata2=344905.458 maks=345075.375 us
+periode n=3 min=1005589.055 rata2=1005600.861 maks=1005616.708 us
+duty = 65.70 %  frekuensi rata2 = 0.994 Hz
+  #0 turun t=194690408.387 us
+  #1 naik  t=195035327.859 us
+  #2 turun t=195695849.303 us
+  #3 naik  t=196040924.678 us
+  #4 turun t=196701799.095 us
+  #5 naik  t=197046541.387 us
+  #6 turun t=197707245.706 us
+  #7 naik  t=198052130.442 us
+LOG1 beat=1926 t_ms=967677
+LOG1 beat=1928 t_ms=967707
+LOG1 beat=1930 t_ms=967737
+LOG1 beat=1932 t_ms=967767
+LOG1 beat=1934 t_ms=967797
+LOG1 beat=1936 t_ms=968017
+LOG1 beat=1938 t_ms=969017
+LOG1 beat=1940 t_ms=970017
+LOG1 beat=1942 t_ms=971017
+LOG1 beat=1944 t_ms=972017
+LOG1 beat=1946 t_ms=973017
+LOG1 beat=1948 t_ms=974017
+LOG1 beat=1950 t_ms=975017
+LOG1 beat=1952 t_ms=976017
+LOG1 beat=1954 t_ms=977017
+LOG1 beat=1956 t_ms=978017
+LOG1 beat=1958 t_ms=979017
+LOG1 beat=1960 t_ms=980017
+LOG1 beat=1962 t_ms=981017
+LOG1 beat=1964 t_ms=982017
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=445 (1112 uV)  bus raw=4040 (5050 mV)
+arus raw=445 (11125 uA)  daya raw=90 (56250 uW)  arus dari shunt=11125 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27547 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1996.0 us  rata2=2017.2 us  maks=2157.1 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=421 rata2=637 maks=781  (arus 10525 .. 19525 uA, rata2 15925 uA)
+bus raw min=4016 rata2=4037 maks=4049  (5020 .. 5061 mV, rata2 5046 mV)
+  #0 t=308 us shunt=444 bus=4032
+  #1 t=2307 us shunt=448 bus=4037
+  #2 t=4306 us shunt=446 bus=4046
+  #3 t=6458 us shunt=448 bus=4041
+  #4 t=8454 us shunt=447 bus=4038
+  #5 t=10452 us shunt=446 bus=4038
+  #6 t=12453 us shunt=444 bus=4044
+  #7 t=14451 us shunt=446 bus=4041
+PA0 awal=0 akhir=0  overflow TIM2 total=1085078  generator PA6=mati
+L4: tepi naik=5 turun=5 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=5 min=660678.611 rata2=661138.888 maks=661466.722 us
+LOW     n=4 min=344105.402 rata2=344373.930 maks=344708.652 us
+periode n=4 min=1005387.263 rata2=1005430.875 maks=1005498.902 us
+duty = 65.75 %  frekuensi rata2 = 0.994 Hz
+  #0 naik  t=214150672.900 us
+  #1 turun t=214811560.262 us
+  #2 naik  t=215156074.484 us
+  #3 turun t=215816753.095 us
+  #4 naik  t=216161461.748 us
+  #5 turun t=216822855.248 us
+  #6 naik  t=217166960.650 us
+  #7 turun t=217828228.956 us
+LOG1 beat=1966 t_ms=987686
+LOG1 beat=1968 t_ms=987716
+LOG1 beat=1970 t_ms=987746
+LOG1 beat=1972 t_ms=987776
+LOG1 beat=1974 t_ms=987806
+LOG1 beat=1976 t_ms=988016
+LOG1 beat=1978 t_ms=989016
+LOG1 beat=1980 t_ms=990016
+LOG1 beat=1982 t_ms=991016
+LOG1 beat=1984 t_ms=992016
+LOG1 beat=1986 t_ms=993016
+LOG1 beat=1988 t_ms=994016
+LOG1 beat=1990 t_ms=995016
+LOG1 beat=1992 t_ms=996016
+LOG1 beat=1994 t_ms=997016
+LOG1 beat=1996 t_ms=998016
+LOG1 beat=1998 t_ms=999016
+LOG1 beat=2000 t_ms=1000016
+LOG1 beat=2002 t_ms=1001016
+LOG1 beat=2004 t_ms=1002016
+INA226 ok=1 init=1 err=0 mfg=5449 die=2260 cfg=4127 cal=0800
+shunt raw=451 (1127 uV)  bus raw=4036 (5045 mV)
+arus raw=451 (11275 uA)  daya raw=92 (57500 uW)  arus dari shunt=11275 uA
+rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...
+L3: n=2479 polls=27548 i2c_err=0 elapsed=5000 ms
+periode polling rata2 = 181 us
+selang cuplik: min=1995.9 us  rata2=2017.2 us  maks=2156.3 us
+laju = 495.72 cuplikan/s (nominal ~454)  terlambat(>1,5x)=0  terlewat(perkiraan)=0
+shunt raw min=441 rata2=691 maks=759  (arus 11025 .. 18975 uA, rata2 17275 uA)
+bus raw min=4018 rata2=4079 maks=4136  (5022 .. 5170 mV, rata2 5098 mV)
+  #0 t=462 us shunt=449 bus=4048
+  #1 t=2463 us shunt=448 bus=4043
+  #2 t=4460 us shunt=447 bus=4043
+  #3 t=6459 us shunt=446 bus=4038
+  #4 t=8456 us shunt=449 bus=4049
+  #5 t=10454 us shunt=450 bus=4043
+  #6 t=12451 us shunt=449 bus=4040
+  #7 t=14450 us shunt=453 bus=4043
+PA0 awal=0 akhir=0  overflow TIM2 total=1107060  generator PA6=mati
+L4: tepi naik=4 turun=4 salah_urut=0 (tik=72000000 Hz)
+HIGH    n=4 min=0.013 rata2=165472.833 maks=661880.472 us
+LOW     n=3 min=1254.763 rata2=690872.152 maks=1727758.194 us
+periode n=3 min=1254.777 rata2=911502.597 maks=1727769.027 us
+duty = 19.32 %  frekuensi rata2 = 1.097 Hz
+  #0 naik  t=234259385.164 us
+  #1 turun t=234921265.637 us
+  #2 naik  t=235264869.164 us
+  #3 turun t=235264879.998 us
+  #4 naik  t=236992638.192 us
+  #5 turun t=236992638.206 us
+  #6 naik  t=236993892.970 us
+  #7 turun t=236993892.984 us
+LOG1 beat=2006 t_ms=1007695
+LOG1 beat=2008 t_ms=1007725
+LOG1 beat=2010 t_ms=1007755
+LOG1 beat=2012 t_ms=1007785
+LOG1 beat=2014 t_ms=1007815
+LOG1 beat=2016 t_ms=1008015
+LOG1 beat=2018 t_ms=1009015
+LOG1 beat=2020 t_ms=1010015
+LOG1 beat=2022 t_ms=1011015
+LOG1 beat=2024 t_ms=1012015
+LOG1 beat=2026 t_ms=1013015
+LOG1 beat=2028 t_ms=1014015
+LOG1 beat=2030 t_ms=1015015
+LOG1 beat=2032 t_ms=1016015
+LOG1 beat=2034 t_ms=1017015
+LOG1 beat=2036 t_ms=1018015
+LOG1 beat=2038 t_ms=1019015
+LOG1 beat=2040 t_ms=1020015
+LOG1 beat=2042 t_ms=1021015

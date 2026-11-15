@@ -9,6 +9,8 @@
 // diberi cap waktu = saat pembacaan MASK yang menemukan flag itu dimulai. Ketidakpastian cap waktu
 // = satu periode polling (diukur dan dilaporkan), karena tidak ada pin ALERT yang dipakai.
 // Hasil dikumpulkan sebagai statistik berjalan (tanpa menyimpan semua cuplikan, RAM kecil).
+// A1 (15 Nov): bila I2C gagal >= 3 kali berturut-turut, ina.recover() dipanggil (paling cepat tiap
+// 10 ms). Celah cuplikan selama macet TIDAK disembunyikan: muncul sebagai selang panjang (late/missed).
 // ============================================================================
 #pragma once
 #include "ina226.h"
@@ -22,6 +24,8 @@ struct L3Stats {
   uint32_t n = 0;                 // cuplikan terbaca
   uint32_t polls = 0;             // jumlah pembacaan MASK sukses
   uint32_t i2c_err = 0;           // kegagalan I2C selama rekam
+  uint32_t recover = 0;           // A1: pemulihan bus dipanggil (setelah >= 3 gagal berturut-turut)
+  uint32_t recover_ok = 0;        //     ... dan berhasil (INA226 terinit ulang, ID cocok)
   uint32_t late = 0;              // selang cuplik > 1,5 x nominal (2,2 ms)
   uint32_t missed_est = 0;        // perkiraan konversi terlewat dari selang yang terlalu panjang
   uint32_t dt_min = 0xFFFFFFFFu;  // selang antar cuplikan (siklus)

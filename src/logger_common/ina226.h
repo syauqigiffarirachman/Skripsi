@@ -26,6 +26,13 @@ class INA226 {
   // r = true bila satu konversi baru selesai sejak pembacaan MASK terakhir (membaca MASK menghapus flag).
   bool ready(bool& r);
   bool readShuntBus(int16_t& shunt, uint16_t& bus);
+  // A1 (15 Nov): pulihkan bus I2C yang macet lalu init ulang dengan cfg/cal terakhir.
+  // Wire.end() = HAL DeInit + reset periferal lewat RCC (menghapus BUSY yang tersangkut, errata F1);
+  // Wire.begin() = recoverBus() (9 detak SCL + STOP bila SDA ditahan slave) + init ulang 100 kHz,
+  // lalu clock dikembalikan ke i2cHz. Bebas dari jenis STM32 (hanya API Wire). true bila init lulus.
+  bool recover();
+  uint32_t i2cHz = 400000;       // clock I2C yang dipasang ulang oleh recover() (samakan dengan setup)
+  uint32_t recoverCount = 0;     // berapa kali recover() dipanggil sejak boot
 
   bool     ok() const { return ok_; }
   uint8_t  lastErr = 0;          // kode terakhir Wire.endTransmission (0x80 = requestFrom kurang byte)
@@ -35,4 +42,5 @@ class INA226 {
   TwoWire& w_;
   uint8_t  addr_;
   bool     ok_ = false;
+  uint16_t cfg_ = CFG_CONT_1P1MS, cal_ = 0;   // nilai init terakhir, dipakai recover()
 };

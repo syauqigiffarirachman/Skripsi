@@ -25,6 +25,8 @@ bool INA226::write(uint8_t reg, uint16_t v) {
 
 bool INA226::init(uint16_t cfg, uint16_t cal) {
   ok_ = false;
+  cfg_ = cfg;
+  cal_ = cal;
   uint16_t m = 0, d = 0, c = 0, k = 0;
   if (!read(REG_MFG, m) || !read(REG_DIE, d)) return false;
   mfg = m;
@@ -50,4 +52,12 @@ bool INA226::readShuntBus(int16_t& shunt, uint16_t& bus) {
   shunt = (int16_t)s;
   bus   = b;
   return true;
+}
+
+bool INA226::recover() {
+  recoverCount++;
+  w_.end();
+  w_.begin();
+  w_.setClock(i2cHz);
+  return init(cfg_, cal_);
 }

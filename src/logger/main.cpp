@@ -24,6 +24,9 @@
 //   jadi 64-bit), statistik tepi di src/logger_common/edge_stats.*; dilaporkan bersama L3 dalam jendela 5 s.
 //   Generator uji PWM 100 Hz/30% di PA6 (jumper ke PA0) HANYA di env logger_selftest (-DL4_SELFTEST_PWM);
 //   env logger biasa membiarkan PA6 input. Uji mandiri LULUS 15 Nov (HIGH 2999,944 / LOW 6999,972 us).
+// A1 (15 Nov): pemulihan bus I2C (INA226::recover = Wire.end + Wire.begin + init ulang). Dipanggil di
+//   L3 bila gagal >= 3 kali beruntun, dan di laporan bila init gagal. Kejadian 15 Nov (err=4 setelah
+//   cabut-pasang kabel, hanya pulih lewat reset SWD) adalah alasan tahap ini.
 // TIDAK ada UART1 ke host, CSV (tahap berikutnya).
 //
 // setup() TIDAK menunggu koneksi USB (pelajaran 13 Nov: blokir di setup merusak pewaktuan).
@@ -48,7 +51,7 @@ volatile uint32_t g_sysclk_hz = 0;              // SystemCoreClock hasil konfigu
 volatile uint32_t g_pclk1_hz  = 0;
 volatile uint32_t g_pclk2_hz  = 0;
 volatile uint8_t  g_clk_hse   = 0;              // 1 = SYSCLK dari HSE+PLL, 0 = fallback HSI
-volatile uint32_t g_build_id  = 0x4C4F4734;     // 'LOG4' = F103 tahap L1 + L2 + L3 + L4
+volatile uint32_t g_build_id  = 0x4C344131;     // 'L4A1' = F103 tahap L1..L4 + A1 (pemulihan I2C)
 
 // --- INA226 (L2/L3) ---
 static const uint8_t  INA_ADDR       = 0x44;    // terukur 14 Nov: A1 ke VS, A0 ke GND (paper v3 menulis 0x40)
@@ -64,6 +67,7 @@ volatile uint16_t g_ina_cal   = 0;
 volatile uint32_t g_l3_n         = 0;
 volatile uint32_t g_l3_late      = 0;
 volatile uint32_t g_l3_i2c_err   = 0;
+volatile uint32_t g_i2c_recover  = 0;           // total pemanggilan INA226::recover() sejak boot
 volatile uint32_t g_l3_rate_x100 = 0;           // cuplikan/s x 100
 volatile uint32_t g_auto_runs    = 0;           // berapa kali laporan otomatis selesai
 volatile uint32_t g_t2_ovf       = 0;           // jumlah overflow TIM2 (L4)
@@ -203,12 +207,18 @@ static void ina_publish() {                         // salin keadaan driver ke g
   g_ina_die = ina.die;
   g_ina_cfg = ina.cfgRb;
   g_ina_cal = ina.calRb;
+  g_i2c_recover = ina.recoverCount;
 }
 
 // Init INA226, satu pembacaan mentah, lalu rekam 5 s dan cetak statistik (sama dengan N + C di F030).
 static void run_report() {
   static L3Stats st;                                // static: tidak membebani stack
   bool ok = ina_report_single(ina, INA_CAL_V, INA_UA_PER_LSB, ser);
+  if (!ok) {                                        // A1: bus macet? pulihkan lalu coba sekali lagi
+    const bool rec = ina.recover();
+    ser.printf("pulihkan bus I2C: %s (total pulih=%lu)\r\n", rec ? "OK" : "GAGAL", (unsigned long)ina.recoverCount);
+    ok = ina_report_single(ina, INA_CAL_V, INA_UA_PER_LSB, ser);
+  }
   ina_publish();
   if (!ok) return;
   ser.print(F("rekam 5 detik (L3 INA226 + L4 tepi PA0 bersamaan)...\r\n"));
@@ -272,7 +282,7 @@ void setup() {
   Wire.setSDA(PB7);
   Wire.setSCL(PB6);
   Wire.begin();
-  Wire.setClock(400000);
+  Wire.setClock(ina.i2cHz);                        // 400 kHz; recover() memasang ulang nilai yang sama
   ina.init(INA226::CFG_CONT_1P1MS, INA_CAL_V);     // hasil di g_ina_* (SWD tanpa USB)
   ina_publish();
   l4_start();
