@@ -32,7 +32,10 @@
 //   Jalur sign sama; satu-satunya perubahan di dalamnya: delay() -> wait_ms() (delay() di luar jendela).
 // TAHAP 4 (14 Nov): + perintah A = jendela dengan permintaan NYATA dari attacker lewat USART2 (DMA,
 //   satu bangun per frame; blok kode IDENTIK K1, lihat "Tahap 4"); setup() tidak lagi menunggu USB.
-// Belum ada: handshake "papan siap" dan RUN_START/RUN_END (tahap 5).
+// TAHAP 5 (15 Nov): + jalur kendali run lewat USART1 ke logger (src/host_common/host_link.h, berkas
+//   yang SAMA dengan K1): perintah ?, S<detik> (= A), W<detik>,<p>; balasan >START, >END + hasil,
+//   >L latensi sign per permintaan, >DONE. Jalur sign dan isi jendela TIDAK diubah. Cetakan USB
+//   setelah jendela kini dilewati bila PC tidak tersambung (bangku ukur: USB-C hanya daya).
 //
 // Perintah (USB CDC 115200, akhiri newline):
 //   I        info: clock, ROM ID, MANID, halaman 0, kunci publik X||Y (halaman 4,5), challenge
@@ -299,6 +302,12 @@ static void cmd_ram(uint32_t n) {
 }
 
 // ---------------------------------------------------------------------------
+// Tahap 5: jalur kendali run lewat USART1 ke logger (berkas bersama K1/K2).
+#define HL_ARCH  "K2"
+#define HL_READY (g_rom_ok)
+#include "../host_common/host_link.h"
+
+// ---------------------------------------------------------------------------
 // Tahap 3: WFI + pewaktu hardware + pin status PB1 + %S_cpu (mekanisme IDENTIK dengan K1,
 // src/k1_software/main.cpp tahap 3; lihat penjelasan lengkap di sana). Fungsi tahap ini satu:
 // satu jendela pengamatan di mana CPU tidur di antara permintaan sintetis TIM4 (perintah W).
@@ -509,6 +518,7 @@ static void end_isr() { g_end = true; }
 static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
   uint32_t K = secs * 1000UL / p_ms;
   if (K < 1 || uart) K = 1;
+  hl_lat_reset();
   static HardwareTimer t4(TIM4);                // statis: tanpa alokasi heap
   static HardwareTimer t1(TIM1);
   g_t1 = &t1;
@@ -554,7 +564,7 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
     const int ret = sign_digest(DIGEST, sig);    // penantian chip di dalamnya tidur lewat TIM1
     const uint32_t lat = cycles() - s0;
     if (ret == 0) {
-      served++; lat_sum += lat;
+      served++; lat_sum += lat; hl_lat_add(lat);
       if (lat < lat_min) lat_min = lat;
       if (lat > lat_max) lat_max = lat;
     } else gagal++;
@@ -576,6 +586,14 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
   const uint64_t cyc_total_us = (uint64_t)(uint32_t)(c_end - c0) * 1000000ULL / SystemCoreClock;
   const int64_t resid = (int64_t)t_obs - (int64_t)g_t_sleep - (int64_t)act_us;
   const uint64_t sp = t_obs ? g_t_sleep * 10000ULL / t_obs : 0;      // persen x100
+
+  hl_res.secs = secs; hl_res.p_ms = p_ms; hl_res.uart = uart ? 1 : 0;
+  hl_res.t_obs = (uint32_t)t_obs; hl_res.t_sleep = (uint32_t)g_t_sleep; hl_res.act_us = (uint32_t)act_us;
+  hl_res.resid = (int32_t)resid;
+  hl_res.arrived = g_arrived; hl_res.served = served; hl_res.gagal = gagal;
+  hl_res.wfi = g_wfi_n; hl_res.spurious = g_spurious; hl_res.pin_salah = g_pin_salah;
+  hl_res.rx_ok = uart ? g_rx_ok : 0; hl_res.rx_bad = uart ? g_rx_bad : 0; hl_res.rx_lost = uart ? g_rx_lost : 0;
+  if (!ser) return;                             // tanpa PC (USB hanya daya): hasil cukup di hl_res
 
   if (uart) ser.printf("# WINDOW attacker (UART2 DMA) %lu s, akhir jendela oleh TIM4 satu-tembakan\n",
                        (unsigned long)secs);
@@ -623,11 +641,12 @@ void setup() {
   pinMode(PB1, OUTPUT);
   PIN_STATUS_LO();
   rx_init();
+  hl_init();
 
   // TIDAK menunggu koneksi USB (tahap 4): di bangku ukur USB-C hanya daya, dan menunggu sampai
   // 10 s merusak jendela 60 s. Banner hanya dicetak bila PC sudah terhubung saat boot.
   if (ser) {
-    ser.println("K2 HARDWARE tahap 4 (DS28E38, base + RAM + WFI + UART2) siap. Perintah: I | R[n] | M[n] | W[s][,p] | A[s]");
+    ser.println("K2 HARDWARE tahap 5 (DS28E38, base + RAM + WFI + UART2) siap. Perintah: I | R[n] | M[n] | W[s][,p] | A[s]  (+ USART1: ? | S | W)");
     if (!dwt_ok)   ser.println("# PERINGATAN: DWT CYCCNT tidak berjalan");
     if (!g_rom_ok) ser.println("# PERINGATAN: DS28E38 tidak ditemukan di bus (PA15)");
     if (!hw_ok)    ser.println("# PERINGATAN: jam pewaktu APB1 bukan kelipatan 1 MHz");
@@ -635,6 +654,7 @@ void setup() {
 }
 
 void loop() {
+  hl_service();                                 // tahap 5: perintah dari logger lewat USART1
   static char line[CMD_MAX];
   static int n = 0;
   if (ser.available() <= 0) return;

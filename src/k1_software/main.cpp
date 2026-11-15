@@ -33,7 +33,10 @@
 //   boot dan berulang, tanpa perintah USB (bangku ukur: USB-C hanya daya, tanpa D+/D-). Hasil tiap
 //   jendela disimpan di g_win_* (dibaca lewat SWD); cetakan USB hanya bila PC tersambung. Jalur sign
 //   dan isi jendela TIDAK diubah. Dipakai untuk validasi pin PB1 terhadap logger (L4).
-// Belum ada: handshake "papan siap" dan RUN_START/RUN_END (tahap 5).
+// TAHAP 5 (15 Nov): + jalur kendali run lewat USART1 ke logger (src/host_common/host_link.h, dipakai
+//   bersama K2): perintah ?, S<detik> (= A), W<detik>,<p> dari logger; balasan >START, >END + hasil,
+//   >L latensi sign per permintaan (disimpan di RAM selama jendela), >DONE. Jalur sign dan isi jendela
+//   TIDAK diubah; tambahan di dalam jendela hanya pencatatan latensi per sign (dua pembacaan CYCCNT).
 //
 // Perintah (USB CDC 115200, akhiri newline):
 //   I        info sistem (clock, profil Mbed TLS, DWT)
@@ -272,10 +275,14 @@ static uint32_t stack_low_water(volatile uint32_t *lo) {
 }
 
 // Satu operasi penuh yang sama dengan R: entropi + sign. Hasil r||s dibuang.
+// g_op_cyc = latensi sign saja (jendela ukur sama dengan R: entropi di luar), dipakai tahap 5.
+static uint32_t g_op_cyc = 0;
 static int __attribute__((noinline)) one_operation() {
   uint8_t ent[32], sig[64];
   int ret = harvest_entropy(ent);
+  const uint32_t t0 = cycles();
   if (ret == 0) ret = sign_digest(DIGEST, ent, sig);
+  g_op_cyc = cycles() - t0;
   mbedtls_platform_zeroize(ent, sizeof ent);
   return ret;
 }
@@ -319,6 +326,12 @@ static void cmd_ram(uint32_t n) {
              (unsigned long)heap_naik);
   ser.println("# SELESAI");
 }
+
+// ---------------------------------------------------------------------------
+// Tahap 5: jalur kendali run lewat USART1 ke logger (berkas bersama K1/K2).
+#define HL_ARCH  "K1"
+#define HL_READY (g_ready)
+#include "../host_common/host_link.h"
 
 // ---------------------------------------------------------------------------
 // Tahap 3: WFI + pewaktu hardware + pin status PB1 + %S_cpu.
@@ -500,6 +513,7 @@ volatile uint32_t g_win_secs, g_win_p_ms;
 static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
   uint32_t K = secs * 1000UL / p_ms;
   if (K < 1 || uart) K = 1;
+  hl_lat_reset();
   static HardwareTimer t4(TIM4);                // statis: tanpa alokasi heap
   t4.pause();
   if (uart) {
@@ -514,7 +528,7 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
 
   g_ticks = 0; g_K = K; g_arrived = 0; g_pending = false; g_end = false;
   g_t_first = 0; g_tick_min = 0xFFFFFFFFUL; g_tick_max = 0;
-  uint32_t served = 0, wfi_n = 0, spurious = 0, pin_salah = 0;
+  uint32_t served = 0, gagal = 0, wfi_n = 0, spurious = 0, pin_salah = 0;
   uint64_t t_sleep = 0, act_cyc = 0, uw_rem = 0;
 
   TIM4->SR = 0; NVIC_ClearPendingIRQ(TIM4_IRQn);   // buang update palsu akibat setOverflow
@@ -555,7 +569,7 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
     __enable_irq();
     if (g_end) break;
     __disable_irq(); g_pending = false; __enable_irq();
-    if (one_operation() == 0) served++;
+    if (one_operation() == 0) { served++; hl_lat_add(g_op_cyc); } else gagal++;
   }
   act_cyc += (uint32_t)(cycles() - seg);
   const uint32_t t_end = hw_us();
@@ -577,7 +591,13 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
   g_win_arrived = g_arrived; g_win_served = served; g_win_wfi = wfi_n; g_win_spurious = spurious;
   g_win_pin_salah = pin_salah; g_win_secs = secs; g_win_p_ms = p_ms;
   g_win_n++;
-  if (!ser) return;                             // tanpa PC (USB hanya daya): hasil cukup di g_win_*
+  hl_res.secs = secs; hl_res.p_ms = p_ms; hl_res.uart = uart ? 1 : 0;
+  hl_res.t_obs = (uint32_t)t_obs; hl_res.t_sleep = (uint32_t)t_sleep; hl_res.act_us = (uint32_t)act_us;
+  hl_res.resid = (int32_t)resid;
+  hl_res.arrived = g_arrived; hl_res.served = served; hl_res.gagal = gagal;
+  hl_res.wfi = wfi_n; hl_res.spurious = spurious; hl_res.pin_salah = pin_salah;
+  hl_res.rx_ok = uart ? g_rx_ok : 0; hl_res.rx_bad = uart ? g_rx_bad : 0; hl_res.rx_lost = uart ? g_rx_lost : 0;
+  if (!ser) return;                             // tanpa PC (USB hanya daya): hasil cukup di g_win_* / hl_res
 
   if (uart) ser.printf("# WINDOW attacker (UART2 DMA) %lu s, akhir jendela oleh TIM4 satu-tembakan\n",
                        (unsigned long)secs);
@@ -586,8 +606,8 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
   ser.printf("# T_obs=%lu us  T_sleep=%lu us  aktif(CYCCNT)=%lu us  sisa=%ld us\n",
              (unsigned long)t_obs, (unsigned long)t_sleep, (unsigned long)act_us, (long)resid);
   ser.printf("# S_cpu=%lu.%02lu %%\n", (unsigned long)(sp / 100), (unsigned long)(sp % 100));
-  ser.printf("# permintaan: datang=%lu dilayani=%lu terlewat=%lu\n", (unsigned long)g_arrived,
-             (unsigned long)served, (unsigned long)(g_arrived - served));
+  ser.printf("# permintaan: datang=%lu dilayani=%lu gagal_sign=%lu terlewat=%lu\n", (unsigned long)g_arrived,
+             (unsigned long)served, (unsigned long)gagal, (unsigned long)(g_arrived - served - gagal));
   ser.printf("# tidur: WFI=%lu bangun_bukan_permintaan=%lu pin_PB1_salah_baca=%lu\n",
              (unsigned long)wfi_n, (unsigned long)spurious, (unsigned long)pin_salah);
   if (uart) {
@@ -617,11 +637,12 @@ void setup() {
   pinMode(PB1, OUTPUT);
   PIN_STATUS_LO();
   rx_init();
+  hl_init();
 
   // TIDAK menunggu koneksi USB (tahap 4): di bangku ukur USB-C hanya daya, dan menunggu sampai
   // 10 s merusak jendela 60 s. Banner hanya dicetak bila PC sudah terhubung saat boot.
   if (ser) {
-    ser.println("K1 SOFTWARE tahap 4 (konfigurasi 1c: hedged nonce, zeroize, tanpa comb) siap. Perintah: I | R[n] | M[n] | W[s][,p] | A[s]");
+    ser.println("K1 SOFTWARE tahap 5 (konfigurasi 1c: hedged nonce, zeroize, tanpa comb) siap. Perintah: I | R[n] | M[n] | W[s][,p] | A[s]  (+ USART1: ? | S | W)");
     if (!dwt_ok)  ser.println("# PERINGATAN: DWT CYCCNT tidak berjalan");
     if (!g_ready) ser.println("# PERINGATAN: gagal memuat grup P-256");
     if (!hw_ok)   ser.println("# PERINGATAN: jam pewaktu APB1 bukan kelipatan 1 MHz");
@@ -648,6 +669,7 @@ void loop() {
     return;
   }
 #endif
+  hl_service();                                 // tahap 5: perintah dari logger lewat USART1
   static char line[CMD_MAX];
   static int n = 0;
   if (ser.available() <= 0) return;
