@@ -1,0 +1,7 @@
+host=>ID,K2,5,48000000,1
+seed=2004
+secs=60
+plan=IDLE,B,B,A,B,A,B,A,A,B,B,A,B,A,A,B,A,B,A,A,A,B,A,B,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=TAHAP D blok 4/4 (pola ABBA: K1 | K2 K2 | K1 K1 | K2): K2 DS28E38, 12A (2 pengganti blok 2) + 11B (1 pengganti blok 2); logger L6B1 langsung ke port komputer; host dicabut-colok daya setelah flash; ST-Link host+logger dicabut; daya host USB-C langsung ke port komputer; attacker COM21 lewat hub; aturan late ringan

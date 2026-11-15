@@ -1,0 +1,7 @@
+host=>ID,K1,5,48000000,1
+seed=2003
+secs=60
+plan=IDLE,A,B,A,A,A,B,B,B,A,B,B,A,A,B,A,B,B,A,A,B,A,B,B,B,A,A,B,A,B,B,A,B,B,A,A,B,A,A,A,B,A,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=TAHAP D blok 3/4 (pola ABBA: K1 | K2 K2 | K1 K1 | K2): K1 konfigurasi 1c; 21A (1 pengganti run gugur blok 1) + 20B; ST-Link host dicabut; daya host USB-C langsung ke port komputer; logger kini LANGSUNG ke port komputer (sebelumnya lewat hub), attacker COM20 lewat hub; shunt belum dikalibrasi

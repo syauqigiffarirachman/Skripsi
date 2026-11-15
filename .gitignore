@@ -12,3 +12,6 @@ tools/emu_cycles/_ext/
 
 # naskah proposal/skripsi (PDF pribadi, tidak ikut repo)
 paper/
+
+# virtualenv analisis statistik (numpy/scipy/pandas/statsmodels/matplotlib)
+.venv-analisis/

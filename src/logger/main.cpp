@@ -71,7 +71,7 @@ volatile uint32_t g_sysclk_hz = 0;              // SystemCoreClock hasil konfigu
 volatile uint32_t g_pclk1_hz  = 0;
 volatile uint32_t g_pclk2_hz  = 0;
 volatile uint8_t  g_clk_hse   = 0;              // 1 = SYSCLK dari HSE+PLL, 0 = fallback HSI
-volatile uint32_t g_build_id  = 0x4C364131;     // 'L6A1' = F103 tahap L1..L6 + A1 (pemulihan I2C)
+volatile uint32_t g_build_id  = 0x4C364231;     // 'L6B1' = L6A1 + perbaikan USB (timeout CDC 250 ms, antrean 64 paket; 15 Nov malam)
 
 // --- INA226 (L2/L3) ---
 static const uint8_t  INA_ADDR       = 0x44;    // terukur 14 Nov: A1 ke VS, A0 ke GND (paper v3 menulis 0x40)

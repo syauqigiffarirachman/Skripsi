@@ -1,0 +1,7 @@
+host=>ID,K1,5,48000000,1
+seed=1794747589
+secs=30
+plan=IDLE
+rshunt=0.1
+offset=-2.0
+catatan=diagnosis pergeseran +0,78 mA setelah blok 3b

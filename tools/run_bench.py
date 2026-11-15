@@ -24,6 +24,19 @@ Pakai:
   python tools/run_bench.py plan ... --kering            cetak urutan saja
   python tools/run_bench.py nodebug                      reset host + DBGMCU_CR = 0
   python tools/run_bench.py analyse data/runs/<sesi>/<berkas>.csv
+  python tools/run_bench.py ringkas data/runs/<sesi> [...] --rshunt 0.082
+                                                         hitung ulang seluruh sesi (mis. setelah kalibrasi
+                                                         shunt) -> ringkasan_ulang.csv + rerata/sd per kelompok
+
+Metrik layanan per run (15 Nov 2026; definisi lengkap di logbook/2026-11-15.md):
+  N_dtg  = permintaan valid diterima host            N_lyn = sign selesai (dilayani)
+  N_ggl  = sign gagal                                 N_rusak = frame rusak/hilang di UART (dilaporkan terpisah)
+  N_lwt  = N_dtg - N_lyn - N_ggl                      (tiba saat host sibuk; digabung, tidak diantrekan)
+  TL     = N_lyn / N_dtg x 100 %                      R_lwt = N_lwt / N_dtg x 100 %
+  Theta  = N_lyn / T_obs (sign/s)                     lambda_eff = N_dtg / T_obs (permintaan/s)
+  TL_model = min(1, 1 / (lambda_eff x t_sign)) x 100 % ; Theta_max = 1 / t_sign   (t_sign = latensi nyata)
+Metrik energi per sesi (butuh run IDLE arsitektur yang sama di sesi itu):
+  P_dyn = P_avg - P_idle ; E_dyn = P_dyn x T_obs ; E_lyn = E_dyn / N_lyn  (energi dinamis per layanan)
 
 Setelah flash, OpenOCD menyalakan DBGMCU_CR = 0x307 (DBG_SLEEP: jam inti tetap jalan saat WFI) dan bit itu
 baru hilang saat power-on reset. Uji 15 Nov: arus tidur K1 naik 0,2-0,7 mA bila bit menyala. Karena itu
@@ -54,6 +67,8 @@ END_COLS = ["arch", "secs", "p_ms", "uart", "t_obs_us", "t_sleep_us", "act_us", 
             "lat_min", "lat_mean", "lat_max", "lat_drop", "clk_hz"]
 SUM_COLS = ["no", "t_stop", "n", "late", "dt_max", "i2c_err", "rec_ok", "rec", "sh_sum", "bus_sum",
             "e_lines", "er_drop", "seq_err", "h_lines", "h_ovf"]
+LATE_RINGAN_US = 5000      # selang cuplik terbesar yang masih sah (1 konversi terlewat = ~4,06 ms)
+LATE_RINGAN_MAX = 10       # jumlah maksimum cuplikan terlambat per run yang masih sah
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -209,6 +224,92 @@ def parse(text):
     return r
 
 
+def layanan(en, T, lat_ms_nyata):
+    """Metrik tingkat layanan dan permintaan terlewat satu run.
+
+    en: kolom >END host; T: T_obs menurut kristal logger (s); lat_ms_nyata: rerata durasi sign (ms, waktu nyata).
+    Penyebut memakai N_dtg TERUKUR, bukan laju nominal x T_obs: frame pertama tiba ~1/lambda setelah t0,
+    sehingga skenario A memberi 59 atau 60 permintaan tergantung fase.
+    """
+    n_dtg, n_lyn, n_ggl = en["arrived"], en["served"], en["gagal"]
+    o = {"N_dtg": n_dtg, "N_lyn": n_lyn, "N_ggl": n_ggl, "N_rusak": en["rx_bad"] + en["rx_lost"],
+         "N_lwt": n_dtg - n_lyn - n_ggl, "Theta_sps": n_lyn / T, "lambda_eff_rps": n_dtg / T}
+    if n_dtg:
+        o["TL_pct"] = n_lyn / n_dtg * 100
+        o["R_lwt_pct"] = o["N_lwt"] / n_dtg * 100
+    if lat_ms_nyata:
+        t_sign = lat_ms_nyata / 1e3
+        o["Theta_max_sps"] = 1 / t_sign
+        if n_dtg:
+            o["TL_model_pct"] = min(1.0, 1 / (o["lambda_eff_rps"] * t_sign)) * 100
+            o["TL_selisih_pct"] = o["TL_pct"] - o["TL_model_pct"]
+    return o
+
+
+def energi_sesi(rows):
+    """Tambahkan P_idle, P_dyn, E_dyn, E_lyn ke tiap run non-IDLE (rows: hasil analyse, diubah di tempat).
+
+    P_idle = rerata P_avg run IDLE yang lolos pemeriksaan, arsitektur sama, dalam sesi yang sama (diapit
+    di awal dan akhir blok), sehingga pergeseran antar sesi (tegangan USB, suhu) ikut terkoreksi.
+    """
+    idle, idle_i = {}, {}
+    for r in rows:
+        if r.get("scen") == "IDLE" and not r.get("masalah") and "P_avg_mW" in r:
+            idle.setdefault(r["arch"], []).append(r["P_avg_mW"])
+            idle_i.setdefault(r["arch"], []).append(r["I_avg_mA"])
+    for r in rows:
+        for k in ("P_idle_mW", "P_dyn_mW", "E_dyn_mJ", "E_lyn_mJ", "I_idle_mA", "I_dyn_mA", "Q_lyn_mC"):
+            r.pop(k, None)
+        a = r.get("arch")
+        if r.get("scen") == "IDLE" or a not in idle or "P_avg_mW" not in r:
+            continue
+        p_idle = sum(idle[a]) / len(idle[a])
+        r["P_idle_mW"] = p_idle
+        r["P_dyn_mW"] = r["P_avg_mW"] - p_idle
+        r["E_dyn_mJ"] = r["P_dyn_mW"] * r["T_obs_log_s"]
+        # Versi berbasis arus/muatan (15 Nov malam): tidak terpengaruh turunnya tegangan USB saat beban
+        # naik (blok 3: 5,11 V idle vs 5,05 V aktif membuat P_dyn ~3 % lebih kecil, I_dyn tetap).
+        i_idle = sum(idle_i[a]) / len(idle_i[a])
+        r["I_idle_mA"] = i_idle
+        r["I_dyn_mA"] = r["I_avg_mA"] - i_idle
+        if r.get("N_lyn"):
+            r["E_lyn_mJ"] = r["E_dyn_mJ"] / r["N_lyn"]
+            r["Q_lyn_mC"] = r["I_dyn_mA"] * r["T_obs_log_s"] / r["N_lyn"]     # muatan dinamis per layanan
+
+
+def tulis_ringkasan(path, rows):
+    cols = ["urut"] + sorted({k for r in rows for k in r} - {"urut"})
+    with path.open("w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=cols)
+        w.writeheader()
+        w.writerows(rows)
+
+
+KELOMPOK = {("K1", "A"): "K1", ("K2", "A"): "K2", ("K1", "B"): "K3", ("K2", "B"): "K4"}
+METRIK = ["S_cpu_log", "TL_pct", "R_lwt_pct", "TL_model_pct", "Theta_sps", "lat_mean_ms_nyata", "I_avg_mA",
+          "I_dyn_mA", "P_avg_mW", "P_dyn_mW", "E_lyn_mJ", "Q_lyn_mC", "V_avg"]
+
+
+def cetak_kelompok(rows):
+    """Rerata dan simpangan baku per kelompok K1-K4 (+ IDLE per arsitektur), hanya run tanpa masalah."""
+    grup = {}
+    for r in rows:
+        if r.get("masalah") or "arch" not in r:
+            continue
+        g = KELOMPOK.get((r["arch"], r["scen"]), f"{r['arch']}-{r['scen']}")
+        grup.setdefault(g, []).append(r)
+    for g in sorted(grup):
+        rs = grup[g]
+        parts = []
+        for k in METRIK:
+            v = [x[k] for x in rs if isinstance(x.get(k), (int, float))]
+            if v:
+                m = sum(v) / len(v)
+                sd = (sum((x - m) ** 2 for x in v) / (len(v) - 1)) ** 0.5 if len(v) > 1 else 0.0
+                parts.append(f"{k}={m:.4g}(sd {sd:.2g})")
+        print(f"  {g:8s} n={len(rs)}  " + "  ".join(parts))
+
+
 def analyse(text, rshunt=0.100, offset=-2.0):
     """Mengembalikan (hasil: dict, masalah: list[str])."""
     r = parse(text)
@@ -226,10 +327,20 @@ def analyse(text, rshunt=0.100, offset=-2.0):
         bad.append("checksum shunt/bus tidak cocok")
     if len(r["e"]) != sm["e_lines"]:
         bad.append(f"tepi diterima {len(r['e'])} != dikirim {sm['e_lines']}")
-    for k in ("late", "i2c_err", "rec", "er_drop", "seq_err", "h_ovf"):
+    for k in ("i2c_err", "rec", "er_drop", "seq_err", "h_ovf"):
         if sm[k]:
             bad.append(f"logger {k}={sm[k]}")
-    out.update(n_samp=sm["n"], late=sm["late"], dt_max_us=sm["dt_max"] / TICK_HZ * 1e6, i2c_err=sm["i2c_err"])
+    # Aturan "late ringan" (keputusan 15 Nov, blok 3 tahap D): cuplikan terlambat diterima bila selang
+    # terbesar < LATE_RINGAN_US (paling banyak 1 konversi INA226 terlewat per celah, ~4,06 ms) dan jumlahnya
+    # <= LATE_RINGAN_MAX. Celah diisi interpolasi trapesium; galat energi < 0,01 %. Uji blok 3: arus dan
+    # S_cpu run 'late' tidak berbeda dari run bersih (selisih <= 0,008 mA, sd 0,022 mA).
+    dt_max_us = sm["dt_max"] / TICK_HZ * 1e6
+    if sm["late"]:
+        if dt_max_us < LATE_RINGAN_US and sm["late"] <= LATE_RINGAN_MAX:
+            out["late_ringan"] = sm["late"]
+        else:
+            bad.append(f"logger late={sm['late']} (dt_max {dt_max_us:.0f} us)")
+    out.update(n_samp=sm["n"], late=sm["late"], dt_max_us=dt_max_us, i2c_err=sm["i2c_err"])
     if en is None or r["t_start"] is None:
         return out, bad + ["hasil host (>END) tidak ada"]
     if len(r["lat"]) != en["lat_n"]:
@@ -262,7 +373,7 @@ def analyse(text, rshunt=0.100, offset=-2.0):
     clk_ppm = (host_T / T - 1) * 1e6                      # jam host terhadap kristal logger
     out.update(arch=en["arch"], secs=en["secs"], T_obs_log_s=T, T_obs_host_s=host_T, clk_ppm=clk_ppm,
                S_cpu_log=scpu_log, S_cpu_host=scpu_host, arrived=en["arrived"], served=en["served"],
-               gagal=en["gagal"], missed=en["arrived"] - en["served"] - en["gagal"], wfi=en["wfi"],
+               gagal=en["gagal"], wfi=en["wfi"],
                spurious=en["spurious"], rx_bad=en["rx_bad"], rx_lost=en["rx_lost"], resid_us=en["resid_us"],
                pin_salah=en["pin_salah"])
     if abs(scpu_log - scpu_host) > 0.5:
@@ -280,6 +391,7 @@ def analyse(text, rshunt=0.100, offset=-2.0):
         m = sum(r["lat"]) / len(r["lat"])
         out.update(lat_n=len(r["lat"]), lat_mean_ms=m * k, lat_min_ms=min(r["lat"]) * k,
                    lat_max_ms=max(r["lat"]) * k, lat_mean_ms_nyata=m * k * corr)
+    out.update(layanan(en, T, out.get("lat_mean_ms_nyata")))
 
     # --- energi: integrasi trapesium P = V x I pada [t0, t1], interpolasi linear di kedua batas ---
     def conv(x):
@@ -325,7 +437,8 @@ def analyse(text, rshunt=0.100, offset=-2.0):
 
 def fmt(res, bad):
     keys = ["arch", "secs", "T_obs_log_s", "T_obs_host_s", "clk_ppm", "S_cpu_log", "S_cpu_host", "arrived",
-            "served", "missed", "wfi", "spurious", "lat_n", "lat_mean_ms", "lat_min_ms", "lat_max_ms",
+            "served", "N_lwt", "N_rusak", "TL_pct", "TL_model_pct", "Theta_sps", "wfi", "spurious", "lat_n",
+            "lat_mean_ms", "lat_min_ms", "lat_max_ms",
             "lat_mean_ms_nyata", "n_samp", "late", "dt_max_us", "E_mJ", "P_avg_mW", "I_avg_mA", "V_avg",
             "I_aktif_mA", "I_tidur_mA", "I_model_mA", "E_per_sign_mJ"]
     parts = []
@@ -361,7 +474,7 @@ def do_run(lg, at, scen, secs, out_path, args):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("aksi", choices=["ping", "run", "plan", "analyse", "nodebug"])
+    ap.add_argument("aksi", choices=["ping", "run", "plan", "analyse", "ringkas", "nodebug"])
     ap.add_argument("arg", nargs="*")
     ap.add_argument("--logger", default="COM18")
     ap.add_argument("--attacker", default="COM16")
@@ -380,6 +493,21 @@ def main():
         for f in args.arg:
             res, bad = analyse(Path(f).read_text(errors="replace"), args.rshunt, args.offset)
             print(f"{f}\n  {fmt(res, bad)}")
+        return
+
+    if args.aksi == "ringkas":
+        for d in map(Path, args.arg):
+            rows = []
+            for i, f in enumerate(sorted(d.glob("[0-9][0-9][0-9]_*.csv")), 1):
+                res, bad = analyse(f.read_text(errors="replace"), args.rshunt, args.offset)
+                res["scen"], res["file"] = f.stem.split("_", 2)[2], f.name
+                res["urut"], res["masalah"] = i, "; ".join(bad)
+                rows.append(res)
+            energi_sesi(rows)
+            tulis_ringkasan(d / "ringkasan_ulang.csv", rows)
+            print(f"{d}  ({len(rows)} run, rshunt={args.rshunt}, offset={args.offset}, "
+                  f"bermasalah {sum(1 for r in rows if r['masalah'])})")
+            cetak_kelompok(rows)
         return
 
     if args.aksi == "nodebug":
@@ -473,17 +601,18 @@ def main():
             res["urut"], res["masalah"] = i, "; ".join(bad)
             rows.append(res)
             print("  " + fmt(res, bad), flush=True)
-            cols = ["urut"] + sorted({k for r in rows for k in r} - {"urut"})
-            with (sesi / "ringkasan.csv").open("w", newline="", encoding="utf-8") as fh:
-                w = csv.DictWriter(fh, fieldnames=cols)
-                w.writeheader()
-                w.writerows(rows)
+            energi_sesi(rows)                             # P_idle dari IDLE yang sudah ada; final di akhir
+            tulis_ringkasan(sesi / "ringkasan.csv", rows)
             if bad and wait_host(lg, maks=5) is None:     # host diam setelah run gagal: jangan buang run
                 print("  host tidak menjawab; sesi dihentikan (cek host, atau 'nodebug' untuk reset)")
                 break
             time.sleep(args.jeda)
         at.close()
+        energi_sesi(rows)
+        tulis_ringkasan(sesi / "ringkasan.csv", rows)
         print(f"sesi: {sesi}   run bermasalah: {sum(1 for r in rows if r['masalah'])}/{len(rows)}")
+        if len(rows) > 1:
+            cetak_kelompok(rows)
     finally:
         lg.close()
 

@@ -1,0 +1,8 @@
+host=>ID,K1,5,48000000,1
+seed=2006
+secs=60
+plan=IDLE,A,B,A,A,A,B,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=TAHAP D blok 3b ULANG (pengganti run gugur blok 1 dan 3): K1 konfigurasi 1c, 4A+2B; host baru dicabut-colok daya (POR); ST-Link host dicabut; daya host USB-C langsung ke port komputer; logger lewat hub; aturan late ringan
+STATUS=GUGUR: 4/8 run kehilangan baris USB (termasuk kedua IDLE, sehingga P_idle blok tidak ada). Penyebab: batas waktu kirim USB 3 ms di core STM32duino (logger L6A1). Diulang setelah perbaikan logger L6b.

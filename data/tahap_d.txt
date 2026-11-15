@@ -1,0 +1,8 @@
+# Manifest sesi tahap D (pengambilan data final), dibaca tools/analisis_d.py.
+# Format: <blok> <nama folder di data/runs>. Sesi gugur ada di data/dev/gugur/ dan TIDAK didaftarkan.
+# Pola ABBA: K1 | K2 K2 | K1 K1 | K2 (blok 2 = K2 20A+20B; blok 3 = K1 21A+20B; blok 3b = tambahan K1).
+blok1  20261115_173019_K1
+blok2  20261115_180129_K2
+blok3  20261115_185637_K1
+blok3b 20261115_204018_K1
+blok4  20261115_205801_K2

@@ -1,0 +1,7 @@
+host=>ID,K2,5,48000000,1
+seed=2002
+secs=60
+plan=IDLE,A,A,B,B,A,B,B,B,B,A,A,B,B,A,B,A,B,A,A,B,A,B,B,A,B,A,A,A,A,B,A,B,B,A,A,A,B,B,B,A,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=TAHAP D blok 2/4 (pola ABBA: K1 | K2 K2 | K1 K1 | K2): K2 DS28E38, K2=A K4=B; ST-Link host+logger dicabut, CH340 logger dicabut, attacker COM20; daya host USB-C langsung ke port komputer; shunt belum dikalibrasi (rshunt nominal)

@@ -1,0 +1,7 @@
+host=>ID,K1,5,48000000,1
+seed=2007
+secs=60
+plan=IDLE,B,B,A,A,A,A,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=TAHAP D blok 3b (ulang ke-2, pengganti run gugur blok 1 dan 3): K1 konfigurasi 1c, 4A+2B; logger L6B1 (perbaikan USB) langsung ke port komputer; host baru dicabut-colok daya; ST-Link host+logger dicabut; daya host USB-C langsung ke port komputer; attacker COM21 lewat hub; aturan late ringan

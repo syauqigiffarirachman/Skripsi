@@ -1,0 +1,8 @@
+host=>ID,K1,5,48000000,1
+seed=2001
+secs=60
+plan=IDLE,A,A,A,A,B,A,A,B,B,B,B,B,B,A,B,A,A,B,A,B,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=TAHAP D blok 1/4 (pola ABBA: K1 | K2 K2 | K1 K1 | K2): K1 konfigurasi 1c, K1=A K3=B; ST-Link host+logger dicabut, CH340 logger dicabut, attacker COM20; shunt belum dikalibrasi (rshunt nominal)
+daya_host=USB-C langsung ke port komputer, tanpa hub (dikonfirmasi user 15 Nov); logger dan attacker masih lewat hub

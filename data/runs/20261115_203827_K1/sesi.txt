@@ -1,0 +1,7 @@
+host=>ID,K1,5,48000000,1
+seed=3001
+secs=20
+plan=IDLE,A,B,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=verifikasi logger L6B1 (perbaikan USB), host baru dicabut-colok, attacker COM21, logger langsung ke port komputer
