@@ -1,0 +1,9 @@
+host=>ID,K1,5,48000000,1
+seed=11
+secs=20
+plan=K2.IDLE,K1.IDLE,K2.A,K1.A,K1.A,K2.B,K1.B,K2.A,K1.IDLE,K2.IDLE
+rshunt=0.1
+offset=-2.0
+elf_K1=.pio/build/k1_sw/firmware.elf sha256=9b1adf623e29
+elf_K2=.pio/build/k2_hw/firmware.elf sha256=00e99ed39d94
+catatan=uji pengacakan K1/K2 dengan flash ulang

@@ -1,0 +1,7 @@
+host=>ID,K1,5,48000000,1
+seed=1794724373
+secs=10
+plan=WA
+rshunt=0.1
+offset=-2.0
+catatan=

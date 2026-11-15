@@ -1,0 +1,7 @@
+host=>ID,K1,5,48000000,1
+seed=902
+secs=60
+plan=IDLE,A,B,A,B,B,A,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=pilot langkah 9: blok K1 (konfigurasi 1c), ST-Link host DICABUT, DBGMCU=0

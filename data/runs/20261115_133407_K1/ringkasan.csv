@@ -1,0 +1,2 @@
+urut,E_mJ,I_avg_mA,I_tidur_mA,P_avg_mW,S_cpu_host,S_cpu_log,T_obs_host_s,T_obs_log_s,V_avg,arch,arrived,clk_ppm,dt_max_us,file,gagal,i2c_err,late,masalah,missed,n_samp,n_win,pin_salah,resid_us,rx_bad,rx_lost,scen,secs,served,spurious,status,wfi
+1,1211.4600607089458,11.665422697593085,11.665457555689343,60.26201767091255,99.9998849992755,99.99989381187837,19.999874,20.103211069444445,5.165867299162027,K1,0,-5140.326542236396,2101.6666666666665,001_K1_IDLE.csv,0,0,0,,0,10025,9966,0,4,0,0,IDLE,20,0,0,OK,1

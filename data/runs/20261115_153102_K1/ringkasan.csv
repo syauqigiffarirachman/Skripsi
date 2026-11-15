@@ -1,0 +1,2 @@
+urut,dt_max_us,file,i2c_err,late,masalah,n_samp,scen,status
+1,2098.111111111111,001_K1_IDLE.csv,0,0,status logger = ERR_NOEND; hasil host (>END) tidak ada,12940,IDLE,ERR_NOEND

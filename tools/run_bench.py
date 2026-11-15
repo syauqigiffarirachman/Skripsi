@@ -17,7 +17,17 @@ Pakai:
   python tools/run_bench.py ping
   python tools/run_bench.py run A 60                     satu run
   python tools/run_bench.py plan A:30,B:30 --secs 60     sesi: IDLE di awal & akhir, urutan diacak
+  python tools/run_bench.py plan K1.A:3,K2.A:3,K1.B:3,K2.B:3 --secs 60
+                                                         sesi campuran K1/K2: urutan diacak penuh, host
+                                                         di-flash ulang lewat ST-Link setiap arsitektur
+                                                         berganti (butuh ST-Link host terpasang)
+  python tools/run_bench.py plan ... --kering            cetak urutan saja
+  python tools/run_bench.py nodebug                      reset host + DBGMCU_CR = 0
   python tools/run_bench.py analyse data/runs/<sesi>/<berkas>.csv
+
+Setelah flash, OpenOCD menyalakan DBGMCU_CR = 0x307 (DBG_SLEEP: jam inti tetap jalan saat WFI) dan bit itu
+baru hilang saat power-on reset. Uji 15 Nov: arus tidur K1 naik 0,2-0,7 mA bila bit menyala. Karena itu
+flash_host() menolkan DBGMCU_CR setelah program; aksi 'nodebug' melakukan hal yang sama tanpa flash.
 
 Kalibrasi arus: --rshunt (Ohm, bawaan 0.100 = nominal; hasil A2c ~0.080-0.083 BELUM final) dan
 --offset (LSB shunt tanpa beban, bawaan -2). CSV mentah menyimpan nilai register, jadi analisis bisa
@@ -25,7 +35,9 @@ diulang dengan kalibrasi lain tanpa mengambil data lagi.
 """
 import argparse
 import csv
+import hashlib
 import random
+import subprocess
 import sys
 import time
 from datetime import datetime
@@ -44,7 +56,60 @@ SUM_COLS = ["no", "t_stop", "n", "late", "dt_max", "i2c_err", "rec_ok", "rec", "
             "e_lines", "er_drop", "seq_err", "h_lines", "h_ovf"]
 
 
+ROOT = Path(__file__).resolve().parent.parent
+ELF = {"K1": ROOT / ".pio/build/k1_sw/firmware.elf", "K2": ROOT / ".pio/build/k2_hw/firmware.elf"}
+OCD = Path.home() / ".platformio/packages/tool-openocd"
+
+
 # --------------------------------------------------------------------------- perangkat
+def openocd(stlink, *cmds, timeout=60):
+    """Jalankan OpenOCD sekali (ST-Link dipilih lewat nomor seri). Mengembalikan (ok, keluaran)."""
+    a = [str(OCD / "bin/openocd"), "-s", str(OCD / "openocd/scripts"), "-c", f"adapter serial {{{stlink}}}",
+         "-f", "interface/stlink.cfg", "-c", "transport select hla_swd", "-f", "target/stm32f1x.cfg"]
+    for c in cmds:
+        a += ["-c", c]
+    p = subprocess.run(a, capture_output=True, text=True, timeout=timeout)
+    return p.returncode == 0, p.stdout + p.stderr
+
+
+def nodebug(stlink):
+    """Reset host lalu nolkan DBGMCU_CR (DBG_SLEEP mati) agar arus tidur tidak terpengaruh debugger."""
+    ok, out = openocd(stlink, "init", "reset run", "sleep 1500", "mww 0xE0042004 0", "mdw 0xE0042004", "shutdown")
+    return ok and "0xe0042004: 00000000" in out.lower(), out
+
+
+def flash_host(stlink, arch):
+    elf = ELF[arch]
+    if not elf.exists():
+        raise FileNotFoundError(f"{elf} belum dibangun (pio run -e {elf.parent.name})")
+    ok, out = openocd(stlink, f"program {{{elf.as_posix()}}} verify reset exit", timeout=90)
+    if not ok or "Verified OK" not in out:
+        raise RuntimeError(f"flash {arch} gagal:\n{out[-600:]}")
+    ok, out = nodebug(stlink)
+    if not ok:
+        raise RuntimeError(f"DBGMCU_CR gagal dinolkan:\n{out[-600:]}")
+
+
+def host_id(lg):
+    raw = lg.command(3, 0, 5).decode(errors="replace")
+    return next((l.split(",", 2)[2] for l in raw.splitlines() if l.startswith("h,") and ">ID" in l), None)
+
+
+def wait_host(lg, arch=None, maks=25):
+    """Tunggu host menjawab '?' (arsitektur cocok dan papan siap bila arch diberikan). Baris >ID atau None."""
+    t = time.time()
+    while time.time() - t < maks:
+        ident = host_id(lg)
+        if ident and (arch is None or (ident.split(",")[1] == arch and ident.split(",")[4] == "1")):
+            return ident
+        time.sleep(1)
+    return None
+
+
+def sha_short(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:12]
+
+
 class Logger:
     def __init__(self, port):
         self.s = serial.Serial(port, 115200, timeout=0.05, write_timeout=1)
@@ -296,7 +361,7 @@ def do_run(lg, at, scen, secs, out_path, args):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("aksi", choices=["ping", "run", "plan", "analyse"])
+    ap.add_argument("aksi", choices=["ping", "run", "plan", "analyse", "nodebug"])
     ap.add_argument("arg", nargs="*")
     ap.add_argument("--logger", default="COM18")
     ap.add_argument("--attacker", default="COM16")
@@ -307,6 +372,8 @@ def main():
     ap.add_argument("--jeda", type=float, default=3.0, help="jeda antar run (s)")
     ap.add_argument("--tanpa-idle", action="store_true")
     ap.add_argument("--catatan", default="")
+    ap.add_argument("--stlink", default="$", help="nomor seri ST-Link host (untuk flash/reset)")
+    ap.add_argument("--kering", action="store_true", help="plan: cetak urutan saja, tanpa menjalankan")
     args = ap.parse_args()
 
     if args.aksi == "analyse":
@@ -315,49 +382,94 @@ def main():
             print(f"{f}\n  {fmt(res, bad)}")
         return
 
+    if args.aksi == "nodebug":
+        ok, out = nodebug(args.stlink)
+        print("DBGMCU_CR = 0" if ok else "GAGAL:\n" + out[-600:])
+        return
+
+    # --- susun rencana dulu (tanpa perangkat), agar --kering bisa dipakai tanpa papan ---
+    seed = args.seed if args.seed is not None else int(time.time())
+    plan, campur, secs = [], False, args.secs             # plan: daftar (arch | None, skenario)
+    if args.aksi == "run":
+        plan = [(None, args.arg[0].upper())]
+        secs = int(args.arg[1]) if len(args.arg) > 1 else args.secs
+    elif args.aksi == "plan":
+        for item in args.arg[0].split(","):
+            sc, n = item.split(":")
+            ar, _, sc = sc.upper().rpartition(".")
+            if ar and ar not in ELF:
+                raise SystemExit(f"arsitektur tidak dikenal: {ar}")
+            campur |= bool(ar)
+            plan += [(ar or None, sc)] * int(n)
+        if campur and any(a is None for a, _ in plan):
+            raise SystemExit("plan campuran: setiap butir harus berawalan K1. atau K2.")
+        if any(sc not in SCEN for _, sc in plan):
+            raise SystemExit("skenario tidak dikenal (pilihan: " + ", ".join(SCEN) + ")")
+        rng = random.Random(seed)
+        rng.shuffle(plan)
+        if not args.tanpa_idle:                           # IDLE tiap arsitektur di awal dan akhir sesi
+            archs = sorted({a for a, _ in plan}) if campur else [None]
+            awal, akhir = archs[:], archs[:]
+            rng.shuffle(awal)
+            rng.shuffle(akhir)
+            plan = [(a, "IDLE") for a in awal] + plan + [(a, "IDLE") for a in akhir]
+        if args.kering:
+            ganti = sum(1 for x, y in zip(plan, plan[1:]) if x[0] != y[0])
+            print(f"seed={seed}  {len(plan)} run, ganti arsitektur (flash) {ganti} kali")
+            for i, (a, sc) in enumerate(plan, 1):
+                print(f"  {i:3d} {a or '-'} {sc}")
+            return
+
     lg = Logger(args.logger)
     try:
-        raw = lg.command(3, 0, 5).decode(errors="replace")
-        ident = next((l.split(",", 2)[2] for l in raw.splitlines() if l.startswith("h,") and ">ID" in l), None)
+        ident = host_id(lg)
         print("host:", ident or "TIDAK MENJAWAB")
-        if args.aksi == "ping" or ident is None:
+        if args.aksi == "ping" or (ident is None and not campur):
             return
-        arch = ident.split(",")[1]
-        if ident.split(",")[4] != "1":
+        arch = ident.split(",")[1] if ident else "?"
+        if not campur and ident.split(",")[4] != "1":
             print("host belum siap (grup P-256 / DS28E38 tidak ditemukan)")
             return
         at = Attacker(args.attacker)
         print("attacker:", at.status())
-        seed = args.seed if args.seed is not None else int(time.time())
-        if args.aksi == "run":
-            plan = [args.arg[0].upper()]
-            secs = int(args.arg[1]) if len(args.arg) > 1 else args.secs
-        else:
-            plan = []
-            for item in args.arg[0].split(","):
-                sc, n = item.split(":")
-                plan += [sc.upper()] * int(n)
-            random.Random(seed).shuffle(plan)
-            if not args.tanpa_idle:
-                plan = ["IDLE"] + plan + ["IDLE"]
-            secs = args.secs
-        sesi = Path(__file__).resolve().parent.parent / "data" / "runs" / f"{datetime.now():%Y%m%d_%H%M%S}_{arch}"
+        tag = "K1K2" if campur else arch
+        sesi = ROOT / "data" / "runs" / f"{datetime.now():%Y%m%d_%H%M%S}_{tag}"
         sesi.mkdir(parents=True, exist_ok=True)
+        elf_info = "".join(f"elf_{a}={ELF[a].relative_to(ROOT).as_posix()} sha256={sha_short(ELF[a])}\n"
+                           for a in ELF if campur and ELF[a].exists())
+        rencana = ",".join((a + "." if a else "") + sc for a, sc in plan)
         (sesi / "sesi.txt").write_text(
-            f"host={ident}\nseed={seed}\nsecs={secs}\nplan={','.join(plan)}\nrshunt={args.rshunt}\n"
-            f"offset={args.offset}\ncatatan={args.catatan}\n", encoding="utf-8")
+            f"host={ident}\nseed={seed}\nsecs={secs}\nplan={rencana}\nrshunt={args.rshunt}\n"
+            f"offset={args.offset}\n{elf_info}catatan={args.catatan}\n", encoding="utf-8")
         rows = []
-        for i, scen in enumerate(plan, 1):
+        for i, (want, scen) in enumerate(plan, 1):
+            res, bad = {"scen": scen}, []
+            if want and want != arch:                     # ganti firmware host lewat ST-Link
+                t = time.time()
+                try:
+                    flash_host(args.stlink, want)
+                    ident = wait_host(lg, want)
+                    if ident is None:
+                        raise RuntimeError("host tidak menjawab / belum siap setelah flash")
+                    arch = want
+                    res["flash_s"] = round(time.time() - t, 1)
+                    print(f"  flash {want} + DBGMCU_CR=0 dalam {res['flash_s']} s: {ident}", flush=True)
+                except Exception as ex:
+                    print(f"  BERHENTI: {ex}")
+                    break
             f = sesi / f"{i:03d}_{arch}_{scen}.csv"
             print(f"[{i}/{len(plan)}] {arch} {scen} {secs} s ...", flush=True)
             try:
-                res, bad = do_run(lg, at, scen, secs, f, args)
+                r2, bad = do_run(lg, at, scen, secs, f, args)
+                res.update(r2)
             except Exception as ex:                       # run gagal: catat, lanjut ke berikutnya
-                res, bad = {"scen": scen, "file": f.name}, [f"pengecualian: {ex}"]
+                res["file"], bad = f.name, [f"pengecualian: {ex}"]
                 try:
                     at.send("x")
                 except Exception:
                     pass
+            if want and res.get("arch") not in (None, want):
+                bad.append(f"arsitektur host {res.get('arch')} != rencana {want}")
             res["urut"], res["masalah"] = i, "; ".join(bad)
             rows.append(res)
             print("  " + fmt(res, bad), flush=True)
@@ -366,6 +478,9 @@ def main():
                 w = csv.DictWriter(fh, fieldnames=cols)
                 w.writeheader()
                 w.writerows(rows)
+            if bad and wait_host(lg, maks=5) is None:     # host diam setelah run gagal: jangan buang run
+                print("  host tidak menjawab; sesi dihentikan (cek host, atau 'nodebug' untuk reset)")
+                break
             time.sleep(args.jeda)
         at.close()
         print(f"sesi: {sesi}   run bermasalah: {sum(1 for r in rows if r['masalah'])}/{len(rows)}")
