@@ -31,6 +31,7 @@
 #pragma once
 #include <Arduino.h>
 #include <stdarg.h>
+#include "host_util.h"
 
 #define HL_BAUD     115200UL
 #define HL_LINE_MAX 24
@@ -114,13 +115,6 @@ static bool hl_poll_line(char *out) {
   return out[0] != '\0';
 }
 
-static uint32_t hl_u32(const char *p, uint32_t def) {
-  if (*p < '0' || *p > '9') return def;
-  uint32_t v = 0;
-  while (*p >= '0' && *p <= '9') v = v * 10 + (uint32_t)(*p++ - '0');
-  return v;
-}
-
 static void hl_send_result() {
   uint32_t mn = 0xFFFFFFFFUL, mx = 0;
   uint64_t sum = 0;
@@ -168,13 +162,13 @@ static void hl_service() {
   uint32_t secs = 0, p = 1000;
   bool uart = false;
   if (line[0] == 'S') {
-    secs = hl_u32(line + 1, 0);
+    secs = parse_u32(line + 1, 0);
     uart = true;
     if (secs < 1 || secs > 80) secs = 0;        // batas TIM4 16-bit + prescaler (89 s pada 48 MHz)
   } else if (line[0] == 'W') {
-    secs = hl_u32(line + 1, 0);
+    secs = parse_u32(line + 1, 0);
     const char *comma = strchr(line, ',');
-    if (comma) p = hl_u32(comma + 1, 0);
+    if (comma) p = parse_u32(comma + 1, 0);
     if (secs < 1 || secs > 120 || p < 100 || p > 6000) secs = 0;
   } else {
     g_hl_err++;

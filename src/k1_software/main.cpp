@@ -58,7 +58,6 @@
 #include "mbedtls/sha256.h"
 #include "mbedtls/platform_util.h"
 
-#define ser SerialUSB
 
 #define N_DEFAULT 30            // run per kelompok (Bab 3)
 #define N_MAX     100
@@ -85,18 +84,9 @@ static const uint8_t PUBLIC_KEY_XY[64] = {
   0x80, 0x3F, 0x97, 0xD1, 0x63, 0xC2, 0x88, 0x8F, 0x64, 0xA6, 0xBE, 0x0E, 0xB1, 0xBB, 0xAD, 0x99
 };
 
-// ---------------------------------------------------------------------------
-// DWT CYCCNT
-static bool cyccnt_start() {
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-  DWT->CYCCNT = 0;
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-  uint32_t a = DWT->CYCCNT;
-  __NOP(); __NOP(); __NOP(); __NOP();
-  return DWT->CYCCNT != a;
-}
-
-static inline uint32_t cycles() { return DWT->CYCCNT; }
+// DWT CYCCNT, cetak, parse_u32, dan `ser` (USB CDC). Di-include SETELAH tabel konstanta di atas
+// supaya urutan data di Flash sama dengan biner yang dipakai mengukur (15 Nov).
+#include "../host_common/host_util.h"
 
 // ---------------------------------------------------------------------------
 // Entropi (H2). Mengumpulkan 32 B: 64 sampel (ADC PA0, CYCCNT, micros) + UID 96-bit chip +
@@ -163,25 +153,7 @@ static int __attribute__((noinline)) sign_digest(const uint8_t *digest, const ui
 }
 
 // ---------------------------------------------------------------------------
-// Cetak (tanpa floating point)
-static void print_hex(const uint8_t *p, size_t n) {
-  static const char H[] = "0123456789ABCDEF";
-  for (size_t i = 0; i < n; i++) { ser.write(H[p[i] >> 4]); ser.write(H[p[i] & 0xF]); }
-}
-
-// siklus -> "xxx.yyy" ms (mikro-detik dibulatkan ke bawah), 64-bit agar tidak meluap
-static void print_ms(uint32_t cyc) {
-  uint64_t us = (uint64_t)cyc * 1000000ULL / SystemCoreClock;
-  ser.printf("%lu.%03lu", (unsigned long)(us / 1000), (unsigned long)(us % 1000));
-}
-
-static uint32_t parse_u32(const char *p, uint32_t def) {
-  if (*p < '0' || *p > '9') return def;
-  uint32_t v = 0;
-  while (*p >= '0' && *p <= '9') v = v * 10 + (uint32_t)(*p++ - '0');
-  return v;
-}
-
+// Perintah USB: I (info) dan R (n kali sign)
 static void cmd_info() {
   ser.printf("# MCU clock : %lu Hz\n", (unsigned long)SystemCoreClock);
   ser.printf("# Library   : Mbed TLS %s, ECDSA secp256r1\n", MBEDTLS_VERSION_STRING);
@@ -244,36 +216,6 @@ static void cmd_run(uint32_t n) {
 }
 
 // ---------------------------------------------------------------------------
-// Tahap 2: RAM puncak. Simbol linker: awal RAM, akhir .bss, puncak stack.
-extern "C" char *sbrk(int i);
-extern char _sdata, _end, _estack;
-
-#define STACK_PAINT 0xA5A5A5A5UL
-#define HEAP_MARGIN 256                        // jarak aman di atas heap saat mengecat stack
-
-static inline uint32_t get_sp() {
-  uint32_t sp;
-  __asm__ volatile ("mov %0, sp" : "=r" (sp));
-  return sp;
-}
-
-// Cat area bebas [sbrk(0)+margin, SP-16). noinline agar SP yang dibaca = SP fungsi ini
-// (frame pemanggil di atasnya tidak ikut tertimpa). Mengembalikan batas bawah cat.
-static volatile uint32_t *__attribute__((noinline)) stack_paint() {
-  volatile uint32_t *lo = (volatile uint32_t *)(((uint32_t)sbrk(0) + HEAP_MARGIN + 3) & ~3UL);
-  volatile uint32_t *hi = (volatile uint32_t *)((get_sp() - 16) & ~3UL);
-  if (lo >= hi) return nullptr;
-  for (volatile uint32_t *p = lo; p < hi; p++) *p = STACK_PAINT;
-  return lo;
-}
-
-// Alamat terendah yang sudah tertimpa (awal stack puncak).
-static uint32_t stack_low_water(volatile uint32_t *lo) {
-  volatile uint32_t *p = lo;
-  while (*p == STACK_PAINT) p++;
-  return (uint32_t)p;
-}
-
 // Satu operasi penuh yang sama dengan R: entropi + sign. Hasil r||s dibuang.
 // g_op_cyc = latensi sign saja (jendela ukur sama dengan R: entropi di luar), dipakai tahap 5.
 static uint32_t g_op_cyc = 0;
@@ -287,45 +229,8 @@ static int __attribute__((noinline)) one_operation() {
   return ret;
 }
 
-static void cmd_ram(uint32_t n) {
-  const uint32_t total  = (uint32_t)&_estack - (uint32_t)&_sdata;    // seluruh RAM
-  const uint32_t statik = (uint32_t)&_end - (uint32_t)&_sdata;       // .data + .bss
-  const uint32_t heap0  = (uint32_t)sbrk(0) - (uint32_t)&_end;       // heap setelah boot (grup P-256)
-
-  // Pemanasan: satu operasi penuh supaya heap mencapai puncaknya sebelum stack dicat.
-  if (one_operation() != 0) { ser.println("# GAGAL: operasi pemanasan"); return; }
-  const uint32_t heap_warm = (uint32_t)sbrk(0) - (uint32_t)&_end;
-
-  ser.println("i,heap,stack_puncak,statik,pakai_total,sisa");
-  uint32_t heap_max = 0, stack_max = 0, fail = 0, heap_naik = 0;
-  for (uint32_t i = 1; i <= n; i++) {
-    volatile uint32_t *lo = stack_paint();
-    if (!lo) { ser.println("# GAGAL: area cat stack kosong"); return; }
-    const uint32_t brk0 = (uint32_t)sbrk(0);
-    int ret = one_operation();
-    const uint32_t brk1 = (uint32_t)sbrk(0);
-    const uint32_t stack = (uint32_t)&_estack - stack_low_water(lo);
-    const uint32_t heap  = brk1 - (uint32_t)&_end;
-    if (ret != 0) { fail++; ser.printf("%lu,ERR,%d\n", (unsigned long)i, ret); continue; }
-    if (brk1 != brk0) heap_naik++;              // heap tumbuh = cat stack tak sah untuk iterasi ini
-    if (heap > heap_max)   heap_max = heap;
-    if (stack > stack_max) stack_max = stack;
-    const uint32_t pakai = statik + heap + stack;
-    ser.printf("%lu,%lu,%lu,%lu,%lu,%lu\n", (unsigned long)i, (unsigned long)heap,
-               (unsigned long)stack, (unsigned long)statik, (unsigned long)pakai,
-               (unsigned long)(total - pakai));
-  }
-  const uint32_t pakai_max = statik + heap_max + stack_max;
-  ser.printf("# RAM total=%lu statik=%lu heap_boot=%lu heap_pemanasan=%lu\n", (unsigned long)total,
-             (unsigned long)statik, (unsigned long)heap0, (unsigned long)heap_warm);
-  ser.printf("# PUNCAK heap=%lu stack=%lu statik=%lu -> pakai=%lu B (%lu.%lu%%) sisa=%lu B\n",
-             (unsigned long)heap_max, (unsigned long)stack_max, (unsigned long)statik,
-             (unsigned long)pakai_max, (unsigned long)(pakai_max * 100 / total),
-             (unsigned long)(pakai_max * 1000 / total % 10), (unsigned long)(total - pakai_max));
-  ser.printf("# n=%lu gagal=%lu heap_tumbuh_saat_ukur=%lu\n", (unsigned long)n, (unsigned long)fail,
-             (unsigned long)heap_naik);
-  ser.println("# SELESAI");
-}
+// Perintah M (RAM puncak): metode dan kode di host_ram.h, memakai one_operation() di atas.
+#include "../host_common/host_ram.h"
 
 // ---------------------------------------------------------------------------
 // Tahap 5: jalur kendali run lewat USART1 ke logger (berkas bersama K1/K2).
@@ -352,155 +257,13 @@ static void cmd_ram(uint32_t n) {
 //     berjalan saat tik terakhir, selesai dulu). Pemeriksa konsistensi internal: T_obs - T_sleep
 //     harus = total segmen aktif yang diukur CYCCNT (jam inti), diukur lepas dari pewaktu.
 //   - Pembanding independen (duty pin PB1 di logger) belum ada; pembacaan balik IDR PB1 dilaporkan.
-#define PIN_STATUS_HI() (GPIOB->BSRR = GPIO_BSRR_BS1)
-#define PIN_STATUS_LO() (GPIOB->BSRR = GPIO_BSRR_BR1)
-
-static bool hw_time_init() {
-  __HAL_RCC_TIM2_CLK_ENABLE();
-  __HAL_RCC_TIM3_CLK_ENABLE();
-  const uint32_t pclk1 = HAL_RCC_GetPCLK1Freq();
-  const uint32_t tclk  = (RCC->CFGR & RCC_CFGR_PPRE1) ? 2 * pclk1 : pclk1;   // jam pewaktu APB1
-  if (tclk == 0 || (tclk % 1000000UL) != 0) return false;
-  TIM2->CR1 = 0; TIM3->CR1 = 0;
-  TIM2->PSC = tclk / 1000000UL - 1;
-  TIM2->ARR = 0xFFFF;
-  TIM2->CR2 = TIM_CR2_MMS_1;                    // TRGO = update
-  TIM2->EGR = TIM_EGR_UG;                       // muat PSC (TIM3 belum jadi budak)
-  TIM3->PSC = 0;
-  TIM3->ARR = 0xFFFF;
-  TIM3->SMCR = TIM_SMCR_TS_0;                   // trigger = ITR1 (TIM2 TRGO)
-  TIM3->SMCR |= TIM_SMCR_SMS;                   // SMS=111: clock eksternal mode 1
-  TIM2->CNT = 0; TIM3->CNT = 0;
-  TIM3->CR1 = TIM_CR1_CEN;
-  TIM2->CR1 = TIM_CR1_CEN;
-  return true;
-}
-
-// Waktu hardware 32-bit (us). Ulangi bila bagian atas berubah di tengah baca, atau bila bagian
-// bawah baru saja membungkus (TRGO ke TIM3 butuh beberapa siklus).
-static inline uint32_t hw_us() {
-  uint32_t hi, lo, hi2;
-  do { hi = TIM3->CNT; lo = TIM2->CNT; hi2 = TIM3->CNT; } while (hi != hi2 || lo < 4);
-  return (hi << 16) | lo;
-}
-
-static volatile uint32_t g_ticks, g_K, g_arrived, g_t_last, g_t_first, g_tick_min, g_tick_max;
-static volatile bool     g_pending, g_end;
-
-static void tick_isr() {
-  const uint32_t t = hw_us();
-  const uint32_t dt = t - g_t_last;
-  g_t_last = t;
-  if (g_ticks == 0) g_t_first = dt;
-  else { if (dt < g_tick_min) g_tick_min = dt; if (dt > g_tick_max) g_tick_max = dt; }
-  g_ticks++;
-  if (g_ticks >= g_K) g_end = true;
-  else { g_arrived++; g_pending = true; }
-}
+#include "../host_common/host_time.h"
 
 // ---------------------------------------------------------------------------
-// Tahap 4: permintaan NYATA dari attacker lewat USART2 (PA3 = RX), menggantikan TIM4 sintetis
-// (perintah A). Penerimaan: DMA1 kanal 6 mengisi satu frame 36 B; interupsi selesai-transfer (TC)
-// terjadi SEKALI per frame, jadi satu frame = satu bangun CPU (paper). Deteksi idle-line lewat
-// interupsi USART2 tak dipakai karena core Arduino sudah mendefinisikan USART2_IRQHandler
-// (tabrakan simbol); gantinya: bila frame tak valid (sinkron geser, byte hilang), ISR membuang
-// byte sampai flag IDLE USART terangkat (atau 10 ms) lalu memasang ulang DMA, sehingga
-// perataan frame pulih pada jeda antar-frame (attacker >= 100 ms antar frame).
-// Frame (src/attacker/attacker.cpp): [0]=0xA5 [1..2]=seq uint16 LE [3..34]=isi [35]=XOR [0..34].
-// Isi frame TIDAK dipakai: yang ditandatangani tetap DIGEST konstan (variabel kontrol K1/K2).
-// Jendela berakhir oleh SATU interupsi TIM4 satu-tembakan (bukan tik tiap detik, agar tak ada
-// bangun tambahan). Permintaan sah yang tiba saat sudah ada yang menunggu menyatu (buffer satu
-// frame): terlewat = datang - dilayani; hilang = selisih seq (frame yang tak pernah sampai).
-#define RX_FRAME_LEN 36
-#define RX_SOF       0xA5
-#define RX_BAUD      115200UL
+// Tahap 4: permintaan NYATA dari attacker lewat USART2 (DMA, satu bangun per frame): host_rx.h.
+#include "../host_common/host_rx.h"
 
-static uint8_t g_rx[RX_FRAME_LEN];
-static volatile uint32_t g_rx_ok, g_rx_bad, g_rx_lost, g_rx_first_seq, g_rx_last_seq;
-static volatile bool     g_rx_have;
-static uint8_t g_rx_badfirst[RX_FRAME_LEN];   // salinan frame bad pertama (diagnosis)
-static volatile uint32_t g_rx_badfirst_wait;      // lama menunggu IDLE di ISR (us) pada bad pertama
-
-static void rx_arm() {
-  DMA1_Channel6->CCR &= ~DMA_CCR_EN;
-  DMA1_Channel6->CNDTR = RX_FRAME_LEN;
-  DMA1_Channel6->CCR |= DMA_CCR_EN;
-}
-
-static void rx_init() {                         // sekali di setup; penerimaan baru aktif di rx_start()
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_USART2_CLK_ENABLE();
-  __HAL_RCC_DMA1_CLK_ENABLE();
-  GPIOA->CRL = (GPIOA->CRL & ~(0xFUL << 12)) | (0x4UL << 12);   // PA3: input floating
-  USART2->CR1 = 0; USART2->CR2 = 0;
-  USART2->BRR = (HAL_RCC_GetPCLK1Freq() + RX_BAUD / 2) / RX_BAUD;
-  USART2->CR3 = USART_CR3_DMAR;
-  USART2->CR1 = USART_CR1_UE;                   // RE dinyalakan di rx_start()
-  DMA1_Channel6->CCR = 0;
-  DMA1_Channel6->CPAR = (uint32_t)&USART2->DR;
-  DMA1_Channel6->CMAR = (uint32_t)g_rx;
-  DMA1_Channel6->CCR = DMA_CCR_MINC | DMA_CCR_TCIE;
-  NVIC_SetPriority(DMA1_Channel6_IRQn, 1);
-  NVIC_EnableIRQ(DMA1_Channel6_IRQn);
-}
-
-static void rx_start() {
-  g_rx_ok = g_rx_bad = g_rx_lost = g_rx_first_seq = g_rx_last_seq = 0;
-  g_rx_have = false;
-  g_rx_badfirst_wait = 0;
-  memset(g_rx_badfirst, 0, RX_FRAME_LEN);
-  (void)USART2->SR; (void)USART2->DR;           // buang sisa
-  DMA1->IFCR = DMA_IFCR_CGIF6;
-  NVIC_ClearPendingIRQ(DMA1_Channel6_IRQn);
-  USART2->CR1 |= USART_CR1_RE;
-  rx_arm();
-#ifdef K1_RX_TEST_MISALIGN
-  // HANYA UJI: frame pertama diharapkan 35 B (bukan 36) -> sengaja salah rata, untuk membuktikan
-  // pemulihan (bad=1 lalu semua frame berikutnya ok). Aktifkan: PLATFORMIO_BUILD_FLAGS=-DK1_RX_TEST_MISALIGN
-  DMA1_Channel6->CCR &= ~DMA_CCR_EN;
-  DMA1_Channel6->CNDTR = RX_FRAME_LEN - 1;
-  DMA1_Channel6->CCR |= DMA_CCR_EN;
-#endif
-}
-
-static void rx_stop() {
-  DMA1_Channel6->CCR &= ~DMA_CCR_EN;
-  USART2->CR1 &= ~USART_CR1_RE;
-}
-
-extern "C" void DMA1_Channel6_IRQHandler(void) {
-  DMA1->IFCR = DMA_IFCR_CGIF6;
-  uint8_t x = 0;
-  for (int i = 0; i < RX_FRAME_LEN - 1; i++) x ^= g_rx[i];
-  if (g_rx[0] == RX_SOF && x == g_rx[RX_FRAME_LEN - 1]) {
-    const uint16_t seq = (uint16_t)g_rx[1] | ((uint16_t)g_rx[2] << 8);
-    if (g_rx_have) g_rx_lost += (uint16_t)(seq - (uint16_t)(g_rx_last_seq + 1));
-    else { g_rx_first_seq = seq; g_rx_have = true; }
-    g_rx_last_seq = seq;
-    g_rx_ok++;
-    g_arrived++;
-    g_pending = true;
-  } else {
-    if (g_rx_bad++ == 0) memcpy(g_rx_badfirst, g_rx, RX_FRAME_LEN);
-    // PENTING: matikan permintaan DMA USART selama resync. Bila tidak, byte sisa yang tiba saat
-    // kanal nonaktif membuat permintaan DMA 'terkunci'; saat kanal dipasang ulang DMA membaca DR
-    // basi (byte checksum) sebagai byte pertama frame berikutnya dan semua frame jadi bad (terbukti
-    // di uji K1_RX_TEST_MISALIGN, 14 Nov). DMAR dinyalakan lagi SESUDAH kanal dipasang ulang.
-    USART2->CR3 &= ~USART_CR3_DMAR;
-    (void)USART2->SR; (void)USART2->DR;         // hapus IDLE basi
-    const uint32_t t = hw_us();
-    while (!(USART2->SR & USART_SR_IDLE) && (uint32_t)(hw_us() - t) < 10000UL) {
-      if (USART2->SR & USART_SR_RXNE) (void)USART2->DR;
-    }
-    if (g_rx_bad == 1) g_rx_badfirst_wait = (uint32_t)(hw_us() - t);
-    (void)USART2->SR; (void)USART2->DR;
-    rx_arm();
-    USART2->CR3 |= USART_CR3_DMAR;
-    return;
-  }
-  rx_arm();
-}
-
+// Akhir jendela attacker: TIM4 satu tembakan (bukan tik tiap detik, agar tak ada bangun tambahan).
 static void end_isr() { g_end = true; }
 
 // Hasil jendela terakhir, untuk dibaca lewat SWD (volatile + non-static agar simbolnya ada di nm).
