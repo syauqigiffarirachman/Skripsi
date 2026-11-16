@@ -36,11 +36,11 @@
 #define Console  Serial2    // USART2 PA2(TX)/PA3(RX)  -> CH340
 #define HostLink Serial1    // USART1 PA9(TX)/PA10(RX) -> host
 
+// Format frame (FRAME_SOF, FRAME_PAYLOAD_LEN, FRAME_LEN, FRAME_BAUD) didefinisikan SATU kali di
+// lib/bench_proto/proto_attacker_host.h, dipakai bersama penerima di host.
+#include <proto_attacker_host.h>
+
 static const uint32_t CONSOLE_BAUD  = 115200;
-static const uint32_t HOST_BAUD     = 115200;   // sesuaikan dengan firmware host nanti
-static const uint8_t  FRAME_SOF     = 0xA5;
-static const uint8_t  PAYLOAD_LEN   = 32;
-static const uint8_t  FRAME_LEN     = 1 + 2 + PAYLOAD_LEN + 1;   // 36 byte
 
 static HardwareTimer  Ticker(TIM3);         // pewaktu hardware: ritme pengiriman frame
 
@@ -65,7 +65,7 @@ static void buildFrame(uint16_t seq) {
   g_frame[0] = FRAME_SOF;
   g_frame[1] = (uint8_t)(seq & 0xFF);
   g_frame[2] = (uint8_t)(seq >> 8);
-  for (uint8_t i = 0; i < PAYLOAD_LEN; i++) {
+  for (uint8_t i = 0; i < FRAME_PAYLOAD_LEN; i++) {
     g_frame[3 + i] = (uint8_t)(0x30 + i);   // isi tetap, mudah diperiksa saat debug
   }
   uint8_t x = 0;
@@ -144,7 +144,7 @@ static void printHelp() {
 
 void setup() {
   Console.begin(CONSOLE_BAUD);    // USART2 lewat CH340
-  HostLink.begin(HOST_BAUD);      // USART1 ke host
+  HostLink.begin(FRAME_BAUD);     // USART1 ke host
   delay(50);
   Console.println();
   Console.println(F("=== Node pembangkit permintaan - tahap 1 (pewaktu TIM3) ==="));

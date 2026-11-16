@@ -1,0 +1,88 @@
+{
+  "commit": "448befecff1d",
+  "diperbarui": "2026-11-16T09:03:57",
+  "env": {
+    "attacker": {
+      "bss": 3160,
+      "data": 120,
+      "sha256": "faf092a1fff6f2def7e93b690bfd9eca41a92137d3d33ed6ee66fe77d53cbde9",
+      "text": 15448,
+      "ukuran": 15568
+    },
+    "genericSTM32F103C8": {
+      "bss": 5460,
+      "data": 676,
+      "sha256": "545d668a38f028826469db3806f4a6779b902c6196164c1886882636b6ff378d",
+      "text": 41128,
+      "ukuran": 41804
+    },
+    "k1_rx": {
+      "bss": 5456,
+      "data": 632,
+      "sha256": "9c2f8ef50b0c406a7dcf4f112043b0c77e1dca46ed3259d2260e0e3d4761fc6c",
+      "text": 26472,
+      "ukuran": 27104
+    },
+    "k1_sw": {
+      "bss": 7788,
+      "data": 652,
+      "sha256": "c55d8ca31cc01e58d7043d88f723162d25f391aeb02312fb073c01110a79f0e6",
+      "text": 55140,
+      "ukuran": 55792
+    },
+    "k1_sw_auto": {
+      "bss": 7780,
+      "data": 652,
+      "sha256": "7ae9623058e7e0a7cddd047e92743dec24bc7224505fb835eddbf192fb7287b3",
+      "text": 54656,
+      "ukuran": 55308
+    },
+    "k2_hw": {
+      "bss": 7880,
+      "data": 636,
+      "sha256": "4df67c4f99757ba80f3f3aa06231c6902b361f105d04d98a6dba028cd7834cb0",
+      "text": 39520,
+      "ukuran": 40156
+    },
+    "logger": {
+      "bss": 13968,
+      "data": 640,
+      "sha256": "7ac6b702300d58abb06fcaa2451e7e53801d40424203ee77df1a34cdf3a27e68",
+      "text": 46172,
+      "ukuran": 46812
+    },
+    "logger_selftest": {
+      "bss": 13968,
+      "data": 640,
+      "sha256": "b17f28d69113441d1c39211713985fc9d3c3df1a67ba2cc9ce74bc9f925a25af",
+      "text": 49728,
+      "ukuran": 50368
+    },
+    "sederhana_stlink": {
+      "bss": 5556,
+      "data": 644,
+      "sha256": "1ea938dce28269804cac6d146dc2f7273f81ea2602028031d388416488774f08",
+      "text": 33136,
+      "ukuran": 33780
+    },
+    "softwaretes": {
+      "bss": 5752,
+      "data": 664,
+      "sha256": "73273d7b16a7adb5558389c77ddf4c9e370df2cf81b6c1ea37cc47ed3d110f41",
+      "text": 42972,
+      "ukuran": 43640
+    },
+    "softwaretes_mbedtls": {
+      "bss": 6912,
+      "data": 656,
+      "sha256": "ffe2c43fcc3a17855f7b42865a5a5b1704dbf84244e3c457d5b7649637f8340a",
+      "text": 52300,
+      "ukuran": 52956
+    }
+  },
+  "paket": {
+    "framework-arduinoststm32": "4.21001.250617",
+    "platform-ststm32": "19.3.0",
+    "toolchain-gccarmnoneeabi": "1.120301.0"
+  }
+}

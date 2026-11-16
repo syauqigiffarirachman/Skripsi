@@ -1,5 +1,5 @@
 // ============================================================================
-// Driver INA226 (I2C) - BEBAS dari jenis STM32 (dipakai logger F030 dan F103).
+// Driver INA226 (I2C) - BEBAS dari jenis STM32 (dipakai logger F103).
 // Hanya bergantung pada Arduino Wire. Satu objek per perangkat; alamat dan bus diberikan pemanggil.
 // Register 16-bit big-endian; baca = tulis pointer, repeated start, baca 2 byte.
 // ============================================================================

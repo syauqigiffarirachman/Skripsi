@@ -1,0 +1,8 @@
+{
+  "name": "bench_proto",
+  "version": "1.0.0",
+  "description": "Definisi bersama antar-board bangku uji skripsi: format frame attacker->host (proto_attacker_host.h) dan protokol baris host<->logger (proto_host_logger.h). Header-only, hanya konstanta dan makro.",
+  "keywords": "protokol, frame, uart",
+  "frameworks": "*",
+  "platforms": "*"
+}

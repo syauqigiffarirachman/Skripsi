@@ -28,7 +28,7 @@
 //   L3 bila gagal >= 3 kali beruntun, dan di laporan bila init gagal. Kejadian 15 Nov (err=4 setelah
 //   cabut-pasang kabel, hanya pulih lewat reset SWD) adalah alasan tahap ini.
 // L5 (15 Nov): USART1 (PA9 TX -> PA10 host, PA10 RX <- PA9 host, 115200) = jalur kendali run ke host
-//   (protokol di src/host_common/host_link.h): logger mengirim ?, S<detik>, W<detik>,<p>; host
+//   (protokol di lib/host_common/host_link.h): logger mengirim ?, S<detik>, W<detik>,<p>; host
 //   membalas >START, >END + hasil, >L latensi, >DONE.
 // L6 (15 Nov): perekaman satu run + keluaran CSV streaming ke PC (USB IN). Baris:
 //     #RUN,BEGIN,<no>,<cmd>,<arg>,<tik_hz>,<build>      awal run
@@ -53,10 +53,11 @@
 // ============================================================================
 #include <Arduino.h>
 #include <Wire.h>
-#include "../logger_common/ina226.h"
-#include "../logger_common/l3_capture.h"
-#include "../logger_common/ina_report.h"
-#include "../logger_common/edge_stats.h"
+#include "../../logger_common/ina226.h"
+#include "../../logger_common/l3_capture.h"
+#include "../../logger_common/ina_report.h"
+#include "../../logger_common/edge_stats.h"
+#include <proto_host_logger.h>                    // perintah/balasan/batas jalur host<->logger (lib/bench_proto)
 #include <HardwareTimer.h>
 #include "usbd_cdc.h"
 
@@ -403,10 +404,10 @@ static void run_capture(uint32_t cmd, uint32_t arg) {
         memcpy(p, hl, hn); p += hn;  *p++ = '\r'; *p++ = '\n';
         ser.write((const uint8_t*)b, (size_t)(p - b));
         h_lines++;
-        if (st == ST_WAIT_START && !strncmp(hl, ">START", 6)) { st = ST_WINDOW; t_state = now; }
-        else if (st == ST_WINDOW && !strncmp(hl, ">END", 4))  { st = ST_POST;   t_state = now; }
-        else if (st == ST_POST && !strncmp(hl, ">DONE", 5))   { st = ST_END; }
-        else if (!strncmp(hl, ">ERR", 4))                     { status = "ERR_HOST"; st = ST_END; }
+        if (st == ST_WAIT_START && LINK_HAS_PREFIX(hl, LINK_R_START)) { st = ST_WINDOW; t_state = now; }
+        else if (st == ST_WINDOW && LINK_HAS_PREFIX(hl, LINK_R_END))  { st = ST_POST;   t_state = now; }
+        else if (st == ST_POST && LINK_HAS_PREFIX(hl, LINK_R_DONE))   { st = ST_END; }
+        else if (LINK_HAS_PREFIX(hl, LINK_R_ERR))                     { status = "ERR_HOST"; st = ST_END; }
       }
       hn = 0;
     }
@@ -416,9 +417,9 @@ static void run_capture(uint32_t cmd, uint32_t arg) {
     if (st == ST_PRE && in_state >= RUN_PRE_MS * ms_t) {
       if (cmd == 7) { st = ST_WINDOW; t_state = now; }
       else {
-        if (cmd == 4)      HostSer.printf("S%lu\n", (unsigned long)arg);
-        else if (cmd == 5) HostSer.printf("W%lu,1000\n", (unsigned long)arg);
-        else               HostSer.printf("W%lu,100\n", (unsigned long)arg);
+        if (cmd == 4)      HostSer.printf(LINK_CMD_UART "%lu\n", (unsigned long)arg);
+        else if (cmd == 5) HostSer.printf(LINK_CMD_SYN "%lu,1000\n", (unsigned long)arg);
+        else               HostSer.printf(LINK_CMD_SYN "%lu,100\n", (unsigned long)arg);
         st = ST_WAIT_START; t_state = now;
       }
     } else if (st == ST_WAIT_START && in_state >= RUN_START_TO_MS * ms_t) {
@@ -461,7 +462,7 @@ static void run_capture(uint32_t cmd, uint32_t arg) {
 // Tanya identitas host (perintah '?'); balasan dicetak sebagai baris h.
 static void host_ping() {
   while (HostSer.available() > 0) (void)HostSer.read();
-  HostSer.print("?\n");
+  HostSer.print(LINK_CMD_ID "\n");
   char hl[64];
   uint8_t hn = 0;
   const uint32_t t = millis();
@@ -510,7 +511,7 @@ void setup() {
   pinMode(PIN_LED, OUTPUT);
   digitalWrite(PIN_LED, HIGH);                     // padam
   ser.begin(115200);                               // tidak menunggu koneksi PC
-  HostSer.begin(115200);                           // L5: USART1 ke host (PA9 TX, PA10 RX)
+  HostSer.begin(LINK_BAUD);                        // L5: USART1 ke host (PA9 TX, PA10 RX)
   Wire.setSDA(PB7);
   Wire.setSCL(PB6);
   Wire.begin();
@@ -529,7 +530,8 @@ static void exec_cmd(uint32_t cmd, uint32_t arg) {
     case 2: run_report(); break;
     case 3: host_ping(); break;
     case 4: case 5: case 6:
-      if (arg < 1 || arg > 120 || (cmd == 4 && arg > 80)) { ser.print(F("#ERR,arg\r\n")); break; }
+      // Batas sama dengan host (proto_host_logger.h): perintah yang pasti ditolak host tidak dikirim.
+      if (arg < 1 || arg > LINK_W_SECS_MAX || (cmd == 4 && arg > LINK_S_SECS_MAX)) { ser.print(F("#ERR,arg\r\n")); break; }
       run_capture(cmd, arg);
       break;
     case 7:
