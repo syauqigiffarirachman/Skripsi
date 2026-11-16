@@ -8,7 +8,7 @@
 //       didefinisikan eksplisit (di bawah), SAMA JENISNYA dengan K1 (tools/k1_check.py);
 //   (3) protokol 1-Wire (XPC) ditulis sekecil mungkin, tanpa LED, tanpa mode manual, tanpa
 //       pengukuran RAM/hash (itu tahap berikutnya).
-// Pengganti firmware monolit lama src/main.cpp (tetap ada sebagai referensi, tidak dipakai).
+// Pengganti firmware monolit lama src/host/eksperimen/monolit/ (tetap ada sebagai referensi, tidak dipakai).
 //
 // Yang berbeda dari firmware lama (dan harus dinyatakan di laporan):
 //   - Pencarian ROM (ds.search) dilakukan SEKALI di setup(), bukan di setiap sign. Firmware lama
@@ -73,7 +73,7 @@ static const uint8_t DIGEST[32] = {
 
 // DWT CYCCNT, cetak, parse_u32, dan `ser` (USB CDC). Di-include SETELAH tabel konstanta di atas
 // supaya urutan data di Flash sama dengan biner yang dipakai mengukur (15 Nov).
-#include "../host_common/host_util.h"
+#include "../../host_common/host_util.h"
 
 static OneWire ds(PIN_ONEWIRE);
 static uint8_t g_rom[8];
@@ -204,22 +204,22 @@ static int __attribute__((noinline)) one_operation() {
 }
 
 // Perintah M (RAM puncak): metode dan kode di host_ram.h, memakai one_operation() di atas.
-#include "../host_common/host_ram.h"
+#include "../../host_common/host_ram.h"
 
 // ---------------------------------------------------------------------------
 // Tahap 5: jalur kendali run lewat USART1 ke logger (berkas bersama K1/K2).
 #define HL_ARCH  "K2"
 #define HL_READY (g_rom_ok)
-#include "../host_common/host_link.h"
+#include "../../host_common/host_link.h"
 
 // ---------------------------------------------------------------------------
 // Tahap 3: WFI + pewaktu hardware + pin status PB1 + %S_cpu (mekanisme IDENTIK dengan K1,
-// src/k1_software/main.cpp tahap 3; lihat penjelasan lengkap di sana). Fungsi tahap ini satu:
+// src/host/k1_software/main.cpp tahap 3; lihat penjelasan lengkap di sana). Fungsi tahap ini satu:
 // satu jendela pengamatan di mana CPU tidur di antara permintaan sintetis TIM4 (perintah W).
 // Tambahan khusus K2 (sesuai paper): selama penantian chip (130 ms) CPU juga tidur lewat WFI,
 // dibangunkan oleh pewaktu TIM1 (interupsi), bukan delay() sibuk. Fase 1-Wire kirim/baca
 // (bit-banging) tetap aktif karena tak bisa tidur. Di luar jendela (I, R, M) wait_ms = delay().
-#include "../host_common/host_time.h"
+#include "../../host_common/host_time.h"
 
 static volatile bool     g_wait_done;                  // penantian chip selesai (TIM1)
 static bool              g_in_window = false;
@@ -275,7 +275,7 @@ static void wait_ms(uint32_t ms) {
 
 // ---------------------------------------------------------------------------
 // Tahap 4: permintaan NYATA dari attacker lewat USART2 (DMA, satu bangun per frame): host_rx.h.
-#include "../host_common/host_rx.h"
+#include "../../host_common/host_rx.h"
 
 // Akhir jendela attacker: TIM4 satu tembakan (bukan tik tiap detik, agar tak ada bangun tambahan).
 static void end_isr() { g_end = true; }
@@ -384,7 +384,7 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart = false) {
                (unsigned long)g_rx_ok, (unsigned long)g_rx_bad, (unsigned long)g_rx_lost,
                (unsigned long)g_rx_first_seq, (unsigned long)g_rx_last_seq, (unsigned long)sent);
     if (g_rx_bad) {
-      ser.print("# bad pertama: "); print_hex(g_rx_badfirst, RX_FRAME_LEN);
+      ser.print("# bad pertama: "); print_hex(g_rx_badfirst, FRAME_LEN);
       ser.printf(" (tunggu IDLE %lu us)\n", (unsigned long)g_rx_badfirst_wait);
     }
   } else {
@@ -448,14 +448,14 @@ void loop() {
       uint32_t s = parse_u32(line + 1, 10), p = 1000;
       const char *comma = strchr(line, ',');
       if (comma) p = parse_u32(comma + 1, 1000);
-      if (s < 1 || s > 120 || p < 100 || p > 6000) { ser.println("-1"); break; }
+      if (s < 1 || s > LINK_W_SECS_MAX || p < LINK_W_P_MIN_MS || p > LINK_W_P_MAX_MS) { ser.println("-1"); break; }
       cmd_window(s, p);
       break;
     }
     case 'A': {
       // A[detik]  jendela dengan permintaan NYATA dari attacker (UART2), default 60 s, maks 80 s
       uint32_t s = parse_u32(line + 1, 60);
-      if (s < 1 || s > 80) { ser.println("-1"); break; }
+      if (s < 1 || s > LINK_S_SECS_MAX) { ser.println("-1"); break; }
       cmd_window(s, 1000, true);
       break;
     }

@@ -8,7 +8,7 @@
 // flag IDLE USART terangkat (atau 10 ms) lalu memasang ulang DMA, sehingga perataan frame pulih
 // pada jeda antar-frame (attacker >= 100 ms antar frame).
 //
-// Frame (src/attacker/attacker.cpp): [0]=0xA5 [1..2]=seq uint16 LE [3..34]=isi [35]=XOR [0..34].
+// Frame: lihat lib/bench_proto/proto_attacker_host.h ([0]=SOF [1..2]=seq LE [3..34]=isi [35]=XOR).
 // Isi frame TIDAK dipakai: yang ditandatangani tetap DIGEST konstan (variabel kontrol K1/K2).
 // Hilang (g_rx_lost) = selisih nomor urut, yaitu frame yang tak pernah sampai.
 //
@@ -18,20 +18,17 @@
 // ============================================================================
 #pragma once
 #include "host_time.h"
+#include <proto_attacker_host.h>   // FRAME_LEN, FRAME_SOF, FRAME_BAUD (lib/bench_proto, satu definisi dengan attacker)
 
-#define RX_FRAME_LEN 36
-#define RX_SOF       0xA5
-#define RX_BAUD      115200UL
-
-static uint8_t g_rx[RX_FRAME_LEN];
+static uint8_t g_rx[FRAME_LEN];
 static volatile uint32_t g_rx_ok, g_rx_bad, g_rx_lost, g_rx_first_seq, g_rx_last_seq;
 static volatile bool     g_rx_have;
-static uint8_t g_rx_badfirst[RX_FRAME_LEN];   // salinan frame bad pertama (diagnosis)
+static uint8_t g_rx_badfirst[FRAME_LEN];   // salinan frame bad pertama (diagnosis)
 static volatile uint32_t g_rx_badfirst_wait;      // lama menunggu IDLE di ISR (us) pada bad pertama
 
 static void rx_arm() {
   DMA1_Channel6->CCR &= ~DMA_CCR_EN;
-  DMA1_Channel6->CNDTR = RX_FRAME_LEN;
+  DMA1_Channel6->CNDTR = FRAME_LEN;
   DMA1_Channel6->CCR |= DMA_CCR_EN;
 }
 
@@ -41,7 +38,7 @@ static void rx_init() {                         // sekali di setup; penerimaan b
   __HAL_RCC_DMA1_CLK_ENABLE();
   GPIOA->CRL = (GPIOA->CRL & ~(0xFUL << 12)) | (0x4UL << 12);   // PA3: input floating
   USART2->CR1 = 0; USART2->CR2 = 0;
-  USART2->BRR = (HAL_RCC_GetPCLK1Freq() + RX_BAUD / 2) / RX_BAUD;
+  USART2->BRR = (HAL_RCC_GetPCLK1Freq() + FRAME_BAUD / 2) / FRAME_BAUD;
   USART2->CR3 = USART_CR3_DMAR;
   USART2->CR1 = USART_CR1_UE;                   // RE dinyalakan di rx_start()
   DMA1_Channel6->CCR = 0;
@@ -56,7 +53,7 @@ static void rx_start() {
   g_rx_ok = g_rx_bad = g_rx_lost = g_rx_first_seq = g_rx_last_seq = 0;
   g_rx_have = false;
   g_rx_badfirst_wait = 0;
-  memset(g_rx_badfirst, 0, RX_FRAME_LEN);
+  memset(g_rx_badfirst, 0, FRAME_LEN);
   (void)USART2->SR; (void)USART2->DR;           // buang sisa
   DMA1->IFCR = DMA_IFCR_CGIF6;
   NVIC_ClearPendingIRQ(DMA1_Channel6_IRQn);
@@ -66,7 +63,7 @@ static void rx_start() {
   // HANYA UJI: frame pertama diharapkan 35 B (bukan 36) -> sengaja salah rata, untuk membuktikan
   // pemulihan (bad=1 lalu semua frame berikutnya ok). Aktifkan: PLATFORMIO_BUILD_FLAGS=-DK1_RX_TEST_MISALIGN
   DMA1_Channel6->CCR &= ~DMA_CCR_EN;
-  DMA1_Channel6->CNDTR = RX_FRAME_LEN - 1;
+  DMA1_Channel6->CNDTR = FRAME_LEN - 1;
   DMA1_Channel6->CCR |= DMA_CCR_EN;
 #endif
 }
@@ -79,8 +76,8 @@ static void rx_stop() {
 extern "C" void DMA1_Channel6_IRQHandler(void) {
   DMA1->IFCR = DMA_IFCR_CGIF6;
   uint8_t x = 0;
-  for (int i = 0; i < RX_FRAME_LEN - 1; i++) x ^= g_rx[i];
-  if (g_rx[0] == RX_SOF && x == g_rx[RX_FRAME_LEN - 1]) {
+  for (int i = 0; i < FRAME_LEN - 1; i++) x ^= g_rx[i];
+  if (g_rx[0] == FRAME_SOF && x == g_rx[FRAME_LEN - 1]) {
     const uint16_t seq = (uint16_t)g_rx[1] | ((uint16_t)g_rx[2] << 8);
     if (g_rx_have) g_rx_lost += (uint16_t)(seq - (uint16_t)(g_rx_last_seq + 1));
     else { g_rx_first_seq = seq; g_rx_have = true; }
@@ -89,7 +86,7 @@ extern "C" void DMA1_Channel6_IRQHandler(void) {
     g_arrived++;
     g_pending = true;
   } else {
-    if (g_rx_bad++ == 0) memcpy(g_rx_badfirst, g_rx, RX_FRAME_LEN);
+    if (g_rx_bad++ == 0) memcpy(g_rx_badfirst, g_rx, FRAME_LEN);
     // PENTING: matikan permintaan DMA USART selama resync. Bila tidak, byte sisa yang tiba saat
     // kanal nonaktif membuat permintaan DMA 'terkunci'; saat kanal dipasang ulang DMA membaca DR
     // basi (byte checksum) sebagai byte pertama frame berikutnya dan semua frame jadi bad (terbukti

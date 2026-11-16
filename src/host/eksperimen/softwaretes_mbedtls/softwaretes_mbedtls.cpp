@@ -4,7 +4,7 @@
 // Library : Mbed TLS 3.6.7 (lib/mbedtls), profil "portable C" = semua optimasi opsional MATI
 //           (tanpa assembly, tanpa reduksi NIST, tanpa tabel comb, window 2) -> lihat
 //           include/mbedtls_heavy_config.h. Ini batas ATAS beban software (worst case);
-//           firmware micro-ecc di src/softwaretes/ adalah batas BAWAH (best case).
+//           firmware micro-ecc di src/host/eksperimen/softwaretes/ adalah batas BAWAH (best case).
 // Metrik  : latensi (DWT->CYCCNT), RAM (statik, puncak heap, puncak stack per operasi),
 //           %S_cpu (waktu di WFI / panjang jendela), serta pin TRIG/SLEEP/WINDOW untuk
 //           sinkronisasi profil arus (include/powertest.h).
@@ -55,7 +55,7 @@
 #define LOG_MAX            128      // jumlah baris latensi per jendela yang disimpan
 
 // ---------------------------------------------------------------------------
-// Data uji konstan (identik dengan src/softwaretes/ agar r||s bisa dibandingkan lintas library).
+// Data uji konstan (identik dengan src/host/eksperimen/softwaretes/ agar r||s bisa dibandingkan lintas library).
 // Digest = SHA-256("Skripsi ECDSA P-256 software vs DS28E38")
 static const uint8_t DIGEST[32] = {
   0xD7, 0x2C, 0x10, 0x39, 0x78, 0x44, 0x3C, 0x67, 0xEA, 0xD7, 0x54, 0x29, 0x10, 0xF0, 0xEB, 0xF1,

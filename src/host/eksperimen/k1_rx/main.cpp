@@ -5,7 +5,7 @@
 // dan utuh. Tidak ada ECDSA, DMA, WFI, atau jendela 60 s (itu tahap berikutnya).
 //
 // Jalur: attacker PA9 -> (resistor seri ~1 kOhm) -> PA3 host (USART2 RX), ground bersama.
-// Frame (format sama dengan src/attacker/attacker.cpp):
+// Frame (format sama dengan src/attacker/main.cpp):
 //   [0]=0xA5  [1..2]=seq uint16 LE  [3..34]=payload 32 B  [35]=XOR byte [0..34]
 //
 // Perintah (USB CDC 115200, akhiri newline):

@@ -28,7 +28,7 @@
 //   L3 bila gagal >= 3 kali beruntun, dan di laporan bila init gagal. Kejadian 15 Nov (err=4 setelah
 //   cabut-pasang kabel, hanya pulih lewat reset SWD) adalah alasan tahap ini.
 // L5 (15 Nov): USART1 (PA9 TX -> PA10 host, PA10 RX <- PA9 host, 115200) = jalur kendali run ke host
-//   (protokol di lib/host_common/host_link.h): logger mengirim ?, S<detik>, W<detik>,<p>; host
+//   (protokol di lib/bench_proto/proto_host_logger.h): logger mengirim ?, S<detik>, W<detik>,<p>; host
 //   membalas >START, >END + hasil, >L latensi, >DONE.
 // L6 (15 Nov): perekaman satu run + keluaran CSV streaming ke PC (USB IN). Baris:
 //     #RUN,BEGIN,<no>,<cmd>,<arg>,<tik_hz>,<build>      awal run

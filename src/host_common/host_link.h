@@ -1,6 +1,6 @@
 // ============================================================================
 // TAHAP 5 (host): jalur kendali run lewat USART1 ke logger - DIPAKAI BERSAMA K1 dan K2
-// (di-include oleh src/k1_software/main.cpp dan src/k2_hardware/main.cpp; blok ini IDENTIK
+// (di-include oleh src/host/k1_software/main.cpp dan src/host/k2_hardware/main.cpp; blok ini IDENTIK
 // di keduanya karena satu berkas).
 //
 // Alasan: di bangku ukur USB-C host hanya daya (tanpa D+/D-), jadi jendela pengamatan tidak bisa
@@ -11,7 +11,7 @@
 //   - Register USART1 langsung, TANPA interupsi dan TANPA DMA: tidak ada sumber bangun baru bagi
 //     WFI di dalam jendela. Penerimaan di-polling dari loop() (hanya di LUAR jendela); pengiriman
 //     blocking. Selama jendela host tidak mengirim dan tidak membaca apa pun di jalur ini.
-//   - Protokol baris ASCII (diakhiri '\n'), mudah dilihat di log:
+//   - Protokol baris ASCII (diakhiri '\n'); definisi resmi di lib/bench_proto/proto_host_logger.h:
 //       logger -> host   ?            minta identitas
 //                        S<detik>     RUN_START: jendela dengan permintaan NYATA attacker (1..80 s)
 //                        W<detik>,<p> RUN_START: jendela dengan permintaan sintetis TIM4 tiap p ms
@@ -32,8 +32,8 @@
 #include <Arduino.h>
 #include <stdarg.h>
 #include "host_util.h"
+#include <proto_host_logger.h>   // perintah/balasan/batas (lib/bench_proto, satu definisi dengan logger)
 
-#define HL_BAUD     115200UL
 #define HL_LINE_MAX 24
 #define HL_LAT_MAX  400                          // K2 barrage 60 s: ~298 sign; K1: <= 92
 #define HL_STAGE    5
@@ -66,7 +66,7 @@ static void hl_init() {
   GPIOA->CRH = (GPIOA->CRH & ~((0xFUL << 4) | (0xFUL << 8))) | (0xAUL << 4) | (0x8UL << 8);
   GPIOA->BSRR = GPIO_BSRR_BS10;
   USART1->CR1 = 0; USART1->CR2 = 0; USART1->CR3 = 0;
-  USART1->BRR = (HAL_RCC_GetPCLK2Freq() + HL_BAUD / 2) / HL_BAUD;
+  USART1->BRR = (HAL_RCC_GetPCLK2Freq() + LINK_BAUD / 2) / LINK_BAUD;
   USART1->CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;      // tanpa RXNEIE: polling saja
 }
 
@@ -128,7 +128,7 @@ static void hl_send_result() {
   // Kolom: arsitektur, detik, p_ms, uart, T_obs(us), T_sleep(us), aktif_CYCCNT(us), sisa(us), datang,
   // dilayani, gagal_sign, WFI, bangun_lain, pin_salah, frame_ok, frame_bad, frame_hilang, n_lat,
   // lat_min, lat_rata2, lat_maks (siklus), lat_tak_tersimpan, SystemCoreClock nominal (Hz)
-  hl_txf(">END," HL_ARCH ",%lu,%lu,%lu,%lu,%lu,%lu,%ld,",
+  hl_txf(LINK_R_END "," HL_ARCH ",%lu,%lu,%lu,%lu,%lu,%lu,%ld,",
          (unsigned long)hl_res.secs, (unsigned long)hl_res.p_ms, (unsigned long)hl_res.uart,
          (unsigned long)hl_res.t_obs, (unsigned long)hl_res.t_sleep, (unsigned long)hl_res.act_us,
          (long)hl_res.resid);
@@ -141,11 +141,11 @@ static void hl_send_result() {
          (unsigned long)(hl_lat_n ? sum / hl_lat_n : 0), (unsigned long)mx,
          (unsigned long)hl_lat_drop, (unsigned long)SystemCoreClock);
   for (uint32_t i = 0; i < hl_lat_n; i++) {
-    if (i % 10 == 0) hl_tx(">L");
+    if (i % 10 == 0) hl_tx(LINK_R_LAT);
     hl_txf(",%lu", (unsigned long)hl_lat[i]);
     if (i % 10 == 9 || i + 1 == hl_lat_n) hl_tx("\n");
   }
-  hl_tx(">DONE\n");
+  hl_tx(LINK_R_DONE "\n");
 }
 
 static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart);   // didefinisikan di main.cpp
@@ -155,29 +155,29 @@ static void hl_service() {
   char line[HL_LINE_MAX];
   if (!hl_poll_line(line)) return;
   g_hl_rx_lines++;
-  if (line[0] == '?') {
-    hl_txf(">ID," HL_ARCH ",%d,%lu,%d\n", HL_STAGE, (unsigned long)SystemCoreClock, (HL_READY) ? 1 : 0);
+  if (line[0] == LINK_CMD_ID[0]) {
+    hl_txf(LINK_R_ID "," HL_ARCH ",%d,%lu,%d\n", HL_STAGE, (unsigned long)SystemCoreClock, (HL_READY) ? 1 : 0);
     return;
   }
   uint32_t secs = 0, p = 1000;
   bool uart = false;
-  if (line[0] == 'S') {
+  if (line[0] == LINK_CMD_UART[0]) {
     secs = parse_u32(line + 1, 0);
     uart = true;
-    if (secs < 1 || secs > 80) secs = 0;        // batas TIM4 16-bit + prescaler (89 s pada 48 MHz)
-  } else if (line[0] == 'W') {
+    if (secs < 1 || secs > LINK_S_SECS_MAX) secs = 0;       // batas TIM4 16-bit + prescaler (89 s pada 48 MHz)
+  } else if (line[0] == LINK_CMD_SYN[0]) {
     secs = parse_u32(line + 1, 0);
     const char *comma = strchr(line, ',');
     if (comma) p = parse_u32(comma + 1, 0);
-    if (secs < 1 || secs > 120 || p < 100 || p > 6000) secs = 0;
+    if (secs < 1 || secs > LINK_W_SECS_MAX || p < LINK_W_P_MIN_MS || p > LINK_W_P_MAX_MS) secs = 0;
   } else {
     g_hl_err++;
-    hl_txf(">ERR,perintah,%s\n", line);
+    hl_txf(LINK_R_ERR ",perintah,%s\n", line);
     return;
   }
-  if (secs == 0)   { g_hl_err++; hl_txf(">ERR,parameter,%s\n", line); return; }
-  if (!(HL_READY)) { g_hl_err++; hl_tx(">ERR,belum_siap\n"); return; }
-  hl_txf(">START,%s\n", line);
+  if (secs == 0)   { g_hl_err++; hl_txf(LINK_R_ERR ",parameter,%s\n", line); return; }
+  if (!(HL_READY)) { g_hl_err++; hl_tx(LINK_R_ERR ",belum_siap\n"); return; }
+  hl_txf(LINK_R_START ",%s\n", line);
   hl_tx_flush();                                // t0 jendela baru dimulai setelah baris ini tuntas
   cmd_window(secs, p, uart);
   hl_rx_flush();                                // buang derau yang mungkin masuk selama jendela
