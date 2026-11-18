@@ -1,6 +1,9 @@
 # Pinout Arsitektur Pengujian (bangku uji Tahap D)
 
 Disusun 16 Nov 2026 dari kode firmware yang dipakai pada 120 run final (commit `448befe`), `platformio.ini`, dan logbook 12–15 Nov.
+**Diperbarui 18 Nov 2026** dari logbook 17–18 Nov, `docs/rencana_deep_sleep.md`, dan `src/host/deepsleep/stop_common.h`: resistor seri jalur sinyal
+kini 10 kΩ (sejak 17 Nov; data tahap D memakai ~1 kΩ), varian host Stop mode (bagian 2b), daya balik lewat jalur sinyal, kemasan DS28E38 terkonfirmasi parasit, nomor COM terakhir. Isi bagian 2–8 untuk firmware
+tahap D (Sleep/WFI, `k1_sw`/`k2_hw`) tetap berlaku.
 Tujuannya jadi acuan saat merancang PCB/board yang lebih rapi. Butir bertanda **[cek]** belum tercatat di kode/logbook dan perlu diukur langsung di bangku.
 
 ---
@@ -27,16 +30,19 @@ Satu board fisik, firmware diganti per blok arsitektur. Peta pin identik di kedu
 |---|---|---|---|---|---|---|
 | PA0 | Sumber entropi (derau ADC) | ADC1, analog | in | **tidak tersambung** (mengambang) | K1 | Dicampur CYCCNT + UID + micros, di-SHA-256 (H2). Jangan disambung apa pun di board baru tanpa mengganti sumber entropi. |
 | PA2 | USART2 TX | AF | out | – (tak dipakai) | K1, K2 | Bebas. |
-| PA3 | USART2 RX: frame permintaan attacker | USART2 + DMA1 Ch6, input floating, 115200 8N1 | in | Attacker PA9 via R seri ~1 kΩ | K1, K2 | Frame 36 B, satu interupsi TC per frame. |
+| PA3 | USART2 RX: frame permintaan attacker | USART2 + DMA1 Ch6, input floating, 115200 8N1 | in | Attacker PA9 via R seri ~1 kΩ (tahap D) / 10 kΩ (sejak 17 Nov) | K1, K2 (K1S/K2S: lihat 2b) | Frame 36 B, satu interupsi TC per frame. |
 | PA9 | USART1 TX: jalur kendali run | AF push-pull 2 MHz, register langsung, tanpa IRQ/DMA | out | Logger PA10 | K1, K2 | Protokol `>ID/>START/>END/>L/>DONE` (`host_link.h`). |
-| PA10 | USART1 RX: jalur kendali run | input pull-up, polling di luar jendela | in | Logger PA9 | K1, K2 | |
+| PA10 | USART1 RX: jalur kendali run | input pull-up, polling di luar jendela | in | Logger PA9 via R seri 10 kΩ (sejak 17 Nov) | K1, K2, K1S, K2S | |
 | PA11 / PA12 | USB D− / D+ (CDC) | USB FS | – | **tidak tersambung saat run** (USB-C hanya daya) | K1, K2 (debug) | Saat debug lewat USB, SOF di-mask selama jendela. |
 | PA13 / PA14 | SWDIO / SWCLK | SWD | – | ST-Link `$` | flash | ST-Link **dicabut** saat run final; pin 3V3 ST-Link wajib ke 3V3 target (klon). |
-| PA15 | 1-Wire data DS28E38 | GPIO open-drain bit-bang (lib OneWire) | i/o | DS28E38 IO + pull-up ke 3V3 | K2 | Nilai pull-up **[cek]**. PA15 = JTDI: JTAG harus dilepas (core sudah memakai SWD saja). |
+| PA15 | 1-Wire data DS28E38 | GPIO open-drain bit-bang (lib OneWire) | i/o | DS28E38 IO + pull-up ke 3V3 | K2 | Nilai pull-up **[cek]** (dugaan 4,7 kΩ dari logbook 15 Nov, ~0,70 mA; belum diukur). PA15 = JTDI: JTAG harus dilepas (core sudah memakai SWD saja). K2S/`host_ds_od`: pewaktuan 1-Wire overdrive dibuat sendiri di PA15. |
 | PB1 | Pin status CPU (1 = aktif, 0 = akan WFI) | GPIO push-pull, BSRR | out | Logger PA0 | K1, K2 | Pembanding independen %S_cpu dan latensi. |
 | PC13 | LED onboard | – | – | – | tidak dipakai | Dibiarkan mati di semua run (variabel kontrol). |
+| (LED PWR) | LED merah power Blue Pill | – | – | – | selalu menyala | Dipertahankan (keputusan 17 Nov), ~1,9 mA. Beban tetap papan di tahap D dan **penentu lantai Stop ~2 mA**. |
+| BOOT0 | Pemulihan host terkunci | jumper | in | GND (normal) / 3V3 (pemulihan) | `tools/pulihkan_host.py` | Wajib dapat dijangkau: Stop membuat SWD mati. BOOT0 = 1 + cabut-pasang daya, setelah selesai kembalikan 0. |
+| PC14 / PC15 | Kristal LSE 32,768 kHz | OSC32 | – | kristal Epson MC-306 (CL 12,5 pF, ESR maks 50 kΩ, ±20 ppm) | varian Stop | Jangan probe langsung (kapasitansi probe menghentikan LSE); jangan beri kabel lain. |
 | 5V / VBUS | Catu | – | in | USB-C → shunt INA226 (IN+ → IN−) → host | – | Titik ukur energi = sisi beban (IN−). |
-| 3V3 | Rail logika | regulator onboard | – | DS28E38 VCC (K2), ST-Link 3V3 (saat flash) | – | |
+| 3V3 | Rail logika | regulator onboard | – | pull-up 1-Wire DS28E38 (K2; chip tanpa pin VCC), ST-Link 3V3 (saat flash) | – | |
 | GND | Ground bersama | – | – | Logger, attacker, INA226, DS28E38 | – | Wajib satu titik ground. |
 
 Periferal internal tanpa pin (penting bila memindah ke MCU lain): TIM2→TIM3 berantai (waktu 32-bit 1 µs, tetap jalan saat WFI), TIM4 (permintaan sintetis/akhir jendela), TIM1 (bangun K2 saat menunggu DS28E38), DMA1 Ch6 (USART2 RX), DWT CYCCNT (latensi).
@@ -45,12 +51,40 @@ Cadangan di `include/powertest.h` (tidak dipakai di Tahap D): PB0 = TRIG per sig
 
 ---
 
+## 2b. Host varian Stop mode (K1S / K2S, 17–18 Nov)
+
+Board dan kabel sama. Yang berbeda adalah konfigurasi pin dan sumber waktu (`src/host/deepsleep/stop_common.h`,
+`pins_init()`, `rx_*`). Tahap D tetap memakai bagian 2.
+
+| Pin / blok | Konfigurasi di varian Stop | Catatan |
+|---|---|---|
+| PA3 | input mengambang; EXTI3 tepi turun sebagai **event** (bangun dari Stop lewat WFE) | Frame attacker membangunkan CPU ~10 µs setelah bit start byte pertama (`0xA5`), saat USART belum menyala; firmware mengenali pola bitnya, lalu menyalakan RE + DMA 35 B. Attacker tidak diubah. |
+| PA9 / PA10 | USART1 ke logger, polling | seperti tahap D |
+| PA13 / PA14 | SWD tetap dikonfigurasi | JTAG dimatikan (SWJ_CFG); selama Stop SWD tidak bisa tersambung |
+| PB1 | keluaran, pin status | seperti tahap D |
+| Semua pin lain, termasuk PC13 | **analog** | menekan kebocoran arus |
+| USB | dimatikan (`usb_off()`) | USB-C hanya daya |
+| RTC | dari LSE (PC14/PC15), CNT 1024 Hz, alarm = event EXTI17 | `T_sleep` dihitung dari RTC. DWT CYCCNT berhenti di Stop dan hanya valid saat terjaga. TIM2/TIM3/TIM4 tidak dipakai sebagai jam jendela. |
+| Jam | bangun dari Stop = HSI 8 MHz, PLL dinyalakan ulang ke 48 MHz | BRR USART2 diganti sementara untuk HSI |
+
+Lantai arus (shunt 0,1 Ω, offset −2 LSB): CPU jalan @48 MHz ~13,0 mA; Stop dengan ST-Link terpasang 2,567 mA;
+Stop tanpa ST-Link setelah POR bersih **1,985 mA** (~80 LSB INA226). Domain debug ST-Link menyumbang ~0,58 mA.
+(18 Nov: lantai IDLE K1S/K2S terukur 2,565 mA pada pilot; selisih dari 1,98 mA belum tuntas, lihat logbook 18 Nov.)
+
+**Daya balik lewat jalur sinyal.** Saat USB-C dicabut, host tetap berdaya lewat kabel sinyal (logger PA9, attacker PA9)
+melalui dioda proteksi; rail 3V3/5V terkunci ~1,92 V (ambang POR/PDR). Tanpa GND host–logger, 3V3 jatuh ke 0,56 V. Resistor seri
+10 kΩ (sejak 17 Nov) membatasi arus injeksi (~≤ 0,1 mA per jalur, belum diukur). Dugaan penyebab pergeseran +0,78 mA tahap D: host tersangkut
+setengah-reset oleh daya balik.
+**Prosedur POR bersih:** cabut ST-Link, cabut USB-C, lepas GND host–logger, tunggu 10 s, sambung GND **dulu**, lalu colok USB-C.
+
+---
+
 ## 3. DS28E38 (K2)
 
 | Pin DS28E38 | Ke | Catatan |
 |---|---|---|
-| IO | Host PA15 + resistor pull-up ke 3V3 | 1-Wire kecepatan standar, Skip ROM. Pull-up tetap di semua run. Nilai **[cek]**. |
-| VCC (bila varian 3 pin) | Host 3V3 | **[cek]** kemasan/modul yang dipakai (parasite vs catu langsung). |
+| IO | Host PA15 + resistor pull-up ke 3V3 | 1-Wire Skip ROM. K2 (tahap D): kecepatan standar, tunggu tetap 130 ms. K2S/`host_ds_od`: **overdrive** + polling (titik baca 2,5 µs, ~115,6 ms per sign). Pull-up tetap di semua run. Nilai **[cek]** (dugaan 4,7 kΩ, belum diukur). |
+| VCC | – | **Terkonfirmasi 17 Nov: hanya IO + GND (selalu parasit)**; chip menarik energi dari garis data saat menghitung. Jumper VCC/CEXT pada DS9121AQ+ kemungkinan tak berpengaruh (belum diverifikasi). |
 | GND | GND bersama | |
 
 Pada K1 modul DS28E38 **[cek]** tetap terpasang atau dicabut; untuk board baru sebaiknya ada jumper/saklar supaya beban statis identik di kedua arsitektur.
@@ -63,7 +97,7 @@ Pada K1 modul DS28E38 **[cek]** tetap terpasang atau dicabut; untuk board baru s
 |---|---|---|---|---|---|
 | PA0 | Tangkap tepi pin status host | TIM2_CH1 (naik) + CH2→TI1 (turun), input pull-down | in | Host PB1 | TIM2 16-bit + penghitung overflow → tik 72 MHz 64-bit. |
 | PA6 | Generator uji PWM 100 Hz / 30 % | TIM3_CH1 | out | jumper ke PA0 (uji mandiri saja) | Hanya env `logger_selftest`; env `logger` membiarkan PA6 input. **Jangan** sambung PB1 host dan jumper PA6 bersamaan. |
-| PA9 | USART1 TX | Serial1, 115200 8N1 | out | Host PA10 | |
+| PA9 | USART1 TX | Serial1, 115200 8N1 | out | Host PA10 via R seri 10 kΩ (sejak 17 Nov) | |
 | PA10 | USART1 RX | Serial1, buffer RX 512 B | in | Host PA9 | |
 | PA11 / PA12 | USB CDC ke PC (CSV) | USB FS | – | PC (micro-USB) | Klon: patch nomor seri wajib; jalur OUT PC→logger rusak, perintah dikirim lewat nilai baud (SET_LINE_CODING). |
 | PA13 / PA14 | SWDIO / SWCLK | SWD | – | ST-Link `X` | |
@@ -98,7 +132,7 @@ Konfigurasi: cfg 0x4127 (AVG 1, 1,1 ms shunt + bus, kontinu), CAL 0x0800; laju c
 
 | Pin | Fungsi | Periferal / mode | Arah | Terhubung ke | Catatan |
 |---|---|---|---|---|---|
-| PA9 | USART1 TX: frame permintaan | Serial1, 115200 8N1 | out | R seri ~1 kΩ → Host PA3 | Frame 36 B: `A5`, seq u16 LE, 32 B isi, XOR. Laju TIM3: A = 1/s, B = 10/s. |
+| PA9 | USART1 TX: frame permintaan | Serial1, 115200 8N1 | out | R seri ~1 kΩ (tahap D) / 10 kΩ (sejak 17 Nov) → Host PA3 | Frame 36 B: `A5`, seq u16 LE, 32 B isi, XOR. Laju TIM3: A = 1/s, B = 10/s. |
 | PA10 | USART1 RX | Serial1 | in | – (tak dipakai) | |
 | PA2 | USART2 TX: konsol | Serial2 | out | CH340 RX | Perintah `a/b/x/s/f`. Auto-start 1 Hz (`ATTACKER_AUTOSTART_HZ`). |
 | PA3 | USART2 RX: konsol | Serial2 | in | CH340 TX | |
@@ -112,9 +146,9 @@ Konfigurasi: cfg 0x4127 (AVG 1, 1,1 ms shunt + bus, kontinu), CAL 0x0800; laju c
 
 | # | Dari | Ke | Sinyal | Komponen seri | Catatan |
 |---|---|---|---|---|---|
-| 1 | Attacker PA9 | Host PA3 | Frame permintaan UART 115200 | R ~1 kΩ | Satu arah. |
+| 1 | Attacker PA9 | Host PA3 | Frame permintaan UART 115200 | R ~1 kΩ (tahap D), 10 kΩ sejak 17 Nov | Satu arah. |
 | 2 | Host PA9 | Logger PA10 | Kendali run host→logger | – | |
-| 3 | Logger PA9 | Host PA10 | Kendali run logger→host | – | |
+| 3 | Logger PA9 | Host PA10 | Kendali run logger→host | R 10 kΩ (sejak 17 Nov) | Kabel ini sempat tidak tersambung 17 Nov (arah host→logger normal): periksa bila `>ID` tak terbalas. |
 | 4 | Host PB1 | Logger PA0 | Pin status CPU | – | Lepas jumper PA6–PA0 saat run. |
 | 5 | Logger PB6 / PB7 | INA226 SCL / SDA | I2C 400 kHz | – | |
 | 6 | Logger 3V3 | INA226 VS | Catu sensor | – | |
@@ -125,7 +159,8 @@ Konfigurasi: cfg 0x4127 (AVG 1, 1,1 ms shunt + bus, kontinu), CAL 0x0800; laju c
 | 11 | Attacker PA2/PA3 | CH340 → PC | Konsol | – | |
 | 12 | Semua GND | – | Ground bersama | – | |
 
-Jalur PC: logger USB CDC (COM18 terakhir), attacker CH340 (COM16/17), host USB hanya daya. Nomor COM berubah tiap cabut-pasang.
+Jalur PC: logger USB CDC (COM18 terakhir), attacker CH340 (COM16/17 pada tahap D; COM22 pada 18 Nov), host USB hanya daya. Nomor COM berubah tiap cabut-pasang
+(`run_bench.py`/`k1s_run.py` memakai `--logger` dan `--attacker`).
 
 ---
 
@@ -165,5 +200,7 @@ Jalur PC: logger USB CDC (COM18 terakhir), attacker CH340 (COM16/17), host USB h
 5. **USB host hanya daya** di bangku ukur. Bila board baru punya USB data, beri jumper untuk memutus D+/D− saat ukur.
 6. **Logger MCU asli** (bukan klon UID nol) agar USB OUT bekerja; atau beri UART-USB terpisah untuk perintah.
 7. **Pin uji PA6→PA0** dijadikan jumper berlabel, jangan tersambung bersamaan dengan pin status host.
-8. Pertahankan R seri ~1 kΩ di jalur attacker→host (proteksi bila beda catu/ground saat bongkar-pasang).
+8. Pertahankan R seri di jalur attacker→host **dan logger→host** (proteksi bila beda catu/ground saat bongkar-pasang; 1 kΩ dipakai
+   tahap D, 10 kΩ sejak 17 Nov untuk membatasi arus injeksi saat host di Stop). Pertimbangkan sakelar daya atau jalur pemutus agar
+   host bisa dimatikan penuh (POR bersih) tanpa mencabut banyak kabel.
 9. Sinyal opsional yang sudah disiapkan di kode: PB0 TRIG, PB10 WINDOW (`include/powertest.h`) dapat diberi test point.

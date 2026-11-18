@@ -1,0 +1,37 @@
+# Lingkungan alat analisis (tools/analisis_d.py, tools/run_bench.py).
+# Disalin dari paket yang TERPASANG di .venv-analisis pada 18 Nov 2026 (Python 3.12.10). Bukan hasil
+# `pip freeze`; bila venv diubah, cocokkan ulang dengan: .venv-analisis/Scripts/python -m pip freeze
+# Versi dikunci persis supaya angka Bab 4 dapat direproduksi. Pin versi TIDAK memverifikasi integritas
+# unduhan; untuk itu buat kunci berhash: pip-compile --generate-hashes (pip-tools), lalu pip install --require-hashes.
+#
+# Buat ulang di mesin lain:
+#   python -m venv .venv-analisis
+#   .venv-analisis/Scripts/python -m pip install -r requirements-analisis.txt
+#
+# Uji alat (tanpa pytest, hanya pustaka standar):
+#   .venv-analisis/Scripts/python -B -m unittest discover -s tests -v
+
+# --- langsung dipakai ---
+numpy==2.5.4
+scipy==1.18.1
+pandas==3.1.1
+statsmodels==0.15.0
+matplotlib==3.11.2
+pyserial==3.5
+
+# --- dependensi turunan (ikut terpasang) ---
+patsy==1.0.3
+formulaic==1.2.2
+interface_meta==2.0.1
+narwhals==2.28.0
+wrapt==2.5.2
+contourpy==1.4.0
+cycler==0.12.1
+fonttools==4.68.0
+kiwisolver==1.5.1
+packaging==26.3
+pillow==13.0.0
+pyparsing==3.3.3
+python-dateutil==4.0.0
+tzdata==2026.6
+typing_extensions==4.16.0
