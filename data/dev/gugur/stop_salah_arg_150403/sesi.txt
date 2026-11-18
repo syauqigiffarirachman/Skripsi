@@ -1,0 +1,7 @@
+host=>ID,K2S,8,47775676,1
+seed=1794989042
+secs=15
+plan=A
+rshunt=0.1
+offset=-2.0
+catatan=cek_DS_terpasang

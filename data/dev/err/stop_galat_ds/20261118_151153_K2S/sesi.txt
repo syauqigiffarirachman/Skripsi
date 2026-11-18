@@ -1,0 +1,7 @@
+host=>ID,K2S,8,47775179,1
+seed=1794989512
+secs=60
+plan=A
+rshunt=0.1
+offset=-2.0
+catatan=galat_DS_pulih_tanpa_reboot

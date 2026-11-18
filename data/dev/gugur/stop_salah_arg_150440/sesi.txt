@@ -1,0 +1,7 @@
+host=>ID,K2S,8,47745525,1
+seed=1794989078
+secs=85
+plan=A
+rshunt=0.1
+offset=-2.0
+catatan=galat_DS_cabut_saat_jalan

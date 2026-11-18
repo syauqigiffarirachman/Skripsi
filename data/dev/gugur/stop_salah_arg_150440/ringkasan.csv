@@ -1,0 +1,2 @@
+urut,file,masalah,scen,status
+1,001_K2S_A.csv,status logger = None; baris #SUM tidak ada; attacker tidak berjalan di akhir run: '[attacker] mode=idle berjalan=tidak seq=16 t_ms=0',A,

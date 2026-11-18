@@ -1,0 +1,7 @@
+host=>ID,K2S,8,48937630,1
+seed=1794989377
+secs=80
+plan=A
+rshunt=0.1
+offset=-2.0
+catatan=galat_DS9121_dicabut_saat_jalan
