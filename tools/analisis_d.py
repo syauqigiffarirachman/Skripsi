@@ -118,7 +118,7 @@ def episode_pin(r, res):
     return [(b - a) / T for a, b in ep], [c * k for c in r["lat"]]
 
 
-def muat(sesi, rshunt, offset):
+def muat(sesi, rshunt, offset, stop=False):
     rows, pins = [], []
     for blok, d in sesi:
         if not d.is_dir():
@@ -143,6 +143,8 @@ def muat(sesi, rshunt, offset):
         rb.energi_sesi(rs)
         rows += rs
     df = pd.DataFrame(rows)
+    if stop:                                            # varian Stop (K1S/K2S) dianalisis dengan kerangka K1/K2 yang sama
+        df["arch"] = df["arch"].str.replace(r"S$", "", regex=True)
     df["kelompok"] = [KELOMPOK.get((a, s), f"{a}-{s}") for a, s in zip(df["arch"], df["scen"])]
     df["sah"] = df["masalah"].fillna("") == ""
     df["urut_global"] = np.arange(len(df)) + 1          # urutan kronologis (sesi menurut manifest)
@@ -523,11 +525,12 @@ def main():
                     help="ketidakpastian relatif kalibrasi shunt (sebelum kalibrasi: target 5 %%)")
     ap.add_argument("--multimeter", default=None, help="CSV kolom file,I_mm_mA (Bland-Altman INA226 vs multimeter)")
     ap.add_argument("--keluar", default=None)
+    ap.add_argument("--stop", action="store_true", help="manifest berisi sesi varian Stop (arsitektur K1S/K2S)")
     ap.add_argument("--tanpa-gambar", action="store_true")
     args = ap.parse_args()
     rng = np.random.default_rng(SEED)
 
-    df, pins = muat(baca_manifest(Path(args.manifest)), args.rshunt, args.offset)
+    df, pins = muat(baca_manifest(Path(args.manifest)), args.rshunt, args.offset, args.stop)
     out = Path(args.keluar) if args.keluar else ROOT / "data" / "analisis" / f"{datetime.now():%Y%m%d_%H%M%S}_r{args.rshunt:g}"
     out.mkdir(parents=True, exist_ok=True)
     df.to_csv(out / "runs.csv", index=False)

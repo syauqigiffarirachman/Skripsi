@@ -47,7 +47,7 @@ static void wait_event(bool exit_on_pending) {
     __disable_irq();
     if (alarm_flag()) { __enable_irq(); alarm_rearm(); return; }
     if (exit_on_pending && g_pending) { __enable_irq(); return; }
-    if (!rx_idle()) {                             // frame sedang masuk (mode terjaga): tunggu selesai (~3 ms)
+    if (!rx_idle_strict()) {                      // frame sedang masuk (mode terjaga): tunggu selesai (~3 ms)
       __enable_irq(); __ISB();
       const uint32_t c = cycles(), lim = (SystemCoreClock / 1000UL) * 8UL;
       while (!rx_idle() && (uint32_t)(cycles() - c) < lim) {}
@@ -97,6 +97,9 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart) {
   g_win_end_cnt = rtc_cnt() + secs * 1024UL;
   alarm_rearm();
   const uint32_t f0 = rtc_fine();
+#ifdef DBG_RX
+  g_d_win0 = RTC->CNTL; g_d_bad_n = 0; g_d_lost_n = 0; g_d_sp_n = 0; g_d_al_mid_n = 0;
+#endif
   PB1_HI();
   rx_awake_start();
   while (!g_win_over) {
@@ -114,6 +117,9 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart) {
     wait_event(true);
   }
   const uint32_t f1 = rtc_fine();
+#ifdef DBG_RX
+  g_d_win1 = RTC->CNTL;
+#endif
   PB1_LO();                                       // tepi turun = akhir jendela (logger)
   rx_off();
   const uint32_t t_obs = fine_to_us(f1 - f0);

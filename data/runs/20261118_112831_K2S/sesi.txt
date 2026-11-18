@@ -1,0 +1,7 @@
+host=>ID,K2S,8,47735862,1
+seed=1794976110
+secs=60
+plan=IDLE,B,B,B,B,B,B,B,B,A,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=k2s_earlyrx2

@@ -200,16 +200,49 @@ static void rx_off() {
 // Tak ada frame setengah jalan: DMA belum menerima byte dan garis RX tinggi.
 static inline bool rx_idle() { return DMA1_Channel6->CNDTR == FRAME_LEN && PA3_HIGH(); }
 
+// Idle KETAT (18 Nov): rx_idle() hanya melihat satu sampel PA3 + CNDTR, sehingga di 87 us pertama sebuah frame (byte
+// 0xA5 belum selesai, PA3 sering tinggi) host salah menganggap garis diam, tidur di TENGAH frame, bangun di tepi acak,
+// dan pola sinkron kadang cocok palsu -> frame rusak (diagnosa: bangun palsu lalu tidur lagi 5-21 us kemudian).
+// Di sini PA3 harus tinggi terus 120 us (> run tinggi terpanjang di dalam frame ~ 9-10 bit = 87 us).
+static bool rx_idle_strict() {
+  if (DMA1_Channel6->CNDTR != FRAME_LEN) return false;
+  const uint32_t t = cycles(), lim = (SystemCoreClock / 1000000UL) * 120UL;
+  while ((uint32_t)(cycles() - t) < lim) {
+    if (!PA3_HIGH()) return false;
+  }
+  return DMA1_Channel6->CNDTR == FRAME_LEN;
+}
+
 static bool frame_valid() {
   uint8_t x = 0;
   for (int i = 0; i < FRAME_LEN - 1; i++) x ^= g_rx[i];
   return g_rx[0] == FRAME_SOF && x == g_rx[FRAME_LEN - 1];
 }
+#ifdef DBG_RX
+// Diagnostik (18 Nov): kapan dan lewat jalur mana frame rusak/hilang pertama terjadi (dibaca lewat SWD).
+volatile uint32_t g_d_bad_n, g_d_bad_path, g_d_bad_t, g_d_bad_ndtr, g_d_bad_rx[10];
+volatile uint32_t g_d_lost_n, g_d_lost_t, g_d_lost_d, g_d_lost_seq, g_d_win0, g_d_win1;
+volatile uint32_t g_d_al_mid_n, g_d_al_mid_us;
+volatile uint32_t g_d_sp_n, g_d_sp_sync, g_d_sp_flag, g_d_sp_lvl, g_d_sp_d1, g_d_sp_d2, g_d_sp_d3, g_d_sp_gap, g_d_sp_prev, g_d_sp_t, g_d_sp_edges;
+volatile uint32_t g_d_entry_c, g_d_prev_exit_c, g_d_prev_cause, g_d_bad_gap_us, g_d_bad_prevcause, g_d_bad_sync, g_d_bad_lvl, g_d_bad_done;
+static void dbg_bad(uint32_t path) {
+  if (g_d_bad_n++ == 0) {
+    g_d_bad_path = path; g_d_bad_t = RTC->CNTL; g_d_bad_ndtr = DMA1_Channel6->CNDTR;
+    for (int i = 0; i < 10; i++) g_d_bad_rx[i] = ((volatile uint32_t *)g_rx)[i];
+  }
+}
+#define DBG_BAD(p) dbg_bad(p)
+#else
+#define DBG_BAD(p) ((void)0)
+#endif
 static void frame_commit() {
   const uint16_t seq = (uint16_t)g_rx[1] | ((uint16_t)g_rx[2] << 8);
   if (g_rx_have) {
     const uint16_t d = (uint16_t)(seq - (uint16_t)(g_rx_last + 1));
     if (d < 1000) g_rx_lost += d; else g_rx_restart++;       // lompatan besar = attacker dimulai ulang
+#ifdef DBG_RX
+    if (d >= 1 && d < 1000 && g_d_lost_n++ == 0) { g_d_lost_t = RTC->CNTL; g_d_lost_d = d; g_d_lost_seq = seq; }
+#endif
   } else { g_rx_first = seq; g_rx_have = true; }
   g_rx_last = seq;
   g_rx_ok++; g_arrived++; g_pending = true;
@@ -231,7 +264,7 @@ static void rx_resync() {
 extern "C" void DMA1_Channel6_IRQHandler(void) {
   DMA1->IFCR = DMA_IFCR_CGIF6;
   if (frame_valid()) { frame_commit(); rx_awake_rearm(); }
-  else { g_rx_bad++; rx_resync(); }
+  else { g_rx_bad++; DBG_BAD(1); rx_resync(); }
 }
 
 // ---------------------------------------------------------------- tidur Stop
@@ -263,6 +296,9 @@ enum { W_ALARM = 0, W_FRAME_OK = 1, W_FRAME_BAD = 2, W_SPURIOUS = 3 };
 // instruksi (instruksi 32-bit sebelum jeda yang kena).
 static StopRes __attribute__((noinline)) stop_sleep() {
   StopRes r = {W_SPURIOUS, 0, 0};
+#ifdef DBG_RX
+  g_d_entry_c = cycles();
+#endif
   rx_off();
   USART2->CR3 &= ~USART_CR3_DMAR;
   SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
@@ -321,7 +357,10 @@ static StopRes __attribute__((noinline)) stop_sleep() {
       USART2->BRR = g_brr_pll;
       if (done && frame_valid()) { frame_commit(); r.cause = W_FRAME_OK; rx_awake_rearm(); }
       else {
-        r.cause = W_FRAME_BAD; g_rx_bad++;
+        r.cause = W_FRAME_BAD; g_rx_bad++; DBG_BAD(2);
+#ifdef DBG_RX
+        if (g_d_bad_n == 1) { g_d_bad_gap_us = (g_d_entry_c - g_d_prev_exit_c) / (SystemCoreClock / 1000000UL); g_d_bad_prevcause = g_d_prev_cause; g_d_bad_sync = r.sync_us; g_d_bad_lvl = lvl_w; g_d_bad_done = done; }
+#endif
 #ifdef S2_TRACE
         if (g_bad_n == 0) { for (int i = 0; i < FRAME_LEN; i++) g_badcopy[i] = g_rx[i]; g_bad_sync = r.sync_us; g_bad_ndtr = DMA1_Channel6->CNDTR; g_bad_done = done; }
         g_bad_n++;
@@ -335,13 +374,44 @@ static StopRes __attribute__((noinline)) stop_sleep() {
       rx_off();
       rx_awake_start();                          // garis tak sesuai pola: terima biasa (frame ini hilang)
       r.cause = W_SPURIOUS;
+#ifdef DBG_RX
+      if (g_d_sp_n++ == 0) { g_d_sp_sync = r.sync_us; g_d_sp_flag = sync; g_d_sp_lvl = lvl_w; g_d_sp_d1 = d1 / 8; g_d_sp_d2 = d2 / 8; g_d_sp_d3 = d3 / 8;
+        g_d_sp_gap = (g_d_entry_c - g_d_prev_exit_c) / (SystemCoreClock / 1000000UL); g_d_sp_prev = g_d_prev_cause; g_d_sp_t = RTC->CNTL; }
+#endif
     }
   } else {
     // ------------------------------------------------------- alarm: pulihkan jam, lalu mode terjaga
+    r.cause = W_ALARM;                           // ALRF dibiarkan terangkat: window() yang melihat dan menghapusnya
+    if (PA3_HIGH()) {
+      // Penerima dinyalakan SEGERA di HSI (garis diam), sebelum PLL siap: frame yang mulai selama pemulihan jam
+      // (~0,3-0,5 ms, penyebab hilang 1-4 frame/600 di K2S B, 18 Nov) tetap diterima. Pindah ke PLL baru bila
+      // garis diam KETAT (tinggi 120 us), supaya baud tak berubah di tengah byte.
+      USART2->BRR = g_brr_hsi;
+      NVIC_ClearPendingIRQ(DMA1_Channel6_IRQn);
+      dma_arm(g_rx, FRAME_LEN, true);
+      (void)USART2->SR; (void)USART2->DR;
+      USART2->CR3 |= USART_CR3_DMAR;
+      USART2->CR1 |= USART_CR1_RE;
+      const uint32_t t0 = cycles();
+      uint32_t t_hi = t0;
+      bool diam = false;
+      for (;;) {
+        const uint32_t c = cycles();
+        if (!PA3_HIGH()) t_hi = c;
+        else if ((uint32_t)(c - t_hi) > 120UL * 8UL && (RCC->CR & RCC_CR_PLLRDY)) { diam = true; break; }
+        if ((uint32_t)(c - t0) > 8000UL * 8UL) break;                       // 8 ms: tak diam, menyerah
+      }
+      pll_switch();
+      c_sw = cycles();
+      USART2->BRR = g_brr_pll;
+      if (!diam) { rx_off(); rx_awake_start(); }                            // garis tak pernah diam: mulai bersih
+    } else {
     pll_switch();
     c_sw = cycles();
-    r.cause = W_ALARM;                           // ALRF dibiarkan terangkat: window() yang melihat dan menghapusnya
     if (!PA3_HIGH()) {                           // frame sedang jalan saat alarm: tunggu garis diam, frame ini hilang
+#ifdef DBG_RX
+      if (g_d_al_mid_n++ == 0) g_d_al_mid_us = (uint32_t)(cycles() - c_w) / 8;
+#endif
       const uint32_t t = cycles(), lim = (SystemCoreClock / 1000UL) * 8UL;
       uint32_t t_low = t;
       while ((uint32_t)(cycles() - t) < lim) {
@@ -350,6 +420,7 @@ static StopRes __attribute__((noinline)) stop_sleep() {
       }
     }
     rx_awake_start();
+    }
   }
   // Waktu sejak bangun: (c_sw - c_w) siklus @8 MHz + sisanya @jam PLL. DWT = HCLK.
   rtc_sync();
@@ -364,6 +435,9 @@ static StopRes __attribute__((noinline)) stop_sleep() {
 #ifdef S2_TRACE
   { const uint32_t i = g_wlog_n % 48; g_wlog[i].t_fine = tw; g_wlog[i].cause = (uint8_t)r.cause; g_wlog[i].lvl = (uint8_t)lvl_w;
     g_wlog[i].ret_imm = (uint8_t)(r.dt_us < 100); g_wlog[i].sync_us = (uint16_t)r.sync_us; g_wlog_n++; }
+#endif
+#ifdef DBG_RX
+  g_d_prev_exit_c = cycles(); g_d_prev_cause = r.cause;
 #endif
   return r;
 }
