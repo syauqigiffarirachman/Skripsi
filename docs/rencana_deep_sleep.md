@@ -5,6 +5,7 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
 ## Keputusan (langkah 1, 17 Nov)
 
 - Stop mode **ditambahkan** sebagai varian. Data tahap D (Sleep/WFI @48 MHz, 120 run) **tetap** dipakai, tidak dihapus.
+- **Keputusan 18 Nov (update):** data final varian Stop menjadi **data skripsi**; data tahap D dipertahankan sebagai data awal pengembangan saja.
 - 17 Nov (lanjutan): lantai Stop ~2 mA DITERIMA user; LED PWR Blue Pill tetap terpasang sebagai beban tetap papan
   (sama di data tahap D, jadi perbandingan Sleep vs Stop adil). Instrumen uA tidak diperlukan.
 - Titik ukur tetap di **input 5 V USB-C** (sama dengan tahap D). Lantai tidur papan terukur ~2 mA (LED PWR
