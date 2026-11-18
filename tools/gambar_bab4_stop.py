@@ -1,8 +1,10 @@
 """Gambar Bab 4 varian Stop (deep sleep) yang belum dibuat oleh analisis_d.py (18 Nov 2026).
 
-Membuat empat gambar sesuai laporan/panduan_grafik_bab4_2026-11-18.md:
+Membuat gambar (4.1, 4.1b, 4.2, 4.7, 4.8, 4.9, 4.10) sesuai laporan/panduan_grafik_bab4_2026-11-18.md:
   4.1  Jejak arus terhadap waktu (4 panel, satu run contoh per kelompok)
+  4.2  Latensi tanda tangan (batang bernilai)
   4.7  Tingkat layanan terukur vs model utilisasi
+  4.8  Throughput terukur dan garis batas kapasitas
   4.9  Arus diam IDLE awal/akhir tiap blok (bukti keadaan bersih)
   4.10 Distribusi frame permintaan hilang pada K4 (semua 41 run)
 
@@ -257,6 +259,59 @@ def gambar_410(out):
     return k4
 
 
+def _legenda_arsitektur(ax, atas=1.14):
+    ax.legend(handles=[Patch(facecolor=C_SW, label="Software"), Patch(facecolor=C_HW, label="DS28E38"),
+                       Patch(facecolor="white", edgecolor="0.3", label="Normal"),
+                       Patch(facecolor="white", edgecolor="0.3", hatch="//", label="Barrage")],
+              ncol=4, loc="upper center", bbox_to_anchor=(0.5, atas), frameon=False, fontsize=8.5)
+
+
+# --------------------------------------------------------------------------- 4.2
+def gambar_42(out):
+    d = pd.read_csv(ANA / "deskriptif.csv")
+    d = d[d.metrik == "lat_mean_ms_nyata"].set_index("kelompok")
+    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    for n, k in enumerate(["K1", "K2", "K3", "K4"]):
+        v = d.loc[k, "rerata"]
+        ax.bar(n, v, 0.6, color=WARNA[k], hatch=ARSIR[k], edgecolor="white")
+        ax.text(n, v + 12, f"{v:.2f}".replace(".", ","), ha="center", fontsize=9.5)
+    ax.set_xticks(range(4))
+    ax.set_xticklabels([NAMA[k] for k in ["K1", "K2", "K3", "K4"]])
+    ax.set_ylim(0, 760)
+    ax.set_ylabel("Latensi tanda tangan (ms)")
+    ax.yaxis.set_major_formatter(FMT)
+    _legenda_arsitektur(ax)
+    fig.tight_layout()
+    fig.savefig(out / "gambar_4_2_latensi.png", bbox_inches="tight")
+    plt.close(fig)
+
+
+# --------------------------------------------------------------------------- 4.8
+def gambar_48(out):
+    lay = pd.read_csv(ANA / "layanan.csv").set_index("kelompok")
+    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    for n, k in enumerate(["K1", "K2", "K3", "K4"]):
+        v = lay.loc[k, "Theta"]
+        ax.bar(n, v, 0.6, color=WARNA[k], hatch=ARSIR[k], edgecolor="white")
+        ax.text(n, v + 0.18, f"{v:.2f}".replace(".", ","), ha="center", fontsize=9.5)
+    cap_sw = float(lay.loc["K1", "Theta_maks_model"])
+    cap_hw = float(lay.loc["K2", "Theta_maks_model"])
+    ax.hlines(cap_sw, -0.55, 3.55, colors=C_SW, linestyles="--", lw=1.3)
+    ax.hlines(cap_hw, -0.55, 3.55, colors=C_HW, linestyles="--", lw=1.3)
+    ax.text(3.6, cap_sw, "kapasitas Software " + f"{cap_sw:.2f}".replace(".", ","), color=C_SW, fontsize=8.5, va="center")
+    ax.text(3.6, cap_hw, "kapasitas DS28E38 " + f"{cap_hw:.2f}".replace(".", ","), color=C_HW, fontsize=8.5, va="center")
+    ax.set_xlim(-0.6, 5.3)
+    ax.set_xticks(range(4))
+    ax.set_xticklabels([NAMA[k] for k in ["K1", "K2", "K3", "K4"]])
+    ax.set_ylim(0, 10.2)
+    ax.set_ylabel("Throughput (tanda tangan/s)")
+    ax.yaxis.set_major_formatter(FMT)
+    _legenda_arsitektur(ax)
+    fig.tight_layout()
+    fig.savefig(out / "gambar_4_8_throughput_vs_batas.png", bbox_inches="tight")
+    plt.close(fig)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--shunt", type=float, default=0.100)
@@ -269,7 +324,9 @@ def main():
     i_idle = float(r[r.scen == "IDLE"]["I_avg_mA"].mean())
     gambar_41(out, a.shunt, i_idle)
     gambar_41_rinci(out, a.shunt, i_idle)
+    gambar_42(out)
     gambar_47(out)
+    gambar_48(out)
     idle = gambar_49(out)
     k4 = gambar_410(out)
     print("keluar:", out)
