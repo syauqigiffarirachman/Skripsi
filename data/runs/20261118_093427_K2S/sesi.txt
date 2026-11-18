@@ -1,0 +1,7 @@
+host=>ID,K2S,8,47779038,1
+seed=1794969265
+secs=60
+plan=IDLE,A,B,B,A,B,A,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=pilot_k2s_tanpa_stlink

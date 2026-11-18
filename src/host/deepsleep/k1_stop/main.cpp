@@ -131,6 +131,9 @@ static int __attribute__((noinline)) one_operation() {
 static int serve_one(uint32_t *lat) {
   const int r = one_operation();
   *lat = g_op_cyc;
+  // ADC (dipakai analogRead di harvest_entropy) dimatikan sebelum tidur: ADC yang tetap menyala menambah ~0,6 mA
+  // di Stop (lantai K1S 2,62 mA vs 1,99 mA host saja, 18 Nov). Diluar blok kripto, tak memengaruhi latensi sign.
+  if (RCC->APB2ENR & RCC_APB2ENR_ADC1EN) ADC1->CR2 &= ~ADC_CR2_ADON;
   return r;
 }
 #include "../stop_window.h"

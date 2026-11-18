@@ -1,0 +1,9 @@
+host=>ID,K2S,8,47781656,1
+seed=1794970080
+secs=60
+plan=K2S.IDLE,K1S.IDLE,K1S.A,K1S.B,K1S.A,K2S.B,K1S.A,K1S.B,K2S.A,K2S.B,K2S.A,K2S.A,K1S.B,K2S.B,K1S.IDLE,K2S.IDLE
+rshunt=0.1
+offset=-2.0
+elf_K1S=.pio/build/host_k1_stop/firmware.elf sha256=45deeaf840a1
+elf_K2S=.pio/build/host_k2_stop/firmware.elf sha256=dae101b92d65
+catatan=pilot_stop_k1s_k2s

@@ -72,7 +72,8 @@ LATE_RINGAN_MAX = 10       # jumlah maksimum cuplikan terlambat per run yang mas
 
 
 ROOT = Path(__file__).resolve().parent.parent
-ELF = {"K1": ROOT / ".pio/build/k1_sw/firmware.elf", "K2": ROOT / ".pio/build/k2_hw/firmware.elf"}
+ELF = {"K1": ROOT / ".pio/build/k1_sw/firmware.elf", "K2": ROOT / ".pio/build/k2_hw/firmware.elf",
+       "K1S": ROOT / ".pio/build/host_k1_stop/firmware.elf", "K2S": ROOT / ".pio/build/host_k2_stop/firmware.elf"}
 OCD = Path.home() / ".platformio/packages/tool-openocd"
 
 
@@ -97,6 +98,12 @@ def flash_host(stlink, arch):
     elf = ELF[arch]
     if not elf.exists():
         raise FileNotFoundError(f"{elf} belum dibangun (pio run -e {elf.parent.name})")
+    if arch.endswith("S"):                            # varian Stop: SWD hanya hidup saat inti terjaga -> tangkap lalu flash
+        p = subprocess.run([sys.executable, str(ROOT / "tools" / "flash_stop.py"), str(elf)],
+                           capture_output=True, text=True, timeout=300)
+        if "Verified OK" not in p.stdout:
+            raise RuntimeError(f"flash {arch} (Stop) gagal: " + (p.stdout + p.stderr)[-600:])
+        return                                        # firmware menolkan DBGMCU_CR sendiri sesudah jendela aman 5 s
     ok, out = openocd(stlink, f"program {{{elf.as_posix()}}} verify reset exit", timeout=90)
     if not ok or "Verified OK" not in out:
         raise RuntimeError(f"flash {arch} gagal:\n{out[-600:]}")
@@ -285,7 +292,8 @@ def tulis_ringkasan(path, rows):
         w.writerows(rows)
 
 
-KELOMPOK = {("K1", "A"): "K1", ("K2", "A"): "K2", ("K1", "B"): "K3", ("K2", "B"): "K4"}
+KELOMPOK = {("K1", "A"): "K1", ("K2", "A"): "K2", ("K1", "B"): "K3", ("K2", "B"): "K4",
+            ("K1S", "A"): "K1S", ("K2S", "A"): "K2S", ("K1S", "B"): "K3S", ("K2S", "B"): "K4S"}
 METRIK = ["S_cpu_log", "TL_pct", "R_lwt_pct", "TL_model_pct", "Theta_sps", "lat_mean_ms_nyata", "I_avg_mA",
           "I_dyn_mA", "P_avg_mW", "P_dyn_mW", "E_lyn_mJ", "Q_lyn_mC", "V_avg"]
 

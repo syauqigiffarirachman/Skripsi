@@ -36,8 +36,8 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
 | 7 | F | S2 bangun dari attacker (EXTI PA3 + sinkron bit byte pertama, attacker TIDAK diubah) | 60 s @1 Hz dan 10 Hz: bad = hilang = 0 | LULUS 17 Nov dan DIULANG 18 Nov (setelah pemulihan host, kode final): 1 Hz 59/59, 10 Hz 602/602, bad = hilang = palsu = 0 |
 | 8 | F | S3 integrasi K1 (`host_k1_stop`, `_auto`) | run A/B 60 s lolos semua pemeriksaan run_bench | LULUS 18 Nov: A 59/59 (S_cpu logger 32,39 % = host 32,40 %, lat 683 ms @48 MHz), B jenuh seperti K1 baseline (604 tiba, 87 dilayani), semua pemeriksaan lolos |
 | 9 | F | S4 integrasi K2 (`host_k2_stop`, `_auto`): overdrive + polling, tunggu chip ~100 ms di Stop | sign valid, A/B 60 s lolos | A LULUS 18 Nov (59/59, lat 116,2 ms, S_cpu 98,19 % = logger, spurious 0). B: 515/600 dilayani, S_cpu cocok, TAPI 1-2 frame rusak/hilang per 600 (kejadian frame bertepatan dengan transisi bangun saat tunggu chip) = temuan, bukan lolos penuh |
-| 10 | V | Ketahanan, jalur galat, uji daya balik | lantai semua papan tersambung = lantai host sendiri | belum |
-| 11 | V | Pilot N=3 per kelompok + alat analisis | metrik lengkap, N=30 cukup | belum |
+| 10 | V | Ketahanan, jalur galat, uji daya balik | lantai semua papan tersambung = lantai host sendiri | SEBAGIAN 18 Nov: ketahanan K1S/K2S lulus (2 sesi pilot, 24 run, 0 crash, 9 kali ganti firmware otomatis). Lantai IDLE terukur 2,565 mA (K1S = K2S = S2), BUKAN 1,98 mA seperti pagi hari; dugaan: POR tidak menyeluruh / debug domain ST-Link (lihat logbook 18 Nov bagian 7), perlu uji POR penuh. Jalur galat (DS28E38 dilepas, attacker kirim sampah) belum |
+| 11 | V | Pilot N=3 per kelompok + alat analisis | metrik lengkap, N=30 cukup | PILOT K1S/K2S SELESAI 18 Nov (data/runs/20261118_094801_K1K2, 093427_K2S): A semua lolos; K1S B lolos; K2S B 3 dari 5 run ditandai (1 frame rusak + 1 hilang per 600). run_bench mendukung arsitektur K1S/K2S (flash lewat flash_stop.py). Alat analisis ABBA untuk K1S/K2S belum |
 | 12 | D | Data final 4 x 30 + IDLE (ABBA) | manifest + pemeriksaan otomatis lolos | belum |
 
 ## Aturan keselamatan firmware Stop
