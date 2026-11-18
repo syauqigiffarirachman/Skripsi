@@ -37,8 +37,8 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
 | 8 | F | S3 integrasi K1 (`host_k1_stop`, `_auto`) | run A/B 60 s lolos semua pemeriksaan run_bench | LULUS 18 Nov: A 59/59 (S_cpu logger 32,39 % = host 32,40 %, lat 683 ms @48 MHz), B jenuh seperti K1 baseline (604 tiba, 87 dilayani), semua pemeriksaan lolos |
 | 9 | F | S4 integrasi K2 (`host_k2_stop`, `_auto`): overdrive + polling, tunggu chip ~100 ms di Stop | sign valid, A/B 60 s lolos | A LULUS 18 Nov (59/59, lat 116,2 ms, S_cpu 98,19 % = logger, spurious 0). B: 515/600 dilayani, S_cpu cocok, TAPI 1-2 frame rusak/hilang per 600 (kejadian frame bertepatan dengan transisi bangun saat tunggu chip) = temuan; setelah cek idle ketat + penerima dini di jalur alarm (18 Nov malam): bad = palsu = 0, hilang ~0,9 per 600 (2 dari 8 run B bersih penuh) |
 | 10 | V | Ketahanan, jalur galat, uji daya balik | lantai semua papan tersambung = lantai host sendiri | LANTAI LULUS 18 Nov: IDLE 1,988 mA setelah POR penuh (sama dengan host sendiri 1,95-1,99); naik ke 2,52-2,57 mA setelah SATU sesi OpenOCD, sampai POR penuh berikutnya. Ketahanan K1S/K2S lulus (0 crash). Jalur galat (DS28E38 dilepas, attacker kirim sampah) belum |
-| 11 | V | Pilot N=3 per kelompok + alat analisis | metrik lengkap, N=30 cukup | PILOT K1S/K2S SELESAI 18 Nov (data/runs/20261118_094801_K1K2, 093427_K2S): A semua lolos; K1S B lolos; K2S B 3 dari 5 run ditandai (1 frame rusak + 1 hilang per 600). run_bench mendukung arsitektur K1S/K2S (flash lewat flash_stop.py). Alat analisis ABBA untuk K1S/K2S belum |
-| 12 | D | Data final 4 x 30 + IDLE (ABBA) | manifest + pemeriksaan otomatis lolos | belum |
+| 11 | V | Pilot N=3 per kelompok + alat analisis | metrik lengkap, N=30 cukup | LULUS 18 Nov: pilot K1S/K2S, `analisis_d.py --stop`, toleransi hilang < 0,25 % (keputusan user) |
+| 12 | D | Data final 4 x 30 + IDLE (ABBA) | manifest + pemeriksaan otomatis lolos | LULUS 18 Nov: `data/tahap_stop.txt`, 4 blok K2S/K1S/K1S/K2S, 30 sah per kelompok, pemeriksaan MEMENUHI STANDAR, analisis di `data/analisis/stop_final/` |
 
 ## Aturan keselamatan firmware Stop
 

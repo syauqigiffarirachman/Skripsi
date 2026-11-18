@@ -1,0 +1,7 @@
+host=>ID,K2S,8,48926606,1
+seed=1794985414
+secs=60
+plan=IDLE,A,A,B,A,A,A,B,A,A,A,B,B,B,B,A,A,B,B,B,B,B,B,B,B,B,A,A,A,B,B,B,B,A,B,B,B,B,A,IDLE
+rshunt=0.1
+offset=-2.0
+catatan=tahap_stop_blok4_K2S

@@ -1,0 +1,67 @@
+# Pemeriksaan keutuhan data tahap D
+
+## 1. Run per sesi
+
+| Blok | Sesi | Run | Sah | Gugur | Build logger |
+|---|---|---|---|---|---|
+| blok1 | 20261118_115044_K2S | 35 | 31 | 4 | 4C364231 |
+| blok2 | 20261118_124646_K1S | 32 | 32 | 0 | 4C364231 |
+| blok3 | 20261118_132320_K1S | 32 | 32 | 0 | 4C364231 |
+| blok4 | 20261118_140335_K2S | 40 | 33 | 7 | 4C364231 |
+
+Run sah dengan 'late ringan' (<= 10 cuplikan terlambat, selang < 5000 us): 62
+
+## 2. Jumlah run sah per kelompok (target 30)
+
+| Kelompok | Arsitektur | Skenario | Sah |
+|---|---|---|---|
+| K1 | Software | Normal | 30 |
+| K2 | DS28E38 | Normal | 30 |
+| K3 | Software | Barrage | 30 |
+| K4 | DS28E38 | Barrage | 30 |
+
+## 3. IDLE pembuka dan penutup tiap blok (drift baseline)
+
+| Blok | I_idle awal | I_idle akhir | Selisih (mA) | V awal | V akhir | Status |
+|---|---|---|---|---|---|---|
+| blok1 | 1.990 | 1.990 | +0.001 | 5.207 | 5.217 | OK |
+| blok2 | 1.990 | 1.992 | +0.002 | 5.218 | 5.225 | OK |
+| blok3 | 1.992 | 1.991 | -0.001 | 5.226 | 5.218 | OK |
+| blok4 | 1.989 | 1.984 | -0.004 | 5.214 | 5.217 | OK |
+
+## 4. Konsistensi (run sah)
+
+- Selisih S_cpu logger vs firmware terbesar: 0.0795 poin (batas 0,5)
+- Frame rusak/hilang di UART (total): 13
+- Galat jam host: -64 s.d. -31 ppm (dikoreksi dengan jam logger)
+- Selang cuplik INA226 terbesar: 4091 us
+- Varian Stop: frame rusak total 0 (harus 0); frame hilang 13 (tiap run < 0,25 % dari yang tiba)
+
+## 5. Pencilan (pagar Tukey 3 x IQR, hanya dilaporkan, tidak dibuang)
+
+- K3 Latensi sign (waktu nyata): 655.3598 ms (blok2 021_K1S_B.csv; median 654.8944)
+- K3 Arus dinamis: 11.7330 mA (blok3 006_K1S_B.csv; median 11.7246)
+- K3 Muatan dinamis per layanan: 7.7868 mC (blok3 006_K1S_B.csv; median 7.7796)
+
+## 6. Run gugur dan sebabnya
+
+- Run gugur di sesi terdaftar: 11 dari 139 run (termasuk IDLE)
+  - blok1 006_K2S_B.csv: host: bad=0 hilang=2 pin_salah=0 gagal=0 lat_drop=0
+  - blok1 008_K2S_B.csv: host: bad=0 hilang=2 pin_salah=0 gagal=0 lat_drop=0
+  - blok1 019_K2S_B.csv: host: bad=0 hilang=2 pin_salah=0 gagal=0 lat_drop=0
+  - blok1 034_K2S_B.csv: host: bad=0 hilang=3 pin_salah=0 gagal=0 lat_drop=0
+  - blok4 013_K2S_B.csv: host: bad=0 hilang=4 pin_salah=0 gagal=0 lat_drop=0
+  - blok4 020_K2S_B.csv: host: bad=0 hilang=2 pin_salah=0 gagal=0 lat_drop=0
+  - blok4 022_K2S_B.csv: host: bad=0 hilang=2 pin_salah=0 gagal=0 lat_drop=0
+  - blok4 024_K2S_B.csv: host: bad=0 hilang=3 pin_salah=0 gagal=0 lat_drop=0
+  - blok4 025_K2S_B.csv: host: bad=0 hilang=4 pin_salah=0 gagal=0 lat_drop=0
+  - blok4 032_K2S_B.csv: host: bad=0 hilang=2 pin_salah=0 gagal=0 lat_drop=0
+  - blok4 035_K2S_B.csv: host: bad=0 hilang=3 pin_salah=0 gagal=0 lat_drop=0
+- Per sebab: host: bad=N hilang=N pin_salah=N gagal=N lat_drop=N: 11
+- Sesi gugur utuh (data/dev/gugur/, tidak dianalisis): 4 sesi, 18 run
+  - 20261115_195039_K1 (8 run): TAHAP D blok 3b (tambahan K1, pengganti run gugur blok 1 dan 3): K1 konfigurasi 1c, 4A+2B; ST-Link host dicabut; daya host USB-C langsung ke port komputer; logger KEMBALI lewat hub; aturan late ringan berlaku
+  - 20261115_201042_K1 (8 run): TAHAP D blok 3b ULANG (pengganti run gugur blok 1 dan 3): K1 konfigurasi 1c, 4A+2B; host baru dicabut-colok daya (POR); ST-Link host dicabut; daya host USB-C langsung ke port komputer; logger lewat hub; aturan late ringan
+  - diagnosis_20261115_195951_K1 (1 run): diagnosis pergeseran +0,78 mA setelah blok 3b
+  - diagnosis_20261115_200926_K1 (1 run): diagnosis: IDLE setelah host dicabut-colok daya (power-on reset)
+
+## Kesimpulan: MEMENUHI STANDAR

@@ -39,6 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import run_bench as rb  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+STOP_MODE = False
 KELOMPOK = {("K1", "A"): "K1", ("K2", "A"): "K2", ("K1", "B"): "K3", ("K2", "B"): "K4"}
 INFO_KEL = {"K1": ("Software", "Normal"), "K2": ("DS28E38", "Normal"),
             "K3": ("Software", "Barrage"), "K4": ("DS28E38", "Barrage")}
@@ -247,7 +248,12 @@ def pemeriksaan(df, sah, gugur):
           f"- Frame rusak/hilang di UART (total): {nr}",
           f"- Galat jam host: {sah['clk_ppm'].min():.0f} s.d. {sah['clk_ppm'].max():.0f} ppm (dikoreksi dengan jam logger)",
           f"- Selang cuplik INA226 terbesar: {sah['dt_max_us'].max():.0f} us"]
-    lulus &= d_s <= 0.5 and nr == 0
+    if STOP_MODE:   # varian Stop: frame RUSAK harus 0; frame hilang sudah dibatasi < 0,25 % per run oleh run_bench (toleransi 18 Nov)
+        nb = int(sah["rx_bad"].fillna(0).sum())
+        L.append(f"- Varian Stop: frame rusak total {nb} (harus 0); frame hilang {nr} (tiap run < 0,25 % dari yang tiba)")
+        lulus &= d_s <= 0.5 and nb == 0
+    else:
+        lulus &= d_s <= 0.5 and nr == 0
 
     L += ["", "## 5. Pencilan (pagar Tukey 3 x IQR, hanya dilaporkan, tidak dibuang)", ""]
     ada = False
@@ -530,6 +536,8 @@ def main():
     args = ap.parse_args()
     rng = np.random.default_rng(SEED)
 
+    global STOP_MODE
+    STOP_MODE = args.stop
     df, pins = muat(baca_manifest(Path(args.manifest)), args.rshunt, args.offset, args.stop)
     out = Path(args.keluar) if args.keluar else ROOT / "data" / "analisis" / f"{datetime.now():%Y%m%d_%H%M%S}_r{args.rshunt:g}"
     out.mkdir(parents=True, exist_ok=True)
