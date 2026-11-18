@@ -33,9 +33,9 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
 | 4 | F | S0a uji LSE (`host_s0a_lse`, `_dingin`) | LSE start tiap start dingin (>= 10x), frekuensi 32768 Hz +- 50 ppm vs logger | LULUS 17 Nov (start dingin 3,5-4,1 s; -47 ppm stabil) |
 | 5 | F | S0 Stop minimal -> lantai papan (`host_s0_stop`, `tools/s0_stop.py`) | lantai stabil dan terjelaskan | LULUS 17 Nov: 1,99 mA (POR bersih, tanpa ST-Link), didominasi LED PWR |
 | 6 | F | S1 Stop + alarm RTC + pulih 48 MHz | T_sleep RTC = duty PB1 logger (< 1 ms/60 s) | LULUS 17 Nov: selisih 9-20 us per jendela 28,5 s (5 jendela), bangun palsu 0, arus tidur 1,988 mA |
-| 7 | F | S2 bangun dari attacker (EXTI PA3 + sinkron bit byte pertama, attacker TIDAK diubah) | 60 s @1 Hz dan 10 Hz: bad = hilang = 0 | LULUS 17 Nov (ST-Link menempel): 1 Hz 59/59, 10 Hz 601/601, bad = hilang = palsu = 0. Perlu diulang tanpa ST-Link (lihat logbook 18 Nov) |
-| 8 | F | S3 integrasi K1 (`host_k1_stop`, `_auto`) | run A/B 60 s lolos semua pemeriksaan run_bench | KODE JADI, belum lulus uji (host terkunci 18 Nov, lihat logbook) |
-| 9 | F | S4 integrasi K2 (`host_k2_stop`, `_auto`): overdrive + polling, tunggu chip ~100 ms di Stop | sign valid, A/B 60 s lolos | KODE JADI, belum lulus uji. Overdrive DS28E38 sendiri LULUS (eksperimen, 115,6 ms per sign) |
+| 7 | F | S2 bangun dari attacker (EXTI PA3 + sinkron bit byte pertama, attacker TIDAK diubah) | 60 s @1 Hz dan 10 Hz: bad = hilang = 0 | LULUS 17 Nov dan DIULANG 18 Nov (setelah pemulihan host, kode final): 1 Hz 59/59, 10 Hz 602/602, bad = hilang = palsu = 0 |
+| 8 | F | S3 integrasi K1 (`host_k1_stop`, `_auto`) | run A/B 60 s lolos semua pemeriksaan run_bench | LULUS 18 Nov: A 59/59 (S_cpu logger 32,39 % = host 32,40 %, lat 683 ms @48 MHz), B jenuh seperti K1 baseline (604 tiba, 87 dilayani), semua pemeriksaan lolos |
+| 9 | F | S4 integrasi K2 (`host_k2_stop`, `_auto`): overdrive + polling, tunggu chip ~100 ms di Stop | sign valid, A/B 60 s lolos | A LULUS 18 Nov (59/59, lat 116,2 ms, S_cpu 98,19 % = logger, spurious 0). B: 515/600 dilayani, S_cpu cocok, TAPI 1-2 frame rusak/hilang per 600 (kejadian frame bertepatan dengan transisi bangun saat tunggu chip) = temuan, bukan lolos penuh |
 | 10 | V | Ketahanan, jalur galat, uji daya balik | lantai semua papan tersambung = lantai host sendiri | belum |
 | 11 | V | Pilot N=3 per kelompok + alat analisis | metrik lengkap, N=30 cukup | belum |
 | 12 | D | Data final 4 x 30 + IDLE (ABBA) | manifest + pemeriksaan otomatis lolos | belum |

@@ -100,6 +100,8 @@ static void cmd_window(uint32_t secs, uint32_t p_ms, bool uart) {
   PB1_HI();
   rx_awake_start();
   while (!g_win_over) {
+    if (alarm_flag()) alarm_rearm();              // beban penuh: tanpa ini akhir jendela tak terlihat selama antrean ada
+    if (g_win_over) break;
     __disable_irq();
     const bool have = g_pending;
     if (have) g_pending = false;

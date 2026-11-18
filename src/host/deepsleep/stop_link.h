@@ -42,7 +42,7 @@
 #include <proto_host_logger.h>   // perintah/balasan/batas (lib/bench_proto, satu definisi dengan logger)
 
 #define HL_LINE_MAX 24
-#define HL_LAT_MAX  400                          // K2 barrage 60 s: ~298 sign; K1: <= 92
+#define HL_LAT_MAX  600                          // K2S (overdrive) barrage 60 s: ~520 sign; K1: <= 92
 #define HL_STAGE    8
 static uint32_t hl_clk_hz = 48000000UL;        // HCLK terukur (diperbarui main.cpp setelah tiap jendela)
 

@@ -253,12 +253,14 @@ enum { W_ALARM = 0, W_FRAME_OK = 1, W_FRAME_BAD = 2, W_SPURIOUS = 3 };
 // Dipanggil dengan PRIMASK = 1, mode TERJAGA (PLL), tak ada frame setengah jalan, tak ada alarm tertunda.
 // Kembali dengan PRIMASK = 1, PLL aktif, mode TERJAGA (DMA terpasang ulang), SysTick belum dinyalakan.
 //
-// CATATAN KEANDALAN (17-18 Nov, belum tuntas): dengan ST-Link menempel, beberapa susunan kode membuat inti
-// 'terlempar' (PC = 0 / instruksi tak dikenal) tepat setelah bangun dari Stop. Konfigurasi di bawah ini = yang
-// TERAKHIR LULUS uji S2 (59/59 pada 1 Hz dan 601/601 pada 10 Hz, bad = hilang = palsu = 0). Percobaan lain yang
-// ditinggalkan karena tak teruji/merusak: SEV+WFE sebagai inline asm dengan clobber (semua frame bad), WFI dengan
-// interupsi EXTI, pindah ke HSI sebelum tidur, matikan SWJ selama tidur (mengunci host!), polling sinkron segera
-// setelah bangun. Verifikasi final WAJIB dengan ST-Link dicabut dan POR bersih.
+// CATATAN KEANDALAN (18 Nov, TUNTAS): tanpa landasan NOP, instruksi pertama sesudah bangun dari Stop kadang
+// salah terbaca/tereksekusi (nilai register 'berubah': add #0x1000 menjadi #0x4000, ISB dianggap instruksi tak
+// dikenal, dll.), bergantung susunan kode: S2 lulus, K1S/K2S crash deterministik pada frame pertama. Penyebab
+// bukan ST-Link (crash juga tanpa ST-Link), bukan LPDS, bukan buffer tulis. Obat: SEV+WFE+WFE dan 24 NOP 16-bit
+// dalam SATU blok asm, sehingga tak ada instruksi 32-bit (yang bisa melintasi batas baris fetch) di awal
+// pemulihan. Sesudah itu K2S lulus penuh (59/59, S_cpu 98,19 % = logger). Percobaan yang tidak menolong:
+// clobber semua register (pembungkus fungsi), fungsi di RAM, LPDS mati, DISDEFWBUF, jeda NOP sesudah beberapa
+// instruksi (instruksi 32-bit sebelum jeda yang kena).
 static StopRes __attribute__((noinline)) stop_sleep() {
   StopRes r = {W_SPURIOUS, 0, 0};
   rx_off();
@@ -271,9 +273,8 @@ static StopRes __attribute__((noinline)) stop_sleep() {
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
   PB1_LO();
   __DSB();
-  __SEV();                                       // buang event basi (WFE pertama kembali segera)
-  __WFE();
-  __WFE();                                       // tidur Stop sungguhan
+  // SEV (buang event stale) + WFE + WFE (tidur Stop sungguhan) + landasan NOP 16-bit: lihat catatan di bawah.
+  asm volatile("sev; wfe; wfe; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop;" ::: "memory");
   const uint32_t c_w = cycles();                 // jam inti = HSI 8 MHz
   RCC->CFGR = (RCC->CFGR & ~RCC_CFGR_PPRE1) | RCC_CFGR_PPRE1_DIV1;     // PCLK1 = 8 MHz: BRR lebih halus (galat baud < 1 %)
   const uint32_t lvl_w = PA3_HIGH() ? 1 : 0;
@@ -302,8 +303,8 @@ static StopRes __attribute__((noinline)) stop_sleep() {
       const uint32_t l = PA3_HIGH() ? 1 : 0;
       if (l != lvl) {
         d3 = d2; d2 = d1; d1 = c - t_e; t_e = c; lvl = l;
-        if (l == 1 && d1 >= 6 * cyc_us && d1 <= 11 * cyc_us && d2 >= 6 * cyc_us && d2 <= 11 * cyc_us &&
-            d3 >= 13 * cyc_us && d3 <= 22 * cyc_us) { sync = true; break; }
+        if (l == 1 && d1 >= 5 * cyc_us && d1 <= 12 * cyc_us && d2 >= 5 * cyc_us && d2 <= 12 * cyc_us &&
+            d3 >= 11 * cyc_us && d3 <= 24 * cyc_us) { sync = true; break; }
       }
       if ((uint32_t)(c - c_w) > SYNC_TIMEOUT_US * cyc_us) break;
     }
@@ -356,7 +357,8 @@ static StopRes __attribute__((noinline)) stop_sleep() {
   const uint32_t c_after = cycles();
   const uint64_t el_x1000 = (uint64_t)(uint32_t)(c_sw - c_w) * 125ULL +
                             (uint64_t)(uint32_t)(c_after - c_sw) * 1000ULL / (SystemCoreClock / 1000000ULL);
-  const uint32_t tot = fine_to_us(tw - ts);
+  const int32_t dfine = (int32_t)(tw - ts);      // baca CNT/DIV tak atomik: tidur sangat singkat bisa terbaca -1 tik
+  const uint32_t tot = dfine > 0 ? fine_to_us((uint32_t)dfine) : 0;
   const uint32_t el = (uint32_t)(el_x1000 / 1000ULL);
   r.dt_us = tot > el ? tot - el : 0;
 #ifdef S2_TRACE
