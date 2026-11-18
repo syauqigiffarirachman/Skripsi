@@ -1,6 +1,6 @@
 """Gambar Bab 4 varian Stop (deep sleep) yang belum dibuat oleh analisis_d.py (18 Nov 2026).
 
-Membuat gambar (4.1, 4.1b, 4.2, 4.7, 4.8, 4.9, 4.10) sesuai laporan/panduan_grafik_bab4_2026-11-18.md:
+Membuat SEMUA gambar Bab 4 (4.1, 4.1b, 4.2 sampai 4.11) dengan gaya seragam sesuai laporan/panduan_grafik_bab4_2026-11-18.md:
   4.1  Jejak arus terhadap waktu (4 panel, satu run contoh per kelompok)
   4.2  Latensi tanda tangan (batang bernilai)
   4.7  Tingkat layanan terukur vs model utilisasi
@@ -312,6 +312,136 @@ def gambar_48(out):
     plt.close(fig)
 
 
+def _dua_desimal(v):
+    return f"{v:.2f}".replace(".", ",")
+
+
+def _batang(ax, nilai, galat=None, fmt=_dua_desimal, ofs=0.0):
+    for n, k in enumerate(["K1", "K2", "K3", "K4"]):
+        v = nilai[k]
+        ax.bar(n, v, 0.6, color=WARNA[k], hatch=ARSIR[k], edgecolor="white")
+        if galat is not None:
+            ax.errorbar(n, v, yerr=galat[k], color="0.15", capsize=4, lw=1.1, capthick=1.1)
+        y_teks = v + (galat[k] if galat is not None else 0) + ofs
+        ax.text(n, y_teks, fmt(v), ha="center", fontsize=9.5)
+    ax.set_xticks(range(4))
+    ax.set_xticklabels([NAMA[k] for k in ["K1", "K2", "K3", "K4"]])
+    ax.yaxis.set_major_formatter(FMT)
+
+
+def _ambil(metrik, kolom="rerata"):
+    d = pd.read_csv(ANA / "deskriptif.csv")
+    d = d[d.metrik == metrik].set_index("kelompok")
+    return {k: float(d.loc[k, kolom]) for k in ["K1", "K2", "K3", "K4"]}
+
+
+def _ugab(metrik):
+    u = pd.read_csv(ANA / "ketidakpastian.csv")
+    u = u[u.metrik == metrik].set_index("kelompok")
+    return {k: float(u.loc[k, "U_gab"]) for k in ["K1", "K2", "K3", "K4"]}
+
+
+# --------------------------------------------------------------------------- 4.3
+def gambar_43(out):
+    v = _ambil("S_cpu_log")
+    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    _batang(ax, v, ofs=1.2)
+    ax.set_ylim(0, 112)
+    ax.set_ylabel("Durasi tidur dalam CPU (% dari jendela 60 s)")
+    _legenda_arsitektur(ax)
+    fig.tight_layout()
+    fig.savefig(out / "gambar_4_3_durasi_tidur_cpu.png", bbox_inches="tight")
+    plt.close(fig)
+
+
+# --------------------------------------------------------------------------- 4.4 dan 4.5
+def _gambar_dengan_galat(out, metrik, label_y, ymax, berkas, ofs):
+    v = _ambil(metrik)
+    g = _ugab(metrik)
+    fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    _batang(ax, v, galat=g, ofs=ofs)
+    ax.set_ylim(0, ymax)
+    ax.set_ylabel(label_y)
+    _legenda_arsitektur(ax)
+    ax.text(0.5, -0.30, "Batang galat = ketidakpastian gabungan (didominasi kalibrasi shunt ±5 %)", transform=ax.transAxes,
+            ha="center", fontsize=8, color="0.35")
+    fig.tight_layout()
+    fig.savefig(out / berkas, bbox_inches="tight")
+    plt.close(fig)
+
+
+def gambar_44(out):
+    _gambar_dengan_galat(out, "P_dyn_mW", "Daya dinamis (mW)", 78, "gambar_4_4_daya_dinamis.png", 0.8)
+
+
+def gambar_45(out):
+    _gambar_dengan_galat(out, "E_lyn_mJ", "Energi dinamis per permintaan terlayani (mJ)", 50,
+                         "gambar_4_5_energi_per_permintaan.png", 0.6)
+
+
+# --------------------------------------------------------------------------- 4.6
+def gambar_46(out):
+    dd = pd.read_csv(ANA / "interaksi_dd.csv").set_index("metrik")
+    fig, axs = plt.subplots(1, 2, figsize=(10.4, 4.3))
+    spes = [("S_cpu_log", "(a) Durasi tidur dalam CPU", "Durasi tidur dalam CPU (%)", 112, "poin"),
+            ("P_dyn_mW", "(b) Daya dinamis", "Daya dinamis (mW)", 74, "mW")]
+    for ax, (m, jd, yl, ymax, sat) in zip(axs, spes):
+        v = _ambil(m)
+        for arsi, (kn, kb), c, mk in [("Software", ("K1", "K3"), C_SW, "o"), ("DS28E38", ("K2", "K4"), C_HW, "s")]:
+            ax.plot([0, 1], [v[kn], v[kb]], "-" + mk, color=c, lw=2, ms=8, label=arsi)
+            ax.text(-0.05, v[kn], _dua_desimal(v[kn]), color=c, fontsize=9.5, ha="right", va="center")
+            ax.text(1.05, v[kb] + (ymax * 0.03 if v[kb] < 5 else 0), _dua_desimal(v[kb]), color=c, fontsize=9.5, ha="left",
+                    va="center")
+        d = dd.loc[m]
+        ax.text(0.98, 0.97 if m == "S_cpu_log" else 0.04, "interaksi DD = " + f"{d.DD:+.2f}".replace(".", ",") + " " + sat +
+                "  [" + f"{d.IK95_bawah:+.2f}".replace(".", ",") + "; " + f"{d.IK95_atas:+.2f}".replace(".", ",") + "]",
+                transform=ax.transAxes, ha="right", va="top" if m == "S_cpu_log" else "bottom", fontsize=8.5, color="0.25")
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels(["Normal", "Barrage"])
+        ax.set_xlim(-0.4, 1.4)
+        ax.set_ylim(0, ymax)
+        ax.set_title(jd, loc="left")
+        ax.set_ylabel(yl)
+        ax.yaxis.set_major_formatter(FMT)
+        ax.legend(frameon=False, loc="upper left" if m == "P_dyn_mW" else "center", fontsize=9)
+    fig.tight_layout()
+    fig.savefig(out / "gambar_4_6_interaksi.png", bbox_inches="tight")
+    plt.close(fig)
+
+
+# --------------------------------------------------------------------------- 4.11
+def gambar_411(out):
+    r = pd.read_csv(ANA / "runs.csv")
+    s = r[r.sah & r.kelompok.isin(["K1", "K2", "K3", "K4"])]
+    ba = pd.read_csv(ANA / "bland_altman.csv").iloc[0]
+    fig, ax = plt.subplots(figsize=(7.4, 4.4))
+    rng = np.random.default_rng(1)
+    for k in ["K1", "K2", "K3", "K4"]:
+        g = s[s.kelompok == k]
+        x = (g.S_cpu_log + g.S_cpu_host) / 2
+        y = g.S_cpu_log - g.S_cpu_host
+        ax.scatter(x + rng.normal(0, 0.0, len(x)), y, s=22, color=WARNA[k], marker="o" if not ARSIR[k] else "^",
+                   alpha=0.85, label=NAMA[k].replace("\n", " "), edgecolor="white", lw=0.4)
+    ax.axhline(ba.bias, color="k", lw=1.2)
+    ax.axhline(ba.LoA_bawah, color="k", lw=1.0, ls="--")
+    ax.axhline(ba.LoA_atas, color="k", lw=1.0, ls="--")
+    x1 = ax.get_xlim()[1]
+    for yv, tx in [(ba.bias, "bias " + f"{ba.bias:+.3f}".replace(".", ",")),
+                   (ba.LoA_atas, "+1,96 sd " + f"{ba.LoA_atas:+.3f}".replace(".", ",")),
+                   (ba.LoA_bawah, "-1,96 sd " + f"{ba.LoA_bawah:+.3f}".replace(".", ","))]:
+        ax.text(x1, yv, " " + tx, fontsize=8.5, va="center")
+    ax.set_xlim(-2, 104)
+    ax.set_ylim(-0.1, 0.1)
+    ax.set_xlabel("Rerata kedua cara (% tidur CPU)")
+    ax.set_ylabel("Selisih pin − firmware (poin persentase)")
+    ax.yaxis.set_major_formatter(FMT)
+    ax.legend(ncol=4, loc="upper center", bbox_to_anchor=(0.5, 1.16), frameon=False, fontsize=7.8, handletextpad=0.2,
+              columnspacing=0.8)
+    fig.tight_layout()
+    fig.savefig(out / "gambar_4_11_bland_altman_scpu.png", bbox_inches="tight")
+    plt.close(fig)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--shunt", type=float, default=0.100)
@@ -325,6 +455,11 @@ def main():
     gambar_41(out, a.shunt, i_idle)
     gambar_41_rinci(out, a.shunt, i_idle)
     gambar_42(out)
+    gambar_43(out)
+    gambar_44(out)
+    gambar_45(out)
+    gambar_46(out)
+    gambar_411(out)
     gambar_47(out)
     gambar_48(out)
     idle = gambar_49(out)
