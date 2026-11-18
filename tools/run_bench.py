@@ -388,7 +388,12 @@ def analyse(text, rshunt=0.100, offset=-2.0):
         bad.append(f"S_cpu logger {scpu_log:.2f} vs host {scpu_host:.2f} berbeda > 0,5 poin")
     if abs(en["resid_us"]) > 2000:
         bad.append(f"sisa konsistensi host {en['resid_us']} us")
-    if en["rx_bad"] or en["rx_lost"] or en["pin_salah"] or en["gagal"] or en["lat_drop"]:
+    # Toleransi varian Stop (keputusan user 18 Nov): barrage (>= 100 permintaan) boleh kehilangan frame < 0,25 % dari
+    # yang tiba (frame yang mulai tepat saat host pulih dari Stop). Frame RUSAK tetap tidak boleh. N_rusak tetap dicatat.
+    lost_ok = en["arch"].endswith("S") and en["arrived"] >= 100 and 0 < en["rx_lost"] < 0.0025 * en["arrived"]
+    if lost_ok:
+        out["rx_lost_toleransi"] = en["rx_lost"]
+    if en["rx_bad"] or (en["rx_lost"] and not lost_ok) or en["pin_salah"] or en["gagal"] or en["lat_drop"]:
         bad.append(f"host: bad={en['rx_bad']} hilang={en['rx_lost']} pin_salah={en['pin_salah']} "
                    f"gagal={en['gagal']} lat_drop={en['lat_drop']}")
 
