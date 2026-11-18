@@ -156,7 +156,7 @@ def muat_gugur():
     """Sesi gugur utuh (data/dev/gugur/): hanya untuk tabel jumlah run gugur dan sebabnya."""
     out = []
     base = ROOT / "data" / "dev" / "gugur"
-    for d in sorted(base.glob("*")) if base.is_dir() else []:
+    for d in sorted(base.glob("stop_*" if STOP_MODE else "*")) if base.is_dir() else []:   # varian Stop: hanya sesi gugurnya sendiri
         cat = ""
         st = d / "sesi.txt"
         if st.exists():
@@ -209,7 +209,7 @@ def bland_altman(x, y):
 
 # --------------------------------------------------------------------------- pemeriksaan keutuhan
 def pemeriksaan(df, sah, gugur):
-    L = ["# Pemeriksaan keutuhan data tahap D", ""]
+    L = [f"# Pemeriksaan keutuhan data {'varian Stop (deep sleep)' if STOP_MODE else 'tahap D'}", ""]
     lulus = True
     L += ["## 1. Run per sesi", "", "| Blok | Sesi | Run | Sah | Gugur | Build logger |", "|---|---|---|---|---|---|"]
     for (blok, s), g in df.groupby(["blok", "sesi"], sort=False):
@@ -594,7 +594,7 @@ def main():
         gambar(out, df, sah, pins, ba_mm)
 
     # ----------------------------------------------------------------- ringkasan
-    R = ["# Ringkasan analisis tahap D", "",
+    R = [f"# Ringkasan analisis {'varian Stop (deep sleep)' if STOP_MODE else 'tahap D'}", "",
          f"Dibuat {datetime.now():%Y-%m-%d %H:%M}; rshunt = {args.rshunt} Ohm, offset = {args.offset} LSB, "
          f"u_rel kalibrasi = {args.u_rel:.1%}; bootstrap {N_BOOT} resampel (seed {SEED}); "
          f"keutuhan data: {'MEMENUHI STANDAR' if lulus else 'BELUM MEMENUHI STANDAR'}.", "",

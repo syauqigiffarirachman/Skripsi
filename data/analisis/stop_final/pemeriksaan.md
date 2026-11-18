@@ -1,4 +1,4 @@
-# Pemeriksaan keutuhan data tahap D
+# Pemeriksaan keutuhan data varian Stop (deep sleep)
 
 ## 1. Run per sesi
 
@@ -58,10 +58,9 @@ Run sah dengan 'late ringan' (<= 10 cuplikan terlambat, selang < 5000 us): 62
   - blok4 032_K2S_B.csv: host: bad=0 hilang=2 pin_salah=0 gagal=0 lat_drop=0
   - blok4 035_K2S_B.csv: host: bad=0 hilang=3 pin_salah=0 gagal=0 lat_drop=0
 - Per sebab: host: bad=N hilang=N pin_salah=N gagal=N lat_drop=N: 11
-- Sesi gugur utuh (data/dev/gugur/, tidak dianalisis): 4 sesi, 18 run
-  - 20261115_195039_K1 (8 run): TAHAP D blok 3b (tambahan K1, pengganti run gugur blok 1 dan 3): K1 konfigurasi 1c, 4A+2B; ST-Link host dicabut; daya host USB-C langsung ke port komputer; logger KEMBALI lewat hub; aturan late ringan berlaku
-  - 20261115_201042_K1 (8 run): TAHAP D blok 3b ULANG (pengganti run gugur blok 1 dan 3): K1 konfigurasi 1c, 4A+2B; host baru dicabut-colok daya (POR); ST-Link host dicabut; daya host USB-C langsung ke port komputer; logger lewat hub; aturan late ringan
-  - diagnosis_20261115_195951_K1 (1 run): diagnosis pergeseran +0,78 mA setelah blok 3b
-  - diagnosis_20261115_200926_K1 (1 run): diagnosis: IDLE setelah host dicabut-colok daya (power-on reset)
+- Sesi gugur utuh (data/dev/gugur/, tidak dianalisis): 3 sesi, 3 run
+  - stop_salah_arg_150341 (1 run): galat_DS_cabut_saat_jalan
+  - stop_salah_arg_150403 (1 run): cek_DS_terpasang
+  - stop_salah_arg_150440 (1 run): galat_DS_cabut_saat_jalan
 
 ## Kesimpulan: MEMENUHI STANDAR

@@ -1,6 +1,6 @@
-# Ringkasan analisis tahap D
+# Ringkasan analisis varian Stop (deep sleep)
 
-Dibuat 2026-11-18 14:51; rshunt = 0.1 Ohm, offset = -2.0 LSB, u_rel kalibrasi = 5.0%; bootstrap 10000 resampel (seed 20261116); keutuhan data: MEMENUHI STANDAR.
+Dibuat 2026-11-18 15:31; rshunt = 0.1 Ohm, offset = -2.0 LSB, u_rel kalibrasi = 5.0%; bootstrap 10000 resampel (seed 20261116); keutuhan data: MEMENUHI STANDAR.
 
 ## 1. Deskriptif: rerata (sd) [min-maks]
 

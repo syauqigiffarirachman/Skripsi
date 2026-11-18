@@ -1,8 +1,7 @@
 # Ringkasan hasil varian Stop untuk Bab 4
 
-Disusun 18 November 2026 dari data final `data/tahap_stop.txt` (analisis: `data/analisis/stop_final/`) dan data tahap D
-`data/tahap_d.txt` (analisis: `data/analisis/20261116_012530_r0.1/`). Semua angka di bawah diambil dari keluaran analisis
-itu; yang dihitung ulang di sini ditandai.
+Disusun 18 November 2026 dari data final varian Stop (*deep sleep*): `data/tahap_stop.txt`, analisis `data/analisis/stop_final/`.
+Hanya data dan analisis ini yang sah dipakai untuk skripsi. Semua angka di bawah diambil dari keluaran analisis itu.
 
 ## 1. Inti dalam lima kalimat
 
@@ -11,12 +10,11 @@ itu; yang dihitung ulang di sini ditandai.
    dan CPU tidur **98,2 %** versus **35,1 %** pada skenario normal.
 2. Pada serangan barrage, software-based nyaris tidak pernah tidur (**0,38 %**) dan hanya melayani **15,0 %** permintaan;
    DS28E38 tetap tidur **84,0 %** dan melayani **85,5 %**. Inilah argumen mitigasi *Denial of Sleep*.
-3. Dibandingkan tahap D (Sleep/WFI), Stop memangkas **daya rata-rata** K1 dari 82,7 menjadi 50,5 mW (-39 %) dan K2 dari
-   67,8 menjadi 13,3 mW (-80 %) pada skenario normal.
-4. **Hati-hati membacanya:** angka K2 mencampur dua perubahan (Stop dan tanda tangan overdrive), dan metrik "dinamis"
-   tidak bisa dibandingkan langsung antar-varian karena garis dasar IDLE-nya berbeda (bagian 6).
-5. Harga yang dibayar Stop pada barrage K2: **0,1-0,2 % frame UART hilang** (batas toleransi < 0,25 % per run), tidak ada di
-   tahap D.
+3. Lantai IDLE host sendiri (1,99 mA) sama dengan lantai saat semua papan tersambung, sehingga selisih yang diamati berasal
+   dari prosesor dan chip, bukan dari papan lain.
+4. **Hati-hati membacanya:** latensi dan tingkat layanan K2 mencerminkan konfigurasi overdrive + polling; kontribusi
+   overdrive, polling, dan mode Stop tidak dipisahkan dalam data final.
+5. Harga yang dibayar Stop pada barrage K2: **0,1-0,2 % frame UART hilang** (batas toleransi < 0,25 % per run).
 
 ## 2. Kondisi pengukuran (untuk Sub-bab 3.x/4.1)
 
@@ -86,33 +84,7 @@ Persentase tidur K3/K4 harus dibaca bersama layanan: CPU K4 tampak tidur lama ju
   host pulih tanpa reboot (59/59). DS28E38 tidak ada saat boot: host melapor "belum siap" dan `run_bench` menolak
   merekam data palsu.
 
-## 6. Perbandingan dengan tahap D (Sleep/WFI) dan cara membacanya
-
-Angka dari analisis resmi masing-masing tahap (rerata), skenario K1-K4:
-
-| Kelompok | Latensi D -> Stop (ms) | Tidur CPU D -> Stop (%) | Daya rata-rata D -> Stop (mW) | Layanan D -> Stop (%) |
-|---|---|---|---|---|
-| K1 normal | 655,4 -> 654,9 | 35,46 -> 35,08 | 82,7 -> 50,5 (-39 %) | 100 -> 100 |
-| K2 normal | 202,2 -> 116,2 | 92,99 -> 98,17 | 67,8 -> 13,3 (-80 %) | 100 -> 100 |
-| K3 barrage | 655,5 -> 654,9 | 0,38 -> 0,38 | 94,5 -> 71,6 (-24 %) | 15,0 -> 15,0 |
-| K4 barrage | 202,2 -> 116,3 | 64,72 -> 83,97 | 85,5 -> 36,1 (-58 %) | 49,3 -> 85,5 |
-
-(Kolom daya rata-rata dihitung ulang dari `ringkasan.csv` run sah kedua tahap; selisih % memakai nilai tersebut.)
-Arus tidur turun dari sekitar 11,7-15,2 mA (WFI) menjadi 2,0-5,6 mA (Stop). Lantai IDLE: 11,5-12,0 mA menjadi 1,99 mA.
-
-**Tiga catatan wajib:**
-1. **Pengaruh K1 = Stop murni** (latensi dan layanan tidak berubah). **Pengaruh K2 bukan Stop murni:** latensi 202 -> 116 ms dan
-   layanan K4 49 -> 85 % datang dari **overdrive 1-Wire + polling** (menggantikan tunggu tetap 130 ms), bukan dari Stop.
-   Keduanya tidak bisa dipisahkan dari data ini. Untuk memisahkannya perlu satu kelompok tambahan (K2 overdrive di WFI
-   atau K2 kecepatan biasa di Stop).
-2. **Daya/energi "dinamis" tidak sebanding antar-varian.** Daya dinamis = daya rata-rata dikurangi daya IDLE varian itu.
-   IDLE Stop (10,4 mW) jauh lebih rendah daripada IDLE WFI (59,5-62,5 mW), jadi P_dyn K1 tampak naik (23,3 -> 40,1 mW) padahal
-   daya rata-rata mutlaknya turun. Untuk perbandingan lintas-varian pakai **daya rata-rata mutlak** (tabel di atas) atau
-   energi jendela; pakai P_dyn hanya untuk SW vs HW di dalam satu varian.
-3. Stop menambah **0,1-0,2 % frame UART hilang** pada K4 (frame yang mulai tepat saat host pulih dari alarm). Dibatasi < 0,25 %
-   per run atas keputusan peneliti; tahap D tidak punya fenomena ini. Frame rusak = 0.
-
-## 7. Temuan metodologis yang layak ditulis (keterbatasan dan prosedur)
+## 6. Temuan metodologis yang layak ditulis (keterbatasan dan prosedur)
 
 - **Keadaan debug mengubah arus tidur.** Satu sesi OpenOCD menaikkan lantai 1,94 menjadi 2,52 mA dan melonjakkan bangun palsu
   sampai POR penuh. Maka data Stop hanya sah setelah POR penuh tanpa debugger; prosedur ini dipakai di semua blok final.
@@ -125,19 +97,18 @@ Arus tidur turun dari sekitar 11,7-15,2 mA (WFI) menjadi 2,0-5,6 mA (Stop). Lant
 - LED PWR Blue Pill dibiarkan; ia dan board DS9121 (sekitar 0,06-0,09 mA diam) membentuk lantai 1,99 mA yang sama di semua
   arsitektur, jadi tidak memengaruhi selisih.
 
-## 8. Saran susunan Bab 4 dan gambar
+## 7. Saran susunan Bab 4 dan gambar
 
-1. Hasil varian Sleep/WFI (tahap D) seperti sebelumnya.
-2. Hasil varian Stop: tabel bagian 3, tabel RM1/RM3 (bagian 4), RM2 dan H4.
-3. Perbandingan Sleep vs Stop (bagian 6) dengan tiga catatan di atas.
-4. Ketahanan dan jalur galat (bagian 5), keterbatasan (bagian 7).
+1. Hasil varian Stop: tabel bagian 3, tabel RM1/RM3 (bagian 4), RM2 dan H4.
+2. Ketahanan dan jalur galat (bagian 5).
+3. Keterbatasan dan prosedur (bagian 6).
 
 Gambar sudah dibuat di `data/analisis/stop_final/gambar/` (box plot, interaction plot, drift, Bland-Altman) dan mengikuti
-`laporan/panduan_grafik_bab4_2026-11-16.md`; gambar Sleep vs Stop berdampingan belum dibuat.
+`laporan/panduan_grafik_bab4_2026-11-16.md`; 
 
-## 9. Yang jangan diklaim
+## 8. Yang jangan diklaim
 
-- Jangan menulis bahwa "Stop menghemat 80 % pada K2" tanpa menyebut overdrive.
-- Jangan membandingkan P_dyn atau E_lyn lintas-varian.
-- Jangan menyebut tingkat layanan K4 85,5 % sebagai efek Stop saja (berasal dari tanda tangan yang lebih cepat).
+- Jangan menyatakan efek overdrive, polling, dan mode Stop terpisah satu sama lain; data final tidak memisahkannya.
+- Jangan menyebut tingkat layanan K4 85,5 % tanpa menyebut latensi 116 ms dan beban 10 permintaan/detik.
 - Jangan menyembunyikan frame UART hilang 0,1-0,2 % pada K4.
+- Nilai mutlak mA/mW/mJ masih memakai shunt nominal 0,100 ohm (kalibrasi belum final).
