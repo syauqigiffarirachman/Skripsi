@@ -48,3 +48,6 @@ CPU tidur jauh lebih lama, dan layanan saat barrage naik dari 15 % ke 49 %.
    supaya data yang sudah diambil tetap sah.
 3. **Catat yang gagal dan yang salah**: logbook memuat dugaan yang terbukti SALAH beserta alasannya (mis. 13 Nov
    "comb tidak mengubah latensi" yang dicabut). Itu yang membuat hasilnya bisa dipercaya.
+
+## Tambahan 19 Nov
+- `07_dari_csv_ke_kesimpulan.md`: asal setiap angka dari CSV mentah sampai kesimpulan, kesenjangan paper-kode (Shapiro-Wilk, ANOVA), naskah menjawab penguji. Pembuktian independen: `tools/hitung_ulang_satu_run.py`.
