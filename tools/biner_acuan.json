@@ -1,6 +1,6 @@
 {
-  "commit": "448befecff1d",
-  "diperbarui": "2026-11-16T09:03:57",
+  "commit": "9b518e27b497+ubah",
+  "diperbarui": "2026-11-18T22:31:20",
   "env": {
     "attacker": {
       "bss": 3160,
@@ -15,6 +15,41 @@
       "sha256": "545d668a38f028826469db3806f4a6779b902c6196164c1886882636b6ff378d",
       "text": 41128,
       "ukuran": 41804
+    },
+    "host_k1_stop": {
+      "bss": 8160,
+      "data": 528,
+      "sha256": "2ca6e8d0d86115d09cf9db24b72e511a24f4463b329c0ceaeb76ed485b814a5c",
+      "text": 47156,
+      "ukuran": 47684
+    },
+    "host_k1_stop_comb_auto": {
+      "bss": 8160,
+      "data": 528,
+      "sha256": "968cf7681a6472bf97202f8102e7d3713ecd15dd98b52f913f1a2ae4d97d1896",
+      "text": 48840,
+      "ukuran": 49368
+    },
+    "host_k1_stop_diag_auto": {
+      "bss": 10080,
+      "data": 528,
+      "sha256": "193d84b9db5b2b9e4024110d3ce3571fb005d2d4a03069b07edcf230f99d035e",
+      "text": 47452,
+      "ukuran": 47980
+    },
+    "host_k2_stop": {
+      "bss": 8096,
+      "data": 516,
+      "sha256": "5b4e017827e39e17a213bf972b8f3346c15142ec0e02576bb8847680e6ae2f71",
+      "text": 30792,
+      "ukuran": 31308
+    },
+    "host_k2_stop_diag_auto": {
+      "bss": 10032,
+      "data": 516,
+      "sha256": "36bc6bf032f07be084de4f89e51a546bfc0a8fdcd64b9f8a05d667bb76cb2477",
+      "text": 31220,
+      "ukuran": 31736
     },
     "k1_rx": {
       "bss": 5456,

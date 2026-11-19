@@ -56,6 +56,9 @@ static void wait_event(bool exit_on_pending) {
     }
     const StopRes r = stop_sleep();
     g_n_stop++; g_t_sleep += r.dt_us;
+#ifdef DIAG_LONG
+    diag_wake((uint32_t)r.cause, r.dt_us);       // 18 Nov: catat tiap bangun dari Stop (diagnosis tanda tangan lambat)
+#endif
     g_uw_rem += r.dt_us; uwTick += (uint32_t)(g_uw_rem / 1000); g_uw_rem %= 1000;
     if (r.cause == W_SPURIOUS) g_spurious++;
     SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;

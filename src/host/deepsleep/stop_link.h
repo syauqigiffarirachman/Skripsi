@@ -123,6 +123,9 @@ static bool hl_poll_line(char *out) {
   return out[0] != '\0';
 }
 
+#ifdef DIAG_SIG
+static void hl_diag_emit();                      // B1: kirim tanda tangan hasil layanan (didefinisikan di main.cpp)
+#endif
 static void hl_send_result() {
   uint32_t mn = 0xFFFFFFFFUL, mx = 0;
   uint64_t sum = 0;
@@ -153,6 +156,9 @@ static void hl_send_result() {
     hl_txf(",%lu", (unsigned long)hl_lat[i]);
     if (i % 10 == 9 || i + 1 == hl_lat_n) hl_tx("\n");
   }
+#ifdef DIAG_SIG
+  hl_diag_emit();                                // sebelum >DONE: logger menghentikan rekaman di >DONE
+#endif
   hl_tx(LINK_R_DONE "\n");
 }
 

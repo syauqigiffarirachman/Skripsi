@@ -577,7 +577,9 @@ def main():
         sesi = ROOT / "data" / "runs" / f"{datetime.now():%Y%m%d_%H%M%S}_{tag}"
         sesi.mkdir(parents=True, exist_ok=True)
         elf_info = "".join(f"elf_{a}={ELF[a].relative_to(ROOT).as_posix()} sha256={sha_short(ELF[a])}\n"
-                           for a in ELF if campur and ELF[a].exists())
+                           for a in ELF if (campur or a == arch) and ELF[a].exists())   # B4: sesi satu-arsitektur juga mencatat sha256
+        elf_info += "".join(f"bin_{a}={ELF[a].with_suffix('.bin').relative_to(ROOT).as_posix()} sha256={hashlib.sha256(ELF[a].with_suffix('.bin').read_bytes()).hexdigest()}\n"
+                            for a in ELF if (campur or a == arch) and ELF[a].with_suffix(".bin").exists())
         rencana = ",".join((a + "." if a else "") + sc for a, sc in plan)
         (sesi / "sesi.txt").write_text(
             f"host={ident}\nseed={seed}\nsecs={secs}\nplan={rencana}\nrshunt={args.rshunt}\n"

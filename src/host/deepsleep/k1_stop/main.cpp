@@ -111,12 +111,20 @@ static int __attribute__((noinline)) sign_digest(const uint8_t *digest, const ui
 // Satu operasi penuh yang sama dengan R: entropi + sign. Hasil r||s dibuang.
 // g_op_cyc = latensi sign saja (jendela ukur sama dengan R: entropi di luar), dipakai tahap 5.
 static uint32_t g_op_cyc = 0;
+#ifdef DIAG_SIG                              // B1 (18 Nov): simpan r||s 30 tanda tangan pertama untuk diverifikasi di komputer
+#define DIAG_N 30
+static uint8_t  g_diag_sig[DIAG_N][64];
+static uint32_t g_diag_n = 0;
+#endif
 static int __attribute__((noinline)) one_operation() {
   uint8_t ent[32], sig[64];
   int ret = harvest_entropy(ent);
   const uint32_t t0 = cycles();
   if (ret == 0) ret = sign_digest(DIGEST, ent, sig);
   g_op_cyc = cycles() - t0;
+#ifdef DIAG_SIG
+  if (ret == 0 && g_diag_n < DIAG_N) memcpy(g_diag_sig[g_diag_n++], sig, 64);
+#endif
   mbedtls_platform_zeroize(ent, sizeof ent);
   return ret;
 }
@@ -126,6 +134,15 @@ static int __attribute__((noinline)) one_operation() {
 #define HL_ARCH  "K1S"
 #define HL_READY (g_ready && g_lse_ok)
 #include "../stop_link.h"
+#ifdef DIAG_SIG
+static void hl_diag_emit() {
+  char hx[129];
+  for (uint32_t i = 0; i < g_diag_n; i++) {
+    for (int j = 0; j < 64; j++) snprintf(hx + 2 * j, 3, "%02x", g_diag_sig[i][j]);
+    hl_txf(">SIG,%lu,%s\n", (unsigned long)i, hx);
+  }
+}
+#endif
 
 // Melayani satu permintaan: satu sign (entropi di luar ukur, sign diukur CYCCNT seperti K1 baseline).
 static int serve_one(uint32_t *lat) {
