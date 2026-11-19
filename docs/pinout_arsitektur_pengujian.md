@@ -69,7 +69,12 @@ Board dan kabel sama. Yang berbeda adalah konfigurasi pin dan sumber waktu (`src
 
 Lantai arus (shunt 0,1 Ω, offset −2 LSB): CPU jalan @48 MHz ~13,0 mA; Stop dengan ST-Link terpasang 2,567 mA;
 Stop tanpa ST-Link setelah POR bersih **1,985 mA** (~80 LSB INA226). Domain debug ST-Link menyumbang ~0,58 mA.
-(18 Nov: lantai IDLE K1S/K2S terukur 2,565 mA pada pilot; selisih dari 1,98 mA belum tuntas, lihat logbook 18 Nov.)
+**Terpecahkan (18 Nov malam):** selisih 1,98 vs 2,565 mA bukan dari firmware, DS28E38, ADC, atau papan lain. Satu sesi OpenOCD
+(ST-Link membaca/menulis host) menyalakan domain debug chip dan menaikkan lantai ke 2,52–2,57 mA; baru turun lagi setelah POR penuh.
+Setelah POR penuh dan tanpa OpenOCD, IDLE K1S/K2S = **1,988 mA**. Data final varian Stop (4 blok, IDLE pembuka/penutup) berada di
+**1,984–1,992 mA** (drift antar-blok ≤ 0,004 mA, `data/analisis/stop_final/pemeriksaan.md` butir 3). Aturan: setiap ganti firmware
+lewat ST-Link wajib diikuti POR penuh sebelum mengukur, dan OpenOCD tidak dibuka di antara run (lihat logbook 18 Nov bagian 8.1).
+Sisa lantai ±1,99 mA didominasi LED daya papan (keputusan dipertahankan, lihat tabel pin `(LED PWR)` bagian 2).
 
 **Daya balik lewat jalur sinyal.** Saat USB-C dicabut, host tetap berdaya lewat kabel sinyal (logger PA9, attacker PA9)
 melalui dioda proteksi; rail 3V3/5V terkunci ~1,92 V (ambang POR/PDR). Tanpa GND host–logger, 3V3 jatuh ke 0,56 V. Resistor seri

@@ -1,0 +1,30 @@
+# Antisipasi pertanyaan penguji (draf, 18 November 2026)
+
+Untuk persiapan sidang proposal (minggu depan) dan sidang skripsi (4 Desember). Jawaban memakai data *deep sleep* (varian Stop); jangan menyebut tahap D.
+Kolom "Bukti" menunjuk berkas pendukung. Butir bertanda **(risiko)** adalah kelemahan yang sebaiknya Anda sebut sendiri sebelum ditanya.
+
+| No | Pertanyaan yang mungkin | Jawaban singkat | Bukti |
+|---|---|---|---|
+| 1 | Mengapa DS28E38, bukan secure element lain? | [Selaraskan dengan alasan di Bab 1-2 Anda; ini draf saya, bukan kutipan.] Fakta teknis: ECDSA P-256 perangkat keras pada antarmuka 1-Wire satu pin; fokus penelitian ialah dampak offloading terhadap Denial of Sleep, bukan memilih chip terbaik. | Bab 2 revisi |
+| 2 | Apa itu serangan Denial of Sleep dan bagaimana kamu memodelkannya? | Permintaan tanda tangan periodik dari attacker node (A = 1/s normal, B = 10/s barrage) yang menahan CPU dari tidur. Model sederhana, penyerang tidak adaptif. | Bab 3 |
+| 3 | Kenapa baseline software hanya 655 ms? Bukankah Mbed TLS bisa lebih cepat? **(risiko)** | Konfigurasi 1c mematikan tabel comb (`MBEDTLS_ECP_FIXED_POINT_OPTIM=0`); dengan comb aktif ±278,6 ms (13 Nov). Keunggulan waktu DS28E38 turun dari 82 % ke ±58 %, keunggulan energi tetap besar tetapi mengecil. Uji B2 (env `host_k1_stop_comb_auto`) disiapkan untuk mengukur ini; hasilnya dilaporkan sebagai batasan. | `docs/prosedur_B1_B2.md`, `bahan_pembahasan` bagian 5 butir 9 |
+| 4 | Kenapa clock 48 MHz, bukan 72 MHz? | Setelah bangun dari Stop host memakai HSI, PLL dikunci 48 MHz agar kedua arsitektur identik; latensi software absolut tidak dibandingkan dengan literatur, hanya antar-arsitektur. | `bahan_pembahasan` butir 6 |
+| 5 | Kenapa 30 run per kelompok? | Kompromi waktu bangku; simpangan baku antar-run sangat kecil (mis. latensi sd 0,06-0,11 ms), IK 95 % dari bootstrap 10 000 resampel; sensitivitas pada 17-41 run K4 tidak mengubah kesimpulan. | `sensitivitas/` |
+| 6 | p-value sangat kecil, apakah itu bermakna? | Ya secara statistik, tetapi yang dilaporkan ialah ukuran efek dan IK; p < 10⁻¹⁰⁰ hanya karena sd kecil dan efek besar. | `p_nilai.csv` |
+| 7 | Bagaimana mengukur arus, dan seberapa akurat? **(risiko)** | INA226 dengan shunt nominal 0,1 Ω, sampling ±4 ms, jam logger sebagai acuan waktu. Kalibrasi shunt terhadap multimeter belum final (dugaan shunt efektif 0,080-0,083 Ω); nilai mutlak mA/mJ ±5 % (asumsi), persentase antar-arsitektur tidak terpengaruh. | `kalibrasi_shunt.py`, daftar A1 |
+| 8 | Lantai arus 2 mA besar sekali untuk "deep sleep". | Didominasi LED daya Blue Pill (dipertahankan), bukan chip (1-20 µA tingkat chip). Selisih dinamis tetap sah karena sama pada kedua arsitektur. Penyebab lantai 2,565 mA awal ialah domain debug ST-Link; dicegah dengan POR penuh. | `pinout...` bagian 2b |
+| 9 | Apakah tanda tangan DS28E38 benar-benar sah? **(risiko)** | Pada eksperimen pengembangan 269/269 sah di komputer, termasuk uji tanda tangan dirusak ditolak. Verifikasi pada firmware final dengan build diagnostik (B1) disiapkan; jangan diklaim sebelum dijalankan. | `b1_verifikasi.py` |
+| 10 | Dari mana 82 % lebih cepat dan 92,6 % lebih hemat? | Latensi 654,9 vs 116,2 ms; energi dinamis per tanda tangan 41,0 vs 3,0 mJ. Dekomposisi: pada K2 62 % energi ialah IC menghitung (CPU tidur), CPU aktif hanya 18,6 ms vs 664 ms. | `dekomposisi_energi.md` |
+| 11 | Berapa kontribusi overdrive terhadap hasil? **(risiko)** | Eksperimen terpisah: 192,5 ms (biasa + tunggu tetap) → 115,6 ms (overdrive + polling); overdrive ±70 %, polling ±30 %. Data final tidak memisahkan Stop dari overdrive. | `bahan_pembahasan` bagian 4 |
+| 12 | Barrage 10 permintaan/s membuat K4 melayani 85,5 % saja. Apa artinya? | Kapasitas K4 = 1/116 ms = 8,6 tanda tangan/s < 10/s; tingkat layanan mengikuti model utilisasi (85,8 %). K3 software hanya 15 %. Angka ini bergantung pada latensi dan beban, bukan properti universal. | Gambar 4.7 |
+| 13 | Frame hilang 0,1-0,2 % di K4, mengapa dibiarkan? | Terdiagnosis: tiap kehilangan bertepatan dengan satu tanda tangan ±210 ms (frame tiba tepat saat alarm RTC chip-siap; frekuensi ≈0,15 %). Tanda tangan tetap sah; toleransi < 0,25 % diputuskan peneliti dan diuji sensitivitasnya. Penyebab tingkat register masih hipotesis. | `bahan_pembahasan` bagian 1, 8 |
+| 14 | Satu papan dan satu chip saja, apakah valid? **(risiko)** | Tidak dapat menyatakan variasi antar-unit; ditulis sebagai batasan dan saran. | ancaman validitas butir 1 |
+| 15 | Apa kontribusi penelitian ini? | Bukti kuantitatif bahwa offloading ke secure element mengurangi dampak Denial of Sleep (tidur CPU 84 % vs 0,4 % saat barrage; layanan 85,5 % vs 15 %) pada MCU Cortex-M3 dalam mode Stop, plus metodologi pengukuran (kontrol keadaan bersih, POR, jam logger). | ringkasan Bab 4 |
+| 16 | Mengapa bukan Standby atau baterai sungguhan? | Standby menghapus RAM dan butuh re-init; Stop mempertahankan keadaan dan wajar untuk perangkat IoT yang sering bangun. Umur baterai diproyeksikan, tidak diukur. | `proyeksi_baterai.md` |
+| 17 | Apakah attacker adaptif akan mengubah hasil? | Tidak diuji; model periodik sederhana. Saran: penyaringan laju dan penyerang adaptif. | Bab 5 saran |
+| 18 | Bagaimana kamu menjamin pengukuran tidak mengganggu sistem? | Logger terpisah (STM32), jalur kendali baud-encoded, attacker via USART2, jendela ukur dibatasi PB1; kesesuaian S_cpu logger vs host ≤ 0,08 poin (batas 0,5). | `pemeriksaan.md` butir 4 |
+
+## Tiga hal yang sebaiknya Anda siapkan secara aktif
+1. Satu kalimat jujur tentang konfigurasi software (butir 3) dan hasil B2 bila sudah diukur.
+2. Satu slide kalibrasi: status A1/A2 dan cara angka mutlak dibaca (butir 7).
+3. Satu slide ancaman validitas (17 butir di `bahan_pembahasan` bagian 5, pilih lima teratas: unit tunggal, lantai LED, kalibrasi shunt, konfigurasi software, penyerang periodik).

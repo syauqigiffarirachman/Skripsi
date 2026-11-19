@@ -19,23 +19,23 @@ Status: `belum` | `siap` (alat/prosedur sudah ada, tinggal dikerjakan) | `proses
 
 | No | Butir | Mengapa penting | Cara | Siapa | Status |
 |---|---|---|---|---|---|
-| B1 | **Keabsahan tanda tangan pada firmware final (Stop)** | Verifikasi di komputer hanya pada eksperimen overdrive (269/269) dan pengembangan K1 awal. K1S/K2S final tidak pernah mengirim tanda tangan ke komputer | Build diagnostik yang mengirim r‖s untuk 30 tanda tangan; verifikasi di komputer dengan `k1_check`/`k2_check` | Saya (kode, skrip), Anda (flash, POR) | `belum` |
-| B2 | **Uji sensitivitas konfigurasi software** | "82 % lebih cepat" bergantung pada Mbed TLS tabel comb dimatikan (655 ms). Catatan 13 Nov: comb aktif ±278,6 ms. Penguji pasti menanyakan | Satu blok kecil K1S dengan comb aktif (jika muat RAM/Flash) atau kutip pengukuran pengembangan sebagai batasan | Saya dan Anda | `belum` |
-| B3 | **Sensitivitas toleransi frame hilang** | Kriteria K4 ditetapkan setelah melihat hasil; perlu bukti kesimpulan tidak berubah | Ulang analisis dengan ke-41 run K4 (termasuk 11 gugur) dan tabel perbandingan | Saya | `belum` |
-| B4 | **Rilis firmware yang membangkitkan data** | Sesi satu-arsitektur tidak mencatat sha256 firmware | Manifes sha256 K1S, K2S, logger, attacker, plus hash commit | Saya | `belum` |
-| B5 | **Nilai p tertulis 0** | CSV menampilkan p = 0 (di bawah presisi mesin) | Laporkan sebagai "< 1e-100" dengan statistik uji dan derajat bebas | Saya | `belum` |
+| B1 | **Keabsahan tanda tangan pada firmware final (Stop)** | Verifikasi di komputer hanya pada eksperimen overdrive (269/269) dan pengembangan K1 awal. K1S/K2S final tidak pernah mengirim tanda tangan ke komputer | Build diagnostik yang mengirim r‖s untuk 30 tanda tangan; verifikasi di komputer dengan `k1_check`/`k2_check` | Saya (kode, skrip), Anda (flash, POR) | `selesai` 18 Nov malam: 30/30 sah K1S dan K2S, lihat `docs/hasil_B1_verifikasi_tanda_tangan_2026-11-18.md` |
+| B2 | **Uji sensitivitas konfigurasi software** | "82 % lebih cepat" bergantung pada Mbed TLS tabel comb dimatikan (655 ms). Catatan 13 Nov: comb aktif ±278,6 ms. Penguji pasti menanyakan | Satu blok kecil K1S dengan comb aktif (jika muat RAM/Flash) atau kutip pengukuran pengembangan sebagai batasan | Saya dan Anda | `selesai` (data dev, N kecil) 18 Nov malam: comb aktif 278,6 ms; keunggulan DS28E38 58 % waktu, 82 % energi; `docs/hasil_B2_sensitivitas_comb_2026-11-18.md` |
+| B3 | **Sensitivitas toleransi frame hilang** | Kriteria K4 ditetapkan setelah melihat hasil; perlu bukti kesimpulan tidak berubah | Ulang analisis dengan ke-41 run K4 (termasuk 11 gugur) dan tabel perbandingan | Saya | `selesai`: `tools/analisis_sensitivitas.py`, `docs/bahan_pembahasan_bab4_2026-11-18.md` bagian 1; kesimpulan tak berubah |
+| B4 | **Rilis firmware yang membangkitkan data** | Sesi satu-arsitektur tidak mencatat sha256 firmware | Manifes sha256 K1S, K2S, logger, attacker, plus hash commit | Saya | `selesai`: `data/manifes_firmware_stop.md`; bukti tak langsung (tak ada sha yang dicatat saat sesi), keterbatasan tertulis |
+| B5 | **Nilai p tertulis 0** | CSV menampilkan p = 0 (di bawah presisi mesin) | Laporkan sebagai "< 1e-100" dengan statistik uji dan derajat bebas | Saya | `selesai`: `sensitivitas/p_nilai.csv`; p = 0 hanya ada di data pengembangan, bukan `stop_final` |
 
 ## C. Sebaiknya: bahan pembahasan
 
 | No | Butir | Mengapa penting | Cara | Siapa | Status |
 |---|---|---|---|---|---|
-| C1 | **Dekomposisi energi per tanda tangan** (CPU aktif, IC menghitung, tidur) | Pembahasan "mengapa DS28E38 hemat" perlu angka; jejak arus menunjukkan plato ±5–6 mA selama IC menghitung | Hitung dari jejak arus mentah: durasi dan arus tiap fase, tabel mJ per fase | Saya | `belum` |
+| C1 | **Dekomposisi energi per tanda tangan** (CPU aktif, IC menghitung, tidur) | Pembahasan "mengapa DS28E38 hemat" perlu angka; jejak arus menunjukkan plato ±5–6 mA selama IC menghitung | Hitung dari jejak arus mentah: durasi dan arus tiap fase, tabel mJ per fase | Saya | `selesai`: `tools/dekomposisi_energi.py`, Gambar 4.12; mJ menunggu kalibrasi |
 | C2 | **Perbandingan dengan literatur** | Noseda dkk. (waktu 27–50 %, energi 51–87 %), Peradeniya (336 ms), Istiyanto | Angka tepat dari paper diambil Anda; tabel disusun Saya; referensi tambahan dapat dicari | Anda | `belum` |
-| C3 | **Latensi kecepatan biasa vs overdrive** | Menjelaskan K2: 192,5 ms (biasa + tunggu tetap) vs 115,6 ms (overdrive + polling); data di `data/dev/ds_od` belum jadi tabel naskah | Tabel pembahasan | Saya | `belum` |
-| C4 | **Waktu respons saat antrean** | Latensi di sini hanya lama tanda tangan, bukan waktu tunggu | Nyatakan sebagai batasan, atau model antrean sederhana | Saya | `belum` |
-| C5 | **Penyebab sisa frame hilang (±0,17 %)** | Mekanisme utama terdiagnosis; sisa masih dugaan | Tulis sebagai dugaan atau uji dengan diagnostik tambahan | Anda memutuskan | `belum` |
-| C6 | **Ancaman terhadap validitas** | Satu papan/chip, logger klon, LED daya, HSI, konfigurasi 1c, penyerang periodik, shunt | Satu subbab terstruktur (bahan di rekap 18 Nov Bagian 9) | Saya bantu | `belum` |
-| C7 | **Implikasi praktis untuk baterai** | Topiknya penguras baterai, tetapi tak ada angka umur baterai | Proyeksi energi per jam dari `E_mJ`/`P_avg` dengan catatan lantai LED 1,99 mA | Saya (tabel); Anda memutuskan | `belum` |
+| C3 | **Latensi kecepatan biasa vs overdrive** | Menjelaskan K2: 192,5 ms (biasa + tunggu tetap) vs 115,6 ms (overdrive + polling); data di `data/dev/ds_od` belum jadi tabel naskah | Tabel pembahasan | Saya | `selesai`: `bahan_pembahasan` bagian 4 |
+| C4 | **Waktu respons saat antrean** | Latensi di sini hanya lama tanda tangan, bukan waktu tunggu | Nyatakan sebagai batasan, atau model antrean sederhana | Saya | `proses`: batasan + bound 2 x latensi ditulis (bagian 7); Anda putuskan perlu pengukuran atau tidak |
+| C5 | **Penyebab sisa frame hilang (±0,17 %)** | Mekanisme utama terdiagnosis; sisa masih dugaan | Tulis sebagai dugaan atau uji dengan diagnostik tambahan | Anda memutuskan | `selesai` sebagian: mekanisme dikarakterisasi (frame hilang = tanda tangan 210 ms akibat kebetulan frame-alarm RTC), penyebab tingkat register belum; `docs/diagnosis_frame_hilang_K2S_2026-11-18.md` |
+| C6 | **Ancaman terhadap validitas** | Satu papan/chip, logger klon, LED daya, HSI, konfigurasi 1c, penyerang periodik, shunt | Satu subbab terstruktur (bahan di rekap 18 Nov Bagian 9) | Saya bantu | `selesai`: 17 butir di `bahan_pembahasan` bagian 5 (draf, tinjau) |
+| C7 | **Implikasi praktis untuk baterai** | Topiknya penguras baterai, tetapi tak ada angka umur baterai | Proyeksi energi per jam dari `E_mJ`/`P_avg` dengan catatan lantai LED 1,99 mA | Saya (tabel); Anda memutuskan | `selesai`: `tools/proyeksi_baterai.py`; angka menunggu kalibrasi; asumsi baterai ilustratif perlu Anda setujui |
 
 ## D. Opsional
 
@@ -52,10 +52,10 @@ Status: `belum` | `siap` (alat/prosedur sudah ada, tinggal dikerjakan) | `proses
 | No | Butir | Status |
 |---|---|---|
 | E1 | Menempel revisi Bab 3, 2, 1 ke naskah (daftar "hal yang harus dipastikan" di laporan Bab 3 Butir 33) | `belum` |
-| E2 | Menulis Bab 4 dan Bab 5 (kerangka di panduan grafik dan laporan rekap) | `belum` |
-| E3 | Isi tahun/revisi dokumen ST (RM0008, datasheet STM32F103x8/B, AN2867) dan halaman datasheet DS28E38 yang menyatakan overdrive | `belum` |
+| E2 | Menulis Bab 4 dan Bab 5 (kerangka di panduan grafik dan laporan rekap) | `proses`: peta bab di `laporan/kerangka_bab4_bab5_2026-11-18.md`; teks bab belum ditulis, angka mutlak menunggu kalibrasi |
+| E3 | Isi tahun/revisi dokumen ST (RM0008, datasheet STM32F103x8/B, AN2867) dan halaman datasheet DS28E38 yang menyatakan overdrive | `proses`: `docs/referensi_dokumen_E3_2026-11-18.md` (overdrive terverifikasi di tabel perintah ROM; revisi/tahun ST perlu Anda lihat dari PDF) |
 | E4 | Gambar ulang Gambar 2.1, 3.1, 3.2, 3.4 di naskah | `belum` |
-| E5 | Perbarui `docs/pinout_arsitektur_pengujian.md` (lantai 1,98 vs 2,565 mA sudah terpecahkan: debug power) | `belum` |
+| E5 | Perbarui `docs/pinout_arsitektur_pengujian.md` (lantai 1,98 vs 2,565 mA sudah terpecahkan: debug power) | `selesai` |
 
 ## Urutan kerja yang disarankan
 

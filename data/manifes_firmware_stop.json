@@ -1,0 +1,39 @@
+{
+  "dibuat": "2026-11-18T22:05:38",
+  "git_head": "9b518e27b497d7ea6ef3987500471d01621b19fc",
+  "commit_sumber_terakhir": "313aadae202dc6a09ea7ee4d55a542a993a160e1 2026-11-18T11:41:33+07:00 Stop: cek idle ketat, penerima dini di jalur alarm, lantai arus terpecahkan (debug power)",
+  "sumber_kotor": false,
+  "firmware": {
+    "K1S": {
+      "env": "host_k1_stop",
+      "bin_sha256": "2ca6e8d0d86115d09cf9db24b72e511a24f4463b329c0ceaeb76ed485b814a5c",
+      "bin_ukuran": 47684,
+      "bin_mtime": "2026-11-18T11:14:33",
+      "elf_sha256": "3e9c7595becbb54cd5683b8f6d04283fb2a6714a350dcec2618f294e58a27450"
+    },
+    "K2S": {
+      "env": "host_k2_stop",
+      "bin_sha256": "5b4e017827e39e17a213bf972b8f3346c15142ec0e02576bb8847680e6ae2f71",
+      "bin_ukuran": 31308,
+      "bin_mtime": "2026-11-18T11:14:41",
+      "elf_sha256": "5d32d74195c1725dfa0c38796d40260017e526ee291567256e130f77edb1e9fb"
+    },
+    "logger": {
+      "env": "logger",
+      "bin_sha256": "7ac6b702300d58abb06fcaa2451e7e53801d40424203ee77df1a34cdf3a27e68",
+      "bin_ukuran": 46812,
+      "bin_mtime": "2026-11-18T22:02:19",
+      "elf_sha256": "f52452f8bf4aff07163b9908d1da48749d2e542dea2adff42aa33e1d7f09e7b8",
+      "sama_dengan_acuan_16nov": true
+    },
+    "attacker": {
+      "env": "attacker",
+      "bin_sha256": "faf092a1fff6f2def7e93b690bfd9eca41a92137d3d33ed6ee66fe77d53cbde9",
+      "bin_ukuran": 15568,
+      "bin_mtime": "2026-11-18T22:03:46",
+      "elf_sha256": "2de44871ed4185d6d3cea345785d83cec26cc1dc95c1e98130242ebd125ea164",
+      "sama_dengan_acuan_16nov": true
+    }
+  },
+  "logger_build_id_di_data": "4C364231 (seluruh 139 run, lihat pemeriksaan.md tabel 1)"
+}
