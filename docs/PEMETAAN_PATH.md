@@ -94,4 +94,4 @@ impor, dan komentar. Logbook, laporan, dan catatan belajar lama memakai path LAM
 | `tools/uji_galat_stop.py` | `tools/4_verifikasi/uji_galat_stop.py` |
 | `tools/window_test.py` | `tools/dev/tahap_d/window_test.py` |
 
-Berkas yang ditambah: `tools/_jalur.py` (jalur impor bersama), `docs/PETA_ALUR.md`, README per folder.
+Berkas yang ditambah: `tools/_jalur.py` (jalur impor bersama), `tools/3_analisis/jalankan_analisis.py`, `tools/4_verifikasi/cek_pemisahan.py`, `tools/4_verifikasi/cek_reproduksi_analisis.py`, `tests/test_pemisahan.py`, `.githooks/pre-commit`, `GLOSSARY.md`, `docs/adr/`, `docs/PETA_ALUR.md`, `docs/PEMETAAN_PATH.md`, README per folder.

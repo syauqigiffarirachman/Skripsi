@@ -11,11 +11,9 @@ Dua pemeriksaan statis, tanpa perangkat keras dan tanpa membangun:
 Pakai:  python tools/4_verifikasi/cek_pemisahan.py        (kode keluar 1 bila ada pelanggaran)
 """
 import re
-import sys as _sys
-from pathlib import Path as _Path
-
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
-from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
+from _jalur import ROOT, skrip_tools  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 
 FIRMWARE_FINAL = ["src/host/final", "src/host/bersama", "src/logger", "src/attacker"]
 DILARANG_FW = ["src/host/dev", "include/dev"]
@@ -56,7 +54,7 @@ def cek_firmware():
 
 def _modul_tools():
     """nama modul -> berkas, untuk semua skrip di tools/."""
-    return {p.stem: p for p in (ROOT / "tools").rglob("*.py") if "emu_cycles" not in p.parts}
+    return {p.stem: p for p in skrip_tools()}
 
 
 def cek_skrip():

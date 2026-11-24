@@ -1,10 +1,6 @@
 """Jalankan benchmark ECDSA software di board, simpan CSV, dan verifikasi tanda tangan
 secara independen di PC (implementasi P-256 murni Python).
 Pemakaian: python ecdsa_bench.py COM12 [N] [out.csv]"""
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
-from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import sys, time, serial
 
 PORT = sys.argv[1] if len(sys.argv) > 1 else "COM12"

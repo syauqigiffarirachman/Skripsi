@@ -12,9 +12,8 @@ Setelah tiap gangguan satu run normal A 60 s harus lolos penuh (tanda host sehat
 Pakai: python tools/4_verifikasi/uji_galat_stop.py [--logger COM18 --attacker COM24 --skenario B]
 Keluaran: data/dev/err/stop_<waktu>_G*.csv dan ringkasan di layar.
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import sys

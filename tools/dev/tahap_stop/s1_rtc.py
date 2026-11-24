@@ -14,9 +14,8 @@ jumlah tidur logger = n_stop, arus tidur ~ lantai S0 (1,99 mA).
 Pakai: python tools/dev/tahap_stop/s1_rtc.py --logger COM18 75 [--catatan ...] [--ppm -47.3] [--rshunt 0.1 --offset -2]
        python tools/dev/tahap_stop/s1_rtc.py --analyse data/dev/s1/<berkas>.csv
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import statistics

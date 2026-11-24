@@ -47,9 +47,8 @@ Kalibrasi arus: --rshunt (Ohm) dan --offset (LSB shunt tanpa beban); bawaan bari
 --rshunt 0.100 --offset -2.0. CSV mentah menyimpan nilai register, jadi analisis bisa diulang dengan kalibrasi lain
 tanpa mengambil data lagi. (Default FUNGSI analyse() tetap nominal; dipakai uji tests/.)
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import csv

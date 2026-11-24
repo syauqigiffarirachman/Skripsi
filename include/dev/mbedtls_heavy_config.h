@@ -1,7 +1,7 @@
 // ============================================================================
 // Konfigurasi Mbed TLS 3.6.7 untuk baseline "Software-Based ECDSA P-256" TERBERAT
 // (kelompok K1/K3, Bab 3.3.1 butir a.1). Dipasang lewat build_flag:
-//     -DMBEDTLS_CONFIG_FILE='"mbedtls_heavy_config.h"'
+//     -DMBEDTLS_CONFIG_FILE='"dev/mbedtls_heavy_config.h"'
 //
 // Prinsip: hanya modul yang dibutuhkan ECDSA P-256 yang dikompilasi, dan SEMUA
 // optimasi kecepatan opsional dimatikan (profil "portable C"). Setiap saklar di

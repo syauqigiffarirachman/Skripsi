@@ -96,10 +96,11 @@ perangkat keras: `python -m unittest discover -s tests`.
 
 ## Aturan saat mengubah kode
 
-Data tahap D diambil dengan biner tertentu (`k1_sw` `c55d8ca31cc0`, `k2_hw` `4df67c4f9975`, `logger` `7ac6b702300d`). Perapian atau refaktor yang tidak dimaksudkan mengubah perilaku harus menghasilkan `firmware.bin` identik:
+Data akhir (Stop, 18 Nov 2026) diambil dengan biner `host_k1_stop` `2ca6e8d0d861`, `host_k2_stop` `5b4e017827e3`, `logger` `7ac6b702300d`, `attacker` `faf092a1fff6`; data tahap D dengan `k1_sw` `c55d8ca31cc0`, `k2_hw` `4df67c4f9975`, `logger` `7ac6b702300d`. Perapian atau refaktor yang tidak dimaksudkan mengubah perilaku harus menghasilkan `firmware.bin` identik:
 
 ```
 python tools/4_verifikasi/cek_biner.py banding          # semua env harus IDENTIK
+python tools/4_verifikasi/cek_pemisahan.py              # kode final tidak boleh bergantung pada dev/
 ```
 
 Bila firmware sengaja diubah: `python tools/4_verifikasi/cek_biner.py simpan <env>` dan catat alasannya di logbook.
@@ -108,6 +109,15 @@ Hal yang diketahui menggeser tata letak Flash walau kodenya sama:
 - kode bersama yang punya `.cpp` ditaruh di `lib/` (objek pustaka ditautkan dalam grup terpisah); header-only di `lib/` aman;
 - `lib_archive = no` (ikut mengubah penautan `Wire`);
 - memindah berkas di `src/` sehingga urutan path berubah (objek `src/` ditautkan urut nama path).
+
+## Hook pre-commit
+
+Pemeriksaan cepat sebelum tiap commit (sintaks skrip, pemisahan final/dev, 55 uji unit; < 10 detik) ada di `.githooks/pre-commit`.
+Aktifkan sekali per klon: `git config core.hooksPath .githooks`. Bila sumber firmware berubah, hook mengingatkan agar menjalankan
+gerbang biner; `CEK_BINER=1 git commit ...` menjalankannya di hook (beberapa menit). Darurat: `git commit --no-verify`.
+(Husky/Prettier tidak dipakai: repo ini bukan proyek Node dan Prettier akan memformat ulang JSON/Markdown yang hash-nya dijaga.)
+
+Istilah proyek: `GLOSSARY.md`. Keputusan desain yang sulit dibalik: `docs/adr/`.
 
 ## Uji alat PC dan lingkungan analisis
 

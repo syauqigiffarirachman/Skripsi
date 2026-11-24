@@ -15,9 +15,8 @@ Pakai:  python tools/4_verifikasi/b1_verifikasi.py K1S|K2S [--secs 60] [--logger
         python tools/4_verifikasi/b1_verifikasi.py K1S|K2S --analyse data/dev/b1/<berkas>.csv               (hanya verifikasi)
 Keluaran: data/dev/b1/<waktu>_<arch>_sig.csv (rekaman mentah) dan ringkasan LULUS/GAGAL.
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import hashlib

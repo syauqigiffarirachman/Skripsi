@@ -1,0 +1,31 @@
+#!/bin/sh
+# Pre-commit (24 Nov 2026): pemeriksaan CEPAT (< 10 detik) sebelum commit. Aktifkan sekali per klon:
+#   git config core.hooksPath .githooks
+# Melewati (darurat): git commit --no-verify. Build firmware penuh (menit) TIDAK dijalankan di sini;
+# bila ada yang berubah di firmware, hook mengingatkan, atau paksa dengan:  CEK_BINER=1 git commit ...
+set -e
+cd "$(git rev-parse --show-toplevel)"
+# git menyetel GIT_INDEX_FILE dkk untuk hook; tes yang membuat repo git sementara (test_provenance) harus bebas dari itu
+unset $(git rev-parse --local-env-vars) 2>/dev/null || true
+PY=python
+command -v python >/dev/null 2>&1 || PY=py
+
+echo "[pre-commit] 1/3 sintaks skrip Python"
+$PY -m compileall -q tools tests >/dev/null
+
+echo "[pre-commit] 2/3 pemisahan FINAL vs DEV"
+$PY -B tools/4_verifikasi/cek_pemisahan.py
+
+echo "[pre-commit] 3/3 uji unit alat PC"
+$PY -B -m unittest discover -s tests -q
+
+if git diff --cached --name-only | grep -qE '^(src/|lib/|include/|platformio\.ini)'; then
+  if [ "${CEK_BINER:-0}" = "1" ]; then
+    echo "[pre-commit] firmware berubah: gerbang biner (beberapa menit)"
+    $PY tools/4_verifikasi/cek_biner.py banding host_k1_stop host_k2_stop logger attacker
+  else
+    echo "[pre-commit] PERINGATAN: sumber firmware berubah. Sebelum merge/push jalankan:"
+    echo "             python tools/4_verifikasi/cek_biner.py banding host_k1_stop host_k2_stop logger attacker"
+    echo "             (atau CEK_BINER=1 git commit ... agar hook menjalankannya sekarang)"
+  fi
+fi

@@ -57,9 +57,9 @@ Kelompok: **K1** software normal (K1S, 1/s), **K2** DS28E38 normal (K2S), **K3**
 | Lapisan | Bahasa / alat | Library atau fasilitas | Dipakai di |
 |---|---|---|---|
 | Build firmware | PlatformIO (VS Code), `platform = ststm32`, `framework = arduino` (`platformio.ini:30-31`), core STM32duino | `Arduino.h`, `HardwareTimer`, `Wire` (I2C), `Serial1/2`, `SerialUSB`; akses register langsung (`GPIOB->BSRR`, `RTC->CRL`, `PWR->CR`, `DMA1_Channel6`) | semua firmware |
-| Kripto software (K1S) | C++ | **Mbed TLS 3.6.7** (`lib/mbedtls`): `mbedtls_ecp_group_load`, `mbedtls_ecdsa_sign`, `mbedtls_hmac_drbg_*`, `mbedtls_sha256_*`; konfigurasi `include/mbedtls_k1_config.h` | `src/host/deepsleep/k1_stop/main.cpp` |
-| Kripto hardware (K2S) | C++ | tanpa library: **driver 1-Wire buatan sendiri** (bit-banging PA15, overdrive) `src/host/deepsleep/ds28e38_od.h` | `k2_stop/main.cpp` |
-| Sensor arus | C++ | I2C 400 kHz lewat `Wire`; driver `src/logger_common/ina226.*` | logger |
+| Kripto software (K1S) | C++ | **Mbed TLS 3.6.7** (`lib/mbedtls`): `mbedtls_ecp_group_load`, `mbedtls_ecdsa_sign`, `mbedtls_hmac_drbg_*`, `mbedtls_sha256_*`; konfigurasi `include/mbedtls_k1_config.h` | `src/host/final/k1_stop/main.cpp` |
+| Kripto hardware (K2S) | C++ | tanpa library: **driver 1-Wire buatan sendiri** (bit-banging PA15, overdrive) `src/host/final/bersama/ds28e38_od.h` | `k2_stop/main.cpp` |
+| Sensor arus | C++ | I2C 400 kHz lewat `Wire`; driver `src/logger/modul/ina226.*` | logger |
 | Protokol bersama | C++ header-only | `lib/bench_proto/proto_attacker_host.h` (frame 36 B), `proto_host_logger.h` (perintah dan balasan USART1) | attacker, host, logger |
 | Pemrograman | Python + OpenOCD (`subprocess`) | `~/.platformio/packages/tool-openocd`, `tools/flash_stop.py`, `tools/pulihkan_host.py` | bangku |
 | Kendali dan perekaman PC | Python 3 | **pyserial** (`serial.Serial`), `argparse`, `csv`, `hashlib`, `random`, `datetime`, `pathlib` | `tools/run_bench.py` |
@@ -128,7 +128,7 @@ PC yang melihat `>START` di aliran langsung menyalakan attacker (`run_bench.py:4
   (`onTick`, baris 77-84), pengiriman di `loop()`. Tick palsu pertama dibuang (`g_skipFirstTick`).
 - Konsol CH340 (USART2): `a`, `b`, `x`, `s` (status), `f`. Attacker **tidak** diubah untuk varian Stop.
 
-### A5. Host: mesin jendela dan tidur Stop (`src/host/deepsleep/stop_window.h`, `stop_common.h`)
+### A5. Host: mesin jendela dan tidur Stop (`src/host/final/bersama/stop_window.h`, `stop_common.h`)
 `cmd_window` (`stop_window.h:90-146`):
 1. `g_win_end_cnt = rtc_cnt() + secs x 1024` (RTC diprescale 1024 Hz, `RTC_PRL_VAL=31`); alarm RTC dipasang (`alarm_rearm`, baris 27-41).
 2. `f0 = rtc_fine()` (1/32768 s); `PB1_HI()`; penerima frame dinyalakan.
@@ -414,5 +414,5 @@ python tools/ekspor_gambar_naskah.py                         # -> data/analisis/
 6. Sebutkan satu keputusan yang diputuskan manusia, bukan kode, dan di mana ia dilaporkan sebagai keterbatasan.
 
 **Berkas rujukan utama**: `tools/run_bench.py`, `tools/analisis_d.py`, `tools/kalibrasi_shunt.py`, `tools/dekomposisi_energi.py`, `tools/analisis_sensitivitas.py`,
-`tools/proyeksi_baterai.py`, `tools/gambar_bab4_stop.py`, `tools/hitung_ulang_satu_run.py`, `src/logger/f103/main.cpp`, `src/host/deepsleep/{stop_common,stop_window,stop_link}.h`,
-`src/host/deepsleep/{k1_stop,k2_stop}/main.cpp`, `src/host/deepsleep/ds28e38_od.h`, `src/attacker/main.cpp`, `lib/bench_proto/*`, `data/kalibrasi/*`.
+`tools/proyeksi_baterai.py`, `tools/gambar_bab4_stop.py`, `tools/hitung_ulang_satu_run.py`, `src/logger/f103/main.cpp`, `src/host/final/ (K1S/K2S) dan src/host/dev/tahap_stop/ (S0-S2) {stop_common,stop_window,stop_link}.h`,
+`src/host/final/ (K1S/K2S) dan src/host/dev/tahap_stop/ (S0-S2) {k1_stop,k2_stop}/main.cpp`, `src/host/final/bersama/ds28e38_od.h`, `src/attacker/main.cpp`, `lib/bench_proto/*`, `data/kalibrasi/*`.

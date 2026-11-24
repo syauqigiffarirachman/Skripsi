@@ -6,7 +6,7 @@
 # Cara memakai (lakukan SAAT TIDAK ADA build/flash berjalan: mengubah platformio.ini membuat PlatformIO
 # menghapus semua folder build):
 #   1. Di platformio.ini, bagian [env] (atau env tertentu), tambahkan:
-#        extra_scripts = post:extra_script_provenance.py
+#        extra_scripts = post:tools/dev/extra_script_provenance.py
 #   2. Bangun satu env, mis. `pio run -e host_k2_stop`, lalu periksa
 #        .pio/build/host_k2_stop/provenance.json
 #   3. Cocokkan: bin_sha256 harus sama dengan `sha256sum .pio/build/host_k2_stop/firmware.bin`.
@@ -16,14 +16,10 @@
 # Logika ada di tools/dev/provenance.py (dapat diuji tanpa PlatformIO: tests/test_provenance.py).
 Import("env")  # noqa: F821  (disediakan SCons/PlatformIO)
 
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
-from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(env["PROJECT_DIR"]) / "tools"))  # noqa: F821
+sys.path.insert(0, str(Path(env["PROJECT_DIR"]) / "tools" / "dev"))  # noqa: F821  (SCons: __file__ tidak ada)
 import provenance  # noqa: E402
 
 

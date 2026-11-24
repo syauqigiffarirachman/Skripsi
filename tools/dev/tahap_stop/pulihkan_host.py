@@ -5,10 +5,6 @@ sistem (SWD hidup di sana). Skrip: halt, hapus total flash, tulis firmware, veri
 Setelah selesai: BOOT0 kembali 0 lalu cabut-pasang daya.
   python tools/dev/tahap_stop/pulihkan_host.py [firmware.elf]     # bawaan: .pio/build/host_s2_rx/firmware.elf
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
-from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import subprocess
 import sys
 from pathlib import Path

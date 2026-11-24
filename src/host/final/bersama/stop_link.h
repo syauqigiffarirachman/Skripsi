@@ -7,7 +7,7 @@
 //   2. perintah W (permintaan sintetis TIM4) ditolak: tak ada TIM4 selama Stop;
 //   3. HL_STAGE = 8 (tahap integrasi Stop).
 // Aslinya: TAHAP 5 (host): jalur kendali run lewat USART1 ke logger - DIPAKAI BERSAMA K1 dan K2
-// (di-include oleh src/host/k1_software/main.cpp dan src/host/k2_hardware/main.cpp; blok ini IDENTIK
+// (di-include oleh src/host/dev/tahap_d/k1_software/main.cpp dan src/host/dev/tahap_d/k2_hardware/main.cpp; blok ini IDENTIK
 // di keduanya karena satu berkas).
 //
 // Alasan: di bangku ukur USB-C host hanya daya (tanpa D+/D-), jadi jendela pengamatan tidak bisa

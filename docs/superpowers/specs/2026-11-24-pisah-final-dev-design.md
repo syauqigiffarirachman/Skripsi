@@ -40,7 +40,7 @@ Diagnostik (`DIAG_SIG`, `DIAG_LONG`, `K1S_AUTO`, `K2S_AUTO`, `DBG_RX`) adalah `#
 jadi tidak bisa dipisah ke berkas lain tanpa menggandakan kode; ia diberi label di README dan di `platformio.ini`.
 
 ## Kendala keras
-1. `firmware.bin` host_k1_stop, host_k2_stop, logger, attacker harus identik dengan `tools/biner_acuan.json`
+1. `firmware.bin` host_k1_stop, host_k2_stop, logger, attacker harus identik dengan `tools/4_verifikasi/biner_acuan.json`
    (sha256 sama dengan manifes data 18 Nov). Env dev juga diperiksa (gerbang penuh).
 2. Objek `src/` ditautkan menurut urutan path. Karena itu logger memakai `logger/f103/` lalu `logger/modul/`
    ('f' < 'm'), meniru urutan lama `logger/f103` < `logger_common`.

@@ -4,7 +4,7 @@
 //   - stop_common.h / stop_window.h / stop_link.h : Stop mode, alarm RTC, penerima frame dengan sinkron bit,
 //     mesin jendela, kendali run lewat logger (arsitektur "K2S");
 //   - ds28e38_od.h : driver DS28E38 overdrive (PA15) + tunggu sign berbasis polling (hasil eksperimen
-//     src/host/eksperimen/ds_overdrive: 115,6 ms per sign vs 192,5 ms standar + tunggu 130 ms).
+//     src/host/dev/eksperimen/ds_overdrive: 115,6 ms per sign vs 192,5 ms standar + tunggu 130 ms).
 // Alur satu permintaan (serve_one): pastikan OD -> kirim perintah 0xA5 (3,4 ms, aktif) -> TIDUR STOP ~100 ms
 // (DQ ditahan kuat tinggi oleh register GPIO yang bertahan di Stop; alarm RTC membangunkan) -> intip per bit
 // sampai chip siap (~7 ms, aktif) -> baca hasil (5,6 ms, aktif). Latensi diukur dengan RTC (DWT berhenti di Stop)

@@ -1,6 +1,6 @@
 // ============================================================================
 // Driver DS28E38 di PA15 dengan OVERDRIVE dan tunggu sign berbasis polling (17 Nov 2026).
-// Diturunkan HARFIAH dari src/host/eksperimen/ds_overdrive/main.cpp (terbukti: 269/269 tanda tangan valid di PC,
+// Diturunkan HARFIAH dari src/host/dev/eksperimen/ds_overdrive/main.cpp (terbukti: 269/269 tanda tangan valid di PC,
 // overdrive A=1,0 us sampel 2,5 us, total 115,6 ms vs 192,5 ms kecepatan standar + tunggu 130 ms).
 // Perbedaan: hook g_ds_wait(ms) menggantikan delay() selama chip menghitung (K2S: tidur Stop dengan alarm RTC).
 // Bit-banging memakai DWT CYCCNT (ns -> siklus, 48 MHz); pin: open-drain + dorong tinggi aktif; DQ kuat tinggi

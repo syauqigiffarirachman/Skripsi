@@ -51,7 +51,7 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
 
 ## Tambahan 18 Nov: DS28E38 overdrive (eksperimen terpisah)
 
-`src/host/eksperimen/ds_overdrive` + `tools/dev/tahap_stop/ds_od.py`. Overdrive ternyata bisa (percobaan 11 Nov gagal karena library
+`src/host/dev/eksperimen/ds_overdrive` + `tools/dev/tahap_stop/ds_od.py`. Overdrive ternyata bisa (percobaan 11 Nov gagal karena library
 OneWire tak mendukungnya). Titik baca sah 2,0-3,0 us; dipakai 2,5 us. 269/269 tanda tangan valid di PC.
 
 | Mode | Total per sign |

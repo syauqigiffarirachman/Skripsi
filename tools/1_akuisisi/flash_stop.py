@@ -10,10 +10,6 @@ beberapa percobaan. Pemakaian:
 Setelah flash: DBGMCU_CR = 0x307 (DBG_STOP menahan Stop) sampai firmware menolkannya (jendela aman 5 s) atau POR.
 Inti dibiarkan JALAN (resume) saat selesai kecuali --halt.
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
-from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import os
 import subprocess

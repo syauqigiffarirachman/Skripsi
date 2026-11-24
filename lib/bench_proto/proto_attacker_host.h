@@ -2,7 +2,7 @@
 // Protokol ATTACKER -> HOST: frame permintaan autentikasi (pustaka bersama bench_proto, header-only).
 //
 // SATU-SATUNYA definisi format frame. Dipakai pengirim (src/attacker/main.cpp) dan penerima
-// (src/host_common/host_rx.h). Mengubah format cukup di sini, lalu bangun ulang attacker DAN host.
+// (src/host/dev/tahap_d/bersama/host_rx.h). Mengubah format cukup di sini, lalu bangun ulang attacker DAN host.
 //
 // Jalur fisik: attacker USART1 PA9 (TX) -> resistor seri ~1 kOhm -> host USART2 PA3 (RX), 8N1,
 // ground bersama. Frame dikirim kontigu (36 byte tanpa jeda): penerima DMA menghitungnya sebagai

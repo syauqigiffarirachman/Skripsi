@@ -5,9 +5,8 @@ dan git (commit sumber terakhir, status src kotor atau tidak). Menulis data/mani
 Bukti kecocokan dengan biner yang benar-benar di-flash saat sesi: (1) sumber tidak lebih baru dari biner (mtime),
 (2) bangun ulang dari HEAD menghasilkan sha256 sama, (3) build-id logger di baris #RUN,BEGIN tiap run = 4C364231.
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import hashlib
 import json

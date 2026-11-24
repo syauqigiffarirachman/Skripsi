@@ -71,7 +71,8 @@ env final; menyalakannya menghasilkan env "pendukung" (`platformio.ini`, KELOMPO
 | 3 Analisis | `tools/3_analisis/` | `analisis_d.py --stop` lalu `dekomposisi_energi.py`, `analisis_sensitivitas.py`, `proyeksi_baterai.py`, `gambar_bab4_stop.py`, `ekspor_gambar_naskah.py` | `data/analisis/stop_final/` |
 | 4 Verifikasi | `tools/4_verifikasi/` | `cek_biner.py`, `manifes_firmware.py`, `b1_verifikasi.py`, `diag_long.py`, `uji_galat_stop.py` | bukti kebenaran |
 
-Urutan perintah analisis (dari akar repo):
+Satu perintah untuk seluruh alur analisis: `python tools/3_analisis/jalankan_analisis.py` (`--kering` mencetak urutan).
+Isinya, dari akar repo:
 ```
 python tools/3_analisis/analisis_d.py --manifest data/tahap_stop.txt --stop --keluar data/analisis/stop_final
 python tools/3_analisis/dekomposisi_energi.py
@@ -85,8 +86,10 @@ mengambil data lagi. Default kalibrasi ada di satu tempat: `tools/2_kalibrasi/ka
 
 ## 5. Bukti bahwa ini kode yang dipakai pada data
 
-Firmware final identik bit demi bit dengan acuan yang cocok dengan manifes data 18 Nov
-(`data/manifes_firmware_stop.md`):
+Build BERSIH dari sumber ini menghasilkan `firmware.bin` dengan sha256 yang sama dengan manifes data 18 Nov
+(`data/manifes_firmware_stop.md`). Keterbatasan yang jujur: manifes mencatat bahwa bukti bahwa biner itulah yang ter-flash saat sesi
+bersifat tidak langsung (sumber tidak lebih baru dari biner, dan build-id logger `4C364231` di tiap `#RUN,BEGIN`); tidak ada sha256
+yang dicatat saat sesi. Yang dibuktikan di sini: sumber ini membangun biner yang sama dengan yang dicatat manifes.
 
 | Env | sha256 firmware.bin (awal) |
 |---|---|
@@ -98,8 +101,9 @@ Firmware final identik bit demi bit dengan acuan yang cocok dengan manifes data 
 Periksa sendiri (membangun dari bersih, beberapa menit):
 `python tools/4_verifikasi/cek_biner.py banding host_k1_stop host_k2_stop logger attacker`
 
-Analisis: menjalankan `analisis_d.py --stop` pada `data/tahap_stop.txt` menghasilkan semua CSV di
-`data/analisis/stop_final/` identik (kecuali stempel waktu di `ringkasan.md`).
+Analisis: `python tools/4_verifikasi/cek_reproduksi_analisis.py` menjalankan `analisis_d.py --stop` ke folder sementara dan
+membandingkannya dengan `data/analisis/stop_final/` (CSV, MD, gambar identik; stempel waktu `ringkasan.md` diabaikan).
+Pemisahan: `python tools/4_verifikasi/cek_pemisahan.py` memastikan kode final tidak meng-`#include`/mengimpor apa pun dari `dev/`.
 
 ## 6. Yang BUKAN bagian data akhir (pengembangan)
 
@@ -108,11 +112,12 @@ Analisis: menjalankan `analisis_d.py --stop` pada `data/tahap_stop.txt` menghasi
 | Tangga menuju Stop | `src/host/dev/tahap_stop/`, `tools/dev/tahap_stop/` | S0a LSE, S0 lantai Stop, S1 alarm RTC, S2 terima frame, overdrive DS28E38 (`ds_od`), pengendali otomatis `k1s_run.py` |
 | Firmware tahap D (tanpa Stop) | `src/host/dev/tahap_d/`, `tools/dev/tahap_d/` | `k1_sw`, `k2_hw` (WFI), uji PC `k1_check`, `k2_check`, emulator siklus |
 | Eksperimen awal | `src/host/dev/eksperimen/` | monolit, sederhana, softwaretes (micro-ecc dan Mbed TLS heavy), `k1_rx` |
-| Varian pendukung | `platformio.ini` KELOMPOK 2 | `*_auto`, `*_diag_auto`, `*_long_auto`, `*_comb*`, `*_dbg`, `logger_selftest` |
+| Varian pendukung | `platformio.ini` KELOMPOK 2 | `*_auto`, `*_diag_auto`, `*_long_auto`, `*_comb*`, `*_dbg`, `logger_selftest`. Firmwarenya pendukung; skrip PC-nya (`b1_verifikasi`, `diag_long`, `uji_galat_stop`) ada di `tools/4_verifikasi/` karena memverifikasi firmware final. |
 | Demo sidang | `tools/demo/` | `demo_sidang.py` |
 
 Kode pendukung pun tidak mengubah angka utama; ia hanya bukti tambahan (B1 verifikasi tanda tangan, B2 sensitivitas
 konfigurasi software, diagnosis frame hilang, uji galat).
 
 ## 7. Peta path lama ke baru
-Lihat `docs/PEMETAAN_PATH.md`. Logbook dan laporan lama sengaja tidak ditulis ulang; path di dalamnya merujuk struktur lama.
+Lihat `docs/PEMETAAN_PATH.md`. Hanya `logbook/`, `laporan/`, dan catatan harian `docs/belajar/2026-11-*.md` yang sengaja tidak ditulis ulang (riwayat bertanggal); path di dalamnya
+merujuk struktur lama. Dokumen hidup dan komentar kode sudah diperbarui.

@@ -118,6 +118,6 @@ tidak disertakan sama sekali (mematikan chip selamanya).
   `select="match"` setelah `detect()`; algoritma search ROM belum dibuat.
 * Verifikasi tanda tangan ECDSA (SHA-256 + kunci publik) **tidak** dilakukan di
   sini; `signed_message()` memberi pesan yang harus di-hash, lalu verifikasi
-  dengan pustaka ECDSA P-256 pilihanmu (mis. `tools/p256.py` di proyek ini).
+  dengan pustaka ECDSA P-256 pilihanmu (mis. `tools/4_verifikasi/p256.py` di proyek ini).
 * Perintah yang belum diport: set/auth SHA-2 & ECDSA write, ECDH, multi-block
   hash, verify signature di DS2476 (koprosesor), key generation DS2476.

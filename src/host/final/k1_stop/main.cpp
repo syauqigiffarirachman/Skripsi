@@ -1,7 +1,7 @@
 // ============================================================================
 // K1 software (Mbed TLS, ECDSA P-256) + STOP MODE  --  LANGKAH 8 = S3 (integrasi K1, 17 Nov 2026)
 // Rencana: docs/rencana_deep_sleep.md. Dasar: stop_common.h (RTC, Stop, penerima frame dengan sinkron bit,
-// LULUS langkah 7) dan src/host/k1_software/main.cpp (jalur sign: blok kripto di bawah = SALINAN HARFIAH baris
+// LULUS langkah 7) dan src/host/dev/tahap_d/k1_software/main.cpp (jalur sign: blok kripto di bawah = SALINAN HARFIAH baris
 // yang sama di K1 baseline: kunci uji, digest, entropi, HMAC-DRBG hedged, zeroize; K1 baseline tak disentuh).
 //
 // Fungsi tahap ini satu: jendela pengamatan K1 dengan permintaan NYATA attacker, di mana CPU tidur di STOP

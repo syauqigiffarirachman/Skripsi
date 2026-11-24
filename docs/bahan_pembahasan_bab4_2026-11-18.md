@@ -135,7 +135,7 @@ Ini proyeksi dari pengukuran, bukan umur baterai terukur; lantai chip sebenarnya
 ## 7. Waktu respons dan antrean (C4)
 
 Yang diukur ialah **latensi tanda tangan** (lama satu operasi sign), bukan waktu tunggu dalam antrean. Menurut kode (`g_pending` satu bendera di
-`src/host/deepsleep/stop_common.h`), host menampung paling banyak **satu** permintaan yang tiba selagi sign berjalan; permintaan berikutnya yang tiba
+`src/host/final/bersama/stop_common.h`), host menampung paling banyak **satu** permintaan yang tiba selagi sign berjalan; permintaan berikutnya yang tiba
 sebelum yang tertampung dilayani akan hilang (dihitung sebagai tidak terlayani, selaras dengan model tingkat layanan `TL = min(1, 1/(λ·t_sign))`).
 Konsekuensi (dari struktur kode, belum diukur langsung per permintaan):
 - Normal (λ = 1/s, latensi 116 ms atau 655 ms < 1 s): tak ada permintaan yang menunggu; waktu respons = latensi.

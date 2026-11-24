@@ -13,9 +13,8 @@ Alamat BP_DONE / G_READY berlaku untuk ELF k1_sw sha256 9b1adf623e29; cari ulang
 dan objdump (instruksi yang memuat alamat string ">DONE") bila firmware berubah. Setelah uji, hentikan server lalu
 jalankan 'run_bench.py nodebug' (server OpenOCD menyalakan DBGMCU_CR = 0x307).
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import os
 import socket

@@ -14,9 +14,8 @@ Yang diperiksa (semuanya harus lulus):
   6. sebaran latensi kecil (max-min terhadap rata-rata <= 1%).
 Terakhir dicetak perbandingan latensi dengan DS28E38 (data/k2_hw_msg_ayah_48mhz.csv).
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 _sys.path.insert(0, str(ROOT / "ds9481_comm"))            # pustaka DS28E38 (ds9481.ecdsa_verify)
 import csv

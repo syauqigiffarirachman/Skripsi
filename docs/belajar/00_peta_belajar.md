@@ -31,13 +31,13 @@ CPU tidur jauh lebih lama, dan layanan saat barrage naik dari 15 % ke 49 %.
 
 | Mau paham | Buka |
 |---|---|
-| Tanda tangan software | `src/host/k1_software/main.cpp` (`sign_digest`, `harvest_entropy`) |
-| Tanda tangan hardware | `src/host/k2_hardware/main.cpp` (`xpc`, `sign_digest`, `wait_ms`) |
-| Cara CPU tidur dan diukur | `src/host_common/host_time.h`, loop di `cmd_window` K1 |
-| Penerimaan frame attacker | `src/host_common/host_rx.h`, `lib/bench_proto/proto_attacker_host.h` |
-| Kendali run PC-logger-host | `lib/bench_proto/proto_host_logger.h`, `src/host_common/host_link.h`, `tools/run_bench.py` |
+| Tanda tangan software | `src/host/dev/tahap_d/k1_software/main.cpp` (`sign_digest`, `harvest_entropy`) |
+| Tanda tangan hardware | `src/host/dev/tahap_d/k2_hardware/main.cpp` (`xpc`, `sign_digest`, `wait_ms`) |
+| Cara CPU tidur dan diukur | `src/host/dev/tahap_d/bersama/host_time.h`, loop di `cmd_window` K1 |
+| Penerimaan frame attacker | `src/host/dev/tahap_d/bersama/host_rx.h`, `lib/bench_proto/proto_attacker_host.h` |
+| Kendali run PC-logger-host | `lib/bench_proto/proto_host_logger.h`, `src/host/dev/tahap_d/bersama/host_link.h`, `tools/run_bench.py` |
 | Konfigurasi Mbed TLS | `include/mbedtls_k1_config.h` |
-| Stop mode (deep sleep) | `docs/rencana_deep_sleep.md`, `src/host/deepsleep/stop_window.h` |
+| Stop mode (deep sleep) | `docs/rencana_deep_sleep.md`, `src/host/final/bersama/stop_window.h` |
 | Statistik akhir | `tools/analisis_d.py` |
 | Pinout dan kabel | `docs/pinout_arsitektur_pengujian.md` |
 

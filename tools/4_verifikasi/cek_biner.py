@@ -17,9 +17,8 @@ Pakai (dari folder proyek):
 Keluaran build tiap env: .pio/cek_biner/<env>.log. Kode keluar 1 bila ada env BEDA / GAGAL / tanpa acuan.
 Bila firmware memang sengaja diubah: jalankan `simpan <env>` untuk env itu dan catat alasannya di logbook.
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import hashlib

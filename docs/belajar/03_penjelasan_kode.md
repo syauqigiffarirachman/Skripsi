@@ -5,7 +5,7 @@ Nomor baris merujuk berkas per 18 Nov 2026 pagi, bisa bergeser bila kode berubah
 
 ---
 
-## 1. K1 software: `src/host/k1_software/main.cpp`
+## 1. K1 software: `src/host/dev/tahap_d/k1_software/main.cpp`
 
 ### 1.1 Mengumpulkan entropi (`harvest_entropy`, baris 97)
 
@@ -115,7 +115,7 @@ for (;;) {
 
 ---
 
-## 3. Penerima frame: `src/host_common/host_rx.h`
+## 3. Penerima frame: `src/host/dev/tahap_d/bersama/host_rx.h`
 
 ### 3.1 DMA sekali per frame
 
@@ -157,7 +157,7 @@ dipasang ulang DMA membaca `DR` basi. **Perbaikan:** matikan `DMAR` (`CR3 &= ~DM
 
 ---
 
-## 4. K2 hardware: `src/host/k2_hardware/main.cpp`
+## 4. K2 hardware: `src/host/dev/tahap_d/k2_hardware/main.cpp`
 
 ### 4.1 Satu transaksi XPC (`xpc`, baris 96)
 
@@ -243,7 +243,7 @@ dipakai untuk dua alasan bangun. Akuntansi tidur terpusat, jadi `S_cpu` menghitu
 
 ---
 
-## 8. Stop mode (sampai 17 Nov): `src/host/deepsleep/stop_window.h`
+## 8. Stop mode (sampai 17 Nov): `src/host/final/bersama/stop_window.h`
 
 Tujuan: ganti Sleep (WFI) dengan Stop agar IDLE turun dari 11,6 mA ke ~2 mA.
 

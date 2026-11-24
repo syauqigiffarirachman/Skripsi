@@ -1,7 +1,7 @@
 """Monitor serial sederhana (pengganti `pio device monitor`).
 
-Pakai di terminal VS Code:   python monitor.py          (otomatis cari STM32 VID 0483:5740)
-                              python monitor.py COM12
+Pakai di terminal VS Code:   python tools/dev/monitor.py          (otomatis cari STM32 VID 0483:5740)
+                              python tools/dev/monitor.py COM12
 Ketik perintah lalu Enter, seperti Serial Monitor Arduino IDE. Ctrl+C untuk keluar.
 Otomatis menyambung ulang setelah board di-upload / dicolok ulang.
 """

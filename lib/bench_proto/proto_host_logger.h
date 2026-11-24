@@ -2,7 +2,7 @@
 // Protokol HOST <-> LOGGER: jalur kendali run (pustaka bersama bench_proto, header-only).
 //
 // SATU-SATUNYA definisi perintah, awalan balasan, dan batas jendela. Dipakai host
-// (src/host_common/host_link.h dan CLI USB di src/host/k1_software, src/host/k2_hardware) dan logger
+// (src/host/dev/tahap_d/bersama/host_link.h dan CLI USB di src/host/dev/tahap_d/k1_software, src/host/dev/tahap_d/k2_hardware) dan logger
 // (src/logger/f103/main.cpp). PC (tools/1_akuisisi/run_bench.py) mengurai baris yang sama: sesuaikan juga bila
 // format diubah.
 //

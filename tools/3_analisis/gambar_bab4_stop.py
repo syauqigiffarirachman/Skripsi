@@ -15,9 +15,8 @@ Nilai mutlak arus pada jejak (Gambar 4.1/4.1b) memakai --shunt dan --offset; baw
 (0,0821 Ohm, offset -2,83; tools/2_kalibrasi/kalibrasi_param.py). Gambar lain mengikuti data/analisis/stop_final/ (jalankan
 analisis_d.py dengan kalibrasi yang sama dulu). Sumbu Gambar 4.4/4.5 mengikuti data (tidak tetap).
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import sys

@@ -19,10 +19,6 @@ keluaran firmware (ringkasan %S_cpu, T_obs, jumlah permintaan), dan ringkasan di
 Untuk pengukuran arus: nyalakan pencatat catu daya DULU, lalu jalankan skrip ini; pin PB10 (WINDOW)
 naik tepat saat jendela mulai dan turun saat selesai.
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
-from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import os, sys, time
 import serial
 

@@ -13,9 +13,8 @@ Keluaran: berkas CSV di data/dev/k1s/ dan ringkasan metrik.
 Pakai: python tools/dev/tahap_stop/k1s_run.py A|B|IDLE [--secs 60] [--logger COM18 --attacker COM22] [--catatan ...]
        python tools/dev/tahap_stop/k1s_run.py --analyse data/dev/k1s/<berkas>.csv
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import sys

@@ -14,6 +14,11 @@ TOOLS = Path(__file__).resolve().parent
 ROOT = TOOLS.parent
 
 
+def skrip_tools():
+    """Semua skrip .py di tools/ (emulator emu_cycles dikecualikan: ia berdiri sendiri)."""
+    return (p for p in sorted(TOOLS.rglob("*.py")) if "emu_cycles" not in p.parts and "__pycache__" not in p.parts)
+
+
 def _subfolder_modul():
     for d in sorted(TOOLS.rglob("*")):
         if d.is_dir() and not d.name.startswith(("__", ".")) and "emu_cycles" not in d.parts and any(d.glob("*.py")):

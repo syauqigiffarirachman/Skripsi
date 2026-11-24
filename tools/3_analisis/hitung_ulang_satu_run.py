@@ -11,9 +11,8 @@ P_idle / I_idle = rerata run IDLE arsitektur dan blok yang sama (kolom P_idle_mW
 Kalibrasi bawaan --rshunt/--offset = hasil 21 Nov 2026 (0,0821 Ohm, -2,83; tools/2_kalibrasi/kalibrasi_param.py, modul kecil yang
 juga hanya memakai pustaka standar). Nilai nominal lama: --rshunt 0.100 --offset -2.0 (dengan --p-idle 10.37 --i-idle 1.99).
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import csv

@@ -8,7 +8,7 @@
 //       didefinisikan eksplisit (di bawah), SAMA JENISNYA dengan K1 (tools/dev/tahap_d/k1_check.py);
 //   (3) protokol 1-Wire (XPC) ditulis sekecil mungkin, tanpa LED, tanpa mode manual, tanpa
 //       pengukuran RAM/hash (itu tahap berikutnya).
-// Pengganti firmware monolit lama src/host/eksperimen/monolit/ (tetap ada sebagai referensi, tidak dipakai).
+// Pengganti firmware monolit lama src/host/dev/eksperimen/monolit/ (tetap ada sebagai referensi, tidak dipakai).
 //
 // Yang berbeda dari firmware lama (dan harus dinyatakan di laporan):
 //   - Pencarian ROM (ds.search) dilakukan SEKALI di setup(), bukan di setiap sign. Firmware lama
@@ -214,7 +214,7 @@ static int __attribute__((noinline)) one_operation() {
 
 // ---------------------------------------------------------------------------
 // Tahap 3: WFI + pewaktu hardware + pin status PB1 + %S_cpu (mekanisme IDENTIK dengan K1,
-// src/host/k1_software/main.cpp tahap 3; lihat penjelasan lengkap di sana). Fungsi tahap ini satu:
+// src/host/dev/tahap_d/k1_software/main.cpp tahap 3; lihat penjelasan lengkap di sana). Fungsi tahap ini satu:
 // satu jendela pengamatan di mana CPU tidur di antara permintaan sintetis TIM4 (perintah W).
 // Tambahan khusus K2 (sesuai paper): selama penantian chip (130 ms) CPU juga tidur lewat WFI,
 // dibangunkan oleh pewaktu TIM1 (interupsi), bukan delay() sibuk. Fase 1-Wire kirim/baca

@@ -1,6 +1,6 @@
 // ============================================================================
 // EKSPERIMEN (17 Nov 2026): DS28E38 dengan OVERDRIVE dan tunggu sign berbasis polling (bukan 130 ms tetap).
-// Bukan firmware pengukuran tahap D; K2 baseline (src/host/k2_hardware) TIDAK disentuh.
+// Bukan firmware pengukuran tahap D; K2 baseline (src/host/dev/tahap_d/k2_hardware) TIDAK disentuh.
 //
 // Tujuan: (1) memangkas waktu bus (kirim ~24 ms + baca ~46 ms pada kecepatan standar) dengan overdrive;
 //         (2) memangkas tunggu 130 ms: chip menghitung ~107 ms lalu mengirim; saat sibuk bus terbaca 1,

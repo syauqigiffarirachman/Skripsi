@@ -8,9 +8,8 @@ Asumsi ilustratif: baterai 1000 mAh x 3,7 V = 13,32 kJ; konversi regulator diaba
 Membaca data/analisis/stop_final/runs.csv, jadi nilainya mengikuti kalibrasi yang dipakai analisis_d.py saat runs.csv dibuat
 (21 Nov 2026: rshunt 0,0821 Ohm, offset -2,83). Jalankan analisis_d.py dulu bila kalibrasi berubah, baru skrip ini.
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 from pathlib import Path
 import pandas as pd

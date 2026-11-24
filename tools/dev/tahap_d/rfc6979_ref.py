@@ -4,9 +4,8 @@ Hanya memakai hashlib/hmac + aritmetika kurva dari ds9481_comm/ds9481/ecdsa_veri
 Jalankan langsung untuk uji mandiri terhadap vektor resmi RFC 6979 Lampiran A.2.5:
     python tools/dev/tahap_d/rfc6979_ref.py
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 _sys.path.insert(0, str(ROOT / "ds9481_comm"))            # pustaka DS28E38 (ds9481.ecdsa_verify)
 import hashlib

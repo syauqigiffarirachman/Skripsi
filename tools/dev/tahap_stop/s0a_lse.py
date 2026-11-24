@@ -15,9 +15,8 @@ Pakai (cabut-colok daya host dulu, tunggu ~3 s, lalu):
   python tools/dev/tahap_stop/s0a_lse.py --logger COM18 60 [--catatan "pc1"]
   python tools/dev/tahap_stop/s0a_lse.py --analyse data/dev/s0a/<berkas>.csv
 """
-import sys as _sys
-from pathlib import Path as _Path
-_sys.path.insert(0, str(_Path(__file__).resolve().parents[2]))   # folder tools/ (tempat _jalur.py)
+import sys as _sys, pathlib as _pl  # noqa: E401
+_sys.path.insert(0, str(next(p for p in _pl.Path(__file__).resolve().parents if (p / "_jalur.py").is_file())))  # folder tools/
 from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ masuk sys.path)
 import argparse
 import csv

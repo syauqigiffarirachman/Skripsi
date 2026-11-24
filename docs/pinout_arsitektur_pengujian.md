@@ -1,7 +1,7 @@
 # Pinout Arsitektur Pengujian (bangku uji Tahap D)
 
 Disusun 16 Nov 2026 dari kode firmware yang dipakai pada 120 run final (commit `448befe`), `platformio.ini`, dan logbook 12–15 Nov.
-**Diperbarui 18 Nov 2026** dari logbook 17–18 Nov, `docs/rencana_deep_sleep.md`, dan `src/host/deepsleep/stop_common.h`: resistor seri jalur sinyal
+**Diperbarui 18 Nov 2026** dari logbook 17–18 Nov, `docs/rencana_deep_sleep.md`, dan `src/host/final/bersama/stop_common.h`: resistor seri jalur sinyal
 kini 10 kΩ (sejak 17 Nov; data tahap D memakai ~1 kΩ), varian host Stop mode (bagian 2b), daya balik lewat jalur sinyal, kemasan DS28E38 terkonfirmasi parasit, nomor COM terakhir. Isi bagian 2–8 untuk firmware
 tahap D (Sleep/WFI, `k1_sw`/`k2_hw`) tetap berlaku.
 Tujuannya jadi acuan saat merancang PCB/board yang lebih rapi. Butir bertanda **[cek]** belum tercatat di kode/logbook dan perlu diukur langsung di bangku.
@@ -12,11 +12,11 @@ Tujuannya jadi acuan saat merancang PCB/board yang lebih rapi. Butir bertanda **
 
 | Peran | Board / MCU | Jam | Firmware (env) | Kode | Daya saat run | Pemrograman |
 |---|---|---|---|---|---|---|
-| **Host K1** (software ECDSA, Mbed TLS) | Blue Pill STM32F103C8T6 (Cortex-M3) | HSI → 48 MHz (tanpa kristal) | `k1_sw` | `src/host/k1_software/` + `src/host_common/` | USB-C **hanya daya** (VBUS, GND, CC) lewat shunt INA226 | ST-Link serial `$` |
-| **Host K2** (hardware DS28E38) | Board yang SAMA dengan K1, diflash ulang | HSI → 48 MHz | `k2_hw` | `src/host/k2_hardware/` + `src/host_common/` | idem | ST-Link serial `$` |
-| **Logger** | Blue Pill STM32F103C8T6 klon (UID nol) | HSE 8 MHz ×9 = 72 MHz (kristal) | `logger` (build L6B1) | `src/logger/f103/` + `src/logger_common/` | micro-USB sendiri (juga jalur CSV ke PC) | ST-Link serial `X` |
+| **Host K1** (software ECDSA, Mbed TLS) | Blue Pill STM32F103C8T6 (Cortex-M3) | HSI → 48 MHz (tanpa kristal) | `k1_sw` | `src/host/dev/tahap_d/k1_software/` + `src/host/bersama/ (host_util.h) dan src/host/dev/tahap_d/bersama/ ` | USB-C **hanya daya** (VBUS, GND, CC) lewat shunt INA226 | ST-Link serial `$` |
+| **Host K2** (hardware DS28E38) | Board yang SAMA dengan K1, diflash ulang | HSI → 48 MHz | `k2_hw` | `src/host/dev/tahap_d/k2_hardware/` + `src/host/bersama/ (host_util.h) dan src/host/dev/tahap_d/bersama/ ` | idem | ST-Link serial `$` |
+| **Logger** | Blue Pill STM32F103C8T6 klon (UID nol) | HSE 8 MHz ×9 = 72 MHz (kristal) | `logger` (build L6B1) | `src/logger/f103/` + `src/logger/modul/` | micro-USB sendiri (juga jalur CSV ke PC) | ST-Link serial `X` |
 | **Attacker** (pembangkit permintaan) | STM32F030C8T6 (Cortex-M0) | HSI 48 MHz | `attacker` | `src/attacker/` | USB bawaan board / CH340 | ST-Link (13 Nov), bootloader CH340 dinonaktifkan |
-| **Sensor arus** | Modul INA226, shunt berkode R100 | – | – | `src/logger_common/ina226.*` | VS dari 3V3 logger | – |
+| **Sensor arus** | Modul INA226, shunt berkode R100 | – | – | `src/logger/modul/ina226.*` | VS dari 3V3 logger | – |
 | **Secure element** | DS28E38 (K2 saja) | – | – | – | dari host (1-Wire) | – |
 
 
@@ -47,13 +47,13 @@ Satu board fisik, firmware diganti per blok arsitektur. Peta pin identik di kedu
 
 Periferal internal tanpa pin (penting bila memindah ke MCU lain): TIM2→TIM3 berantai (waktu 32-bit 1 µs, tetap jalan saat WFI), TIM4 (permintaan sintetis/akhir jendela), TIM1 (bangun K2 saat menunggu DS28E38), DMA1 Ch6 (USART2 RX), DWT CYCCNT (latensi).
 
-Cadangan di `include/powertest.h` (tidak dipakai di Tahap D): PB0 = TRIG per sign, PB1 = SLEEP, PB10 = WINDOW.
+Cadangan di `include/dev/powertest.h` (tidak dipakai di Tahap D): PB0 = TRIG per sign, PB1 = SLEEP, PB10 = WINDOW.
 
 ---
 
 ## 2b. Host varian Stop mode (K1S / K2S, 17–18 Nov)
 
-Board dan kabel sama. Yang berbeda adalah konfigurasi pin dan sumber waktu (`src/host/deepsleep/stop_common.h`,
+Board dan kabel sama. Yang berbeda adalah konfigurasi pin dan sumber waktu (`src/host/final/bersama/stop_common.h`,
 `pins_init()`, `rx_*`). Tahap D tetap memakai bagian 2.
 
 | Pin / blok | Konfigurasi di varian Stop | Catatan |
@@ -208,4 +208,4 @@ Jalur PC: logger USB CDC (COM18 terakhir), attacker CH340 (COM16/17 pada tahap D
 8. Pertahankan R seri di jalur attacker→host **dan logger→host** (proteksi bila beda catu/ground saat bongkar-pasang; 1 kΩ dipakai
    tahap D, 10 kΩ sejak 17 Nov untuk membatasi arus injeksi saat host di Stop). Pertimbangkan sakelar daya atau jalur pemutus agar
    host bisa dimatikan penuh (POR bersih) tanpa mencabut banyak kabel.
-9. Sinyal opsional yang sudah disiapkan di kode: PB0 TRIG, PB10 WINDOW (`include/powertest.h`) dapat diberi test point.
+9. Sinyal opsional yang sudah disiapkan di kode: PB0 TRIG, PB10 WINDOW (`include/dev/powertest.h`) dapat diberi test point.
