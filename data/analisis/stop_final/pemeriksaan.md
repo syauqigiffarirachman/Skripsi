@@ -24,10 +24,10 @@ Run sah dengan 'late ringan' (<= 10 cuplikan terlambat, selang < 5000 us): 62
 
 | Blok | I_idle awal | I_idle akhir | Selisih (mA) | V awal | V akhir | Status |
 |---|---|---|---|---|---|---|
-| blok1 | 1.990 | 1.990 | +0.001 | 5.207 | 5.217 | OK |
-| blok2 | 1.990 | 1.992 | +0.002 | 5.218 | 5.225 | OK |
-| blok3 | 1.992 | 1.991 | -0.001 | 5.226 | 5.218 | OK |
-| blok4 | 1.989 | 1.984 | -0.004 | 5.214 | 5.217 | OK |
+| blok1 | 2.449 | 2.450 | +0.001 | 5.207 | 5.217 | OK |
+| blok2 | 2.449 | 2.451 | +0.003 | 5.218 | 5.225 | OK |
+| blok3 | 2.451 | 2.451 | -0.001 | 5.226 | 5.218 | OK |
+| blok4 | 2.448 | 2.442 | -0.005 | 5.214 | 5.217 | OK |
 
 ## 4. Konsistensi (run sah)
 
@@ -40,8 +40,8 @@ Run sah dengan 'late ringan' (<= 10 cuplikan terlambat, selang < 5000 us): 62
 ## 5. Pencilan (pagar Tukey 3 x IQR, hanya dilaporkan, tidak dibuang)
 
 - K3 Latensi sign (waktu nyata): 655.3598 ms (blok2 021_K1S_B.csv; median 654.8944)
-- K3 Arus dinamis: 11.7330 mA (blok3 006_K1S_B.csv; median 11.7246)
-- K3 Muatan dinamis per layanan: 7.7868 mC (blok3 006_K1S_B.csv; median 7.7796)
+- K3 Arus dinamis: 14.2911 mA (blok3 006_K1S_B.csv; median 14.2809)
+- K3 Muatan dinamis per layanan: 9.4845 mC (blok3 006_K1S_B.csv; median 9.4758)
 
 ## 6. Run gugur dan sebabnya
 

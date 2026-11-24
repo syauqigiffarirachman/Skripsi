@@ -1,5 +1,9 @@
 # 07. Dari CSV mentah sampai kesimpulan: asal setiap angka
 
+> **Catatan 21 Nov 2026:** angka mutlak di berkas ini (mA, mW, mJ, 1,99 mA, 40,10 mW, 41,03 mJ, u_kal 5 %, "belum dikalibrasi") memakai shunt nominal 0,100 Ohm dan SUDAH USANG.
+> Setelah kalibrasi: R_eff 0,0821 Ohm, offset -2,83, u_kal 1,5 % (angka baru: `08_alur_data_lengkap_2026-11-21.md`). Persentase, rasio, latensi, S_cpu, TL, dan p-value tidak berubah.
+> Bagian 7.1 (kalibrasi belum dilakukan) dan jawaban penguji tentang kalibrasi/arus demo juga perlu dibaca dengan 08.
+
 Dibuat 19 Nov 2026. Untuk menjawab: "Apakah tabel dan perhitungan analisis benar dari rumus di paper? Bagaimana
 alurnya sampai grafik? Dari kode mana angka di pembahasan dan kesimpulan?" Semua angka di bawah diambil dari
 `data/analisis/stop_final/` (data skripsi = varian deep sleep/Stop) dan saya periksa ulang sendiri hari ini.
