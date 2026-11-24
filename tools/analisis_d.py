@@ -16,8 +16,10 @@ run_bench.analyse() (kalibrasi --rshunt/--offset bisa diganti tanpa mengambil da
   9. gambar: box plot, interaction plot, drift, Bland-Altman.
 
 Pakai:
-  python tools/analisis_d.py                               manifest bawaan data/tahap_d.txt, rshunt 0.100
-  python tools/analisis_d.py --rshunt 0.082 --u-rel 0.02   setelah kalibrasi shunt (u_rel = ketidakpastian kalibrasi)
+  python tools/analisis_d.py                               manifest bawaan data/tahap_d.txt; kalibrasi bawaan = hasil 21 Nov 2026
+                                                           (rshunt 0.0821, offset -2.83, u_rel 0.015; tools/kalibrasi_param.py)
+  python tools/analisis_d.py --manifest data/tahap_stop.txt --stop --keluar data/analisis/stop_final     data skripsi (Stop)
+  python tools/analisis_d.py --rshunt 0.100 --offset -2.0 --u-rel 0.05   mereproduksi hasil sebelum kalibrasi (nominal)
   python tools/analisis_d.py --multimeter data/kalibrasi/multimeter.csv   (kolom: file,I_mm_mA)
 
 Keluaran: data/analisis/<tanggal_jam>_r<rshunt>/.
@@ -37,6 +39,7 @@ from statsmodels.stats.multitest import multipletests
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import run_bench as rb  # noqa: E402
+import kalibrasi_param as kp  # noqa: E402   # default --rshunt/--offset/--u-rel = kalibrasi 21 Nov 2026
 
 ROOT = Path(__file__).resolve().parent.parent
 STOP_MODE = False
@@ -525,10 +528,11 @@ def f(v, n=4):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--manifest", default=str(ROOT / "data" / "tahap_d.txt"))
-    ap.add_argument("--rshunt", type=float, default=0.100)
-    ap.add_argument("--offset", type=float, default=-2.0)
-    ap.add_argument("--u-rel", type=float, default=0.05,
-                    help="ketidakpastian relatif kalibrasi shunt (sebelum kalibrasi: target 5 %%)")
+    ap.add_argument("--rshunt", type=float, default=kp.RSHUNT_EFEKTIF,
+                    help="hambatan shunt efektif (Ohm); bawaan = kalibrasi 21 Nov 2026 (nominal modul 0,100)")
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB, help="offset nol (satuan 2,5 uV)")
+    ap.add_argument("--u-rel", type=float, default=kp.U_REL_KAL,
+                    help="ketidakpastian relatif kalibrasi shunt (bawaan 1,5 %%; sebelum kalibrasi 5 %%)")
     ap.add_argument("--multimeter", default=None, help="CSV kolom file,I_mm_mA (Bland-Altman INA226 vs multimeter)")
     ap.add_argument("--keluar", default=None)
     ap.add_argument("--stop", action="store_true", help="manifest berisi sesi varian Stop (arsitektur K1S/K2S)")

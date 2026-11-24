@@ -4,17 +4,23 @@ Tujuan belajar/pembuktian: menunjukkan bahwa angka di tabel (runs.csv) memang ke
 ditulis di paper, langsung dari baris mentah logger. Tiap baris kode di bawah menunjuk rumusnya.
 
 Pakai:
-  python tools/hitung_ulang_satu_run.py data/runs/20261118_115044_K2S/033_K2S_A.csv --p-idle 10.4 --i-idle 1.99
+  python tools/hitung_ulang_satu_run.py data/runs/20261118_115044_K2S/033_K2S_A.csv --p-idle 12.766 --i-idle 2.449
   tambahkan --banding data/analisis/stop_final/runs.csv --sesi 20261118_115044_K2S  untuk membandingkan dengan tabel
 
 P_idle / I_idle = rerata run IDLE arsitektur dan blok yang sama (kolom P_idle_mW dan I_idle_mA di runs.csv).
+Kalibrasi bawaan --rshunt/--offset = hasil 21 Nov 2026 (0,0821 Ohm, -2,83; tools/kalibrasi_param.py, modul kecil yang
+juga hanya memakai pustaka standar). Nilai nominal lama: --rshunt 0.100 --offset -2.0 (dengan --p-idle 10.37 --i-idle 1.99).
 """
 import argparse
 import csv
+import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import kalibrasi_param as kp  # noqa: E402
+
 TICK_HZ = 72_000_000          # jam logger (kristal) = satuan semua cap waktu
-SHUNT_LSB_V = 2.5e-6          # INA226: 2,5 uV per LSB register shunt
+SHUNT_LSB_V = kp.SHUNT_LSB_V   # INA226: 2,5 uV per LSB register shunt
 BUS_LSB_V = 1.25e-3           # INA226: 1,25 mV per LSB register bus
 
 
@@ -95,8 +101,8 @@ def hitung(path, rshunt, offset, p_idle_mw=None, i_idle_ma=None):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("csv")
-    ap.add_argument("--rshunt", type=float, default=0.100)
-    ap.add_argument("--offset", type=float, default=-2.0)
+    ap.add_argument("--rshunt", type=float, default=kp.RSHUNT_EFEKTIF)
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB)
     ap.add_argument("--p-idle", type=float, default=None, help="P_idle (mW) blok yang sama")
     ap.add_argument("--i-idle", type=float, default=None, help="I_idle (mA) blok yang sama")
     ap.add_argument("--banding", help="runs.csv hasil analisis_d.py")

@@ -2,10 +2,11 @@
 
 Dua ukuran yang tidak bergantung pada papan uji:
  (a) tanda tangan per baterai (hanya energi dinamis): N = E_batere / E_lyn
- (b) umur pada beban kerja Normal (1 permintaan/s) = kapasitas / (I_idle + I_dyn)  [dengan lantai papan 1,99 mA]
+ (b) umur pada beban kerja Normal (1 permintaan/s) = kapasitas / (I_idle + I_dyn)  [dengan lantai papan ~2,45 mA terkalibrasi]
      dan versi 'tanpa lantai' = kapasitas / I_dyn (batas atas; lantai LED papan ini bukan sifat chip).
 Asumsi ilustratif: baterai 1000 mAh x 3,7 V = 13,32 kJ; konversi regulator diabaikan; energi diukur di input 5,2 V.
-Nilai mengikuti kalibrasi shunt saat ini (rshunt 0,1, offset -2,0); ulang bila kalibrasi berubah.
+Membaca data/analisis/stop_final/runs.csv, jadi nilainya mengikuti kalibrasi yang dipakai analisis_d.py saat runs.csv dibuat
+(21 Nov 2026: rshunt 0,0821 Ohm, offset -2,83). Jalankan analisis_d.py dulu bila kalibrasi berubah, baru skrip ini.
 """
 from pathlib import Path
 import pandas as pd
@@ -27,7 +28,7 @@ g.to_csv(D / "proyeksi_baterai.csv")
 n = {"K1": "K1 Software, normal", "K2": "K2 DS28E38, normal", "K3": "K3 Software, barrage", "K4": "K4 DS28E38, barrage"}
 L = ["# Proyeksi pemakaian baterai (ilustrasi)\n",
      f"Asumsi: baterai {CAP_MAH:.0f} mAh x {V_BAT} V = {E_BAT_J / 1e3:.2f} kJ; regulator diabaikan; arus diukur di input 5,2 V. "
-     "Lantai papan (LED daya dkk.) 1,99 mA ikut pada kolom 'dengan lantai'; kolom 'tanpa lantai' hanya arus dinamis (batas atas, "
+     "Lantai papan (LED daya dkk.) ~2,45 mA terkalibrasi (1,99 mA pada shunt nominal 0,100 Ohm) ikut pada kolom 'dengan lantai'; kolom 'tanpa lantai' hanya arus dinamis (batas atas, "
      "karena lantai chip sebenarnya 1-20 uA). Ini proyeksi dari data pengukuran, bukan umur baterai terukur.\n",
      "| Kelompok | E per layanan (mJ) | Tanda tangan per baterai (ribu) | Arus rerata (mA) | Umur dengan lantai (jam) | Umur tanpa lantai (jam) | Tingkat layanan (%) |",
      "|---|---|---|---|---|---|---|"]

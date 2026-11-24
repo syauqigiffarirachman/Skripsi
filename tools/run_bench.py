@@ -42,9 +42,10 @@ Setelah flash, OpenOCD menyalakan DBGMCU_CR = 0x307 (DBG_SLEEP: jam inti tetap j
 baru hilang saat power-on reset. Uji 15 Nov: arus tidur K1 naik 0,2-0,7 mA bila bit menyala. Karena itu
 flash_host() menolkan DBGMCU_CR setelah program; aksi 'nodebug' melakukan hal yang sama tanpa flash.
 
-Kalibrasi arus: --rshunt (Ohm, bawaan 0.100 = nominal; hasil A2c ~0.080-0.083 BELUM final) dan
---offset (LSB shunt tanpa beban, bawaan -2). CSV mentah menyimpan nilai register, jadi analisis bisa
-diulang dengan kalibrasi lain tanpa mengambil data lagi.
+Kalibrasi arus: --rshunt (Ohm) dan --offset (LSB shunt tanpa beban); bawaan baris perintah = hasil kalibrasi
+21 Nov 2026 (R_eff 0,0821 Ohm, offset -2,83; lihat tools/kalibrasi_param.py dan data/kalibrasi/). Nilai nominal lama:
+--rshunt 0.100 --offset -2.0. CSV mentah menyimpan nilai register, jadi analisis bisa diulang dengan kalibrasi lain
+tanpa mengambil data lagi. (Default FUNGSI analyse() tetap nominal; dipakai uji tests/.)
 """
 import argparse
 import csv
@@ -58,8 +59,10 @@ from pathlib import Path
 
 import serial
 
+import kalibrasi_param as kp   # default --rshunt/--offset = hasil kalibrasi 21 Nov 2026
+
 TICK_HZ = 72_000_000
-SHUNT_LSB_V = 2.5e-6
+SHUNT_LSB_V = kp.SHUNT_LSB_V
 BUS_LSB_V = 1.25e-3
 SCEN = {"A": (4, "a"), "B": (4, "b"), "IDLE": (4, None), "WA": (5, None), "WB": (6, None)}
 END_COLS = ["arch", "secs", "p_ms", "uart", "t_obs_us", "t_sleep_us", "act_us", "resid_us", "arrived",
@@ -492,8 +495,9 @@ def main():
     ap.add_argument("--logger", default="COM18")
     ap.add_argument("--attacker", default="COM16")
     ap.add_argument("--secs", type=int, default=60)
-    ap.add_argument("--rshunt", type=float, default=0.100)
-    ap.add_argument("--offset", type=float, default=-2.0)
+    ap.add_argument("--rshunt", type=float, default=kp.RSHUNT_EFEKTIF,
+                    help="hambatan shunt efektif (Ohm); bawaan = kalibrasi 21 Nov 2026 (nominal modul 0,100)")
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB, help="offset nol (satuan 2,5 uV)")
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--jeda", type=float, default=3.0, help="jeda antar run (s)")
     ap.add_argument("--tanpa-idle", action="store_true")

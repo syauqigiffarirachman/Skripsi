@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import run_bench as rb  # noqa: E402
+import kalibrasi_param as kp  # noqa: E402
 
 OUT = Path(__file__).resolve().parent.parent / "data" / "dev" / "k1s"
 GAP_S, CAL_S, KIRIM_S = 8, 2, 4          # jeda host, ukur HCLK, kirim hasil (perkiraan)
@@ -67,8 +68,8 @@ def main():
     ap.add_argument("--secs", type=int, default=60)
     ap.add_argument("--logger", default="COM18")
     ap.add_argument("--attacker", default="COM22")
-    ap.add_argument("--rshunt", type=float, default=0.100)
-    ap.add_argument("--offset", type=float, default=-2.0)
+    ap.add_argument("--rshunt", type=float, default=kp.RSHUNT_EFEKTIF)
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB)
     ap.add_argument("--catatan", default="")
     ap.add_argument("--analyse", metavar="CSV")
     a = ap.parse_args()

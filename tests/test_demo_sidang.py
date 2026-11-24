@@ -307,7 +307,9 @@ class TestCLI(unittest.TestCase):
             folder = js.call_args[0][1]
             catatan = (Path(folder) / "sesi.txt").read_text(encoding="utf-8")
             self.assertEqual(Path(folder).parent, Path(d))
-        self.assertIn("rshunt=0.1", catatan)
+        # sesi.txt mencatat kalibrasi yang dipakai: bawaan CLI = hasil kalibrasi 21 Nov 2026 (tools/kalibrasi_param.py)
+        self.assertIn(f"rshunt={ds.kp.RSHUNT_EFEKTIF}", catatan)
+        self.assertIn(f"offset={ds.kp.OFFSET_LSB}", catatan)
         self.assertIn("ST-Link", catatan)
         self.assertIn("K1S", teks)
         self.assertIn(ds.CATATAN_STLINK, teks)

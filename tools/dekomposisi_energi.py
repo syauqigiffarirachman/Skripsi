@@ -20,6 +20,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import run_bench as rb  # noqa: E402
+import kalibrasi_param as kp  # noqa: E402
 
 D = ROOT / "data" / "analisis" / "stop_final"
 T = rb.TICK_HZ
@@ -77,8 +78,8 @@ def fase_run(path, rshunt, offset, p_idle_mw, i_idle_ma):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--rshunt", type=float, default=0.100)
-    ap.add_argument("--offset", type=float, default=-2.0)
+    ap.add_argument("--rshunt", type=float, default=kp.RSHUNT_EFEKTIF)   # kalibrasi 21 Nov 2026
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB)
     a = ap.parse_args()
     runs = pd.read_csv(D / "runs.csv")
     runs = runs[runs.sah & runs.kelompok.isin(["K1", "K2"])]
@@ -109,7 +110,7 @@ def main():
     # tabel markdown
     L = ["# Dekomposisi energi dinamis per tanda tangan (Normal)\n",
          f"rshunt = {a.rshunt} Ohm, offset = {a.offset} LSB; n = " + ", ".join(f"{k}: {len(v)} run" for k, v in d.groupby('kelompok')) + ".",
-         "Energi dinamis = integral (P - P_idle) dt per fase; dibagi jumlah tanda tangan terlayani. Nilai mutlak mengikuti kalibrasi shunt (u_kal 5 %).\n",
+         f"Energi dinamis = integral (P - P_idle) dt per fase; dibagi jumlah tanda tangan terlayani. Nilai mutlak mengikuti kalibrasi shunt di atas (u_kal bawaan {kp.U_REL_KAL * 100:g} %, kalibrasi 21 Nov 2026).\n",
          "| Kelompok | Fase | Durasi (ms/sign) | Arus rerata (mA) | E dinamis (mJ/sign) | Porsi (%) |", "|---|---|---|---|---|---|"]
     for k in ("K1", "K2"):
         s = d[d.kelompok == k]

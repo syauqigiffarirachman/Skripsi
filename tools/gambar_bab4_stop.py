@@ -8,12 +8,16 @@ Membuat SEMUA gambar Bab 4 (4.1, 4.1b, 4.2 sampai 4.11) dengan gaya seragam sesu
   4.9  Arus diam IDLE awal/akhir tiap blok (bukti keadaan bersih)
   4.10 Distribusi frame permintaan hilang pada K4 (semua 41 run)
 
-Pakai:  python tools/gambar_bab4_stop.py [--shunt 0.100] [--keluar data/analisis/stop_final/gambar_bab4]
+Pakai:  python tools/gambar_bab4_stop.py [--shunt 0.0821] [--keluar data/analisis/stop_final/gambar_bab4]
 Data:   data/analisis/stop_final/{runs.csv,layanan.csv}, data/runs/<sesi>/<berkas> (jejak arus mentah).
 Konvensi: warna menurut arsitektur (Software biru, DS28E38 oranye), Barrage berarsir, desimal koma, 300 dpi.
-Nilai mutlak arus memakai shunt nominal 0,100 Ohm; jalankan ulang dengan --shunt setelah kalibrasi.
+Nilai mutlak arus pada jejak (Gambar 4.1/4.1b) memakai --shunt dan --offset; bawaan = hasil kalibrasi 21 Nov 2026
+(0,0821 Ohm, offset -2,83; tools/kalibrasi_param.py). Gambar lain mengikuti data/analisis/stop_final/ (jalankan
+analisis_d.py dengan kalibrasi yang sama dulu). Sumbu Gambar 4.4/4.5 mengikuti data (tidak tetap).
 """
 import argparse
+import sys
+from functools import lru_cache
 from pathlib import Path
 
 import matplotlib
@@ -26,6 +30,8 @@ from matplotlib.patches import Patch  # noqa: E402
 from matplotlib.ticker import FuncFormatter  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import kalibrasi_param as kp  # noqa: E402   # default --shunt/--offset = kalibrasi 21 Nov 2026
 ANA = ROOT / "data" / "analisis" / "stop_final"
 TICK_HZ = 72_000_000
 C_SW, C_HW = "#1f5fa8", "#e07b00"          # Software, DS28E38
@@ -56,7 +62,9 @@ def gaya():
                          "axes.spines.right": False, "font.family": "DejaVu Sans"})
 
 
-def baca_jejak(path, shunt):
+@lru_cache(maxsize=None)     # Gambar 4.1 dan 4.1b (serta pencarian puncak) memakai berkas yang sama: baca sekali
+def baca_jejak(path, shunt, offset=kp.OFFSET_LSB):
+    """Jejak satu run: (waktu detik, arus mA, daftar tepi pin status). Hasil di-cache; jangan diubah di tempat."""
     s, e, t0 = [], [], None
     for ln in Path(path).read_text(errors="replace").splitlines():
         if ln.startswith("s,"):
@@ -69,7 +77,7 @@ def baca_jejak(path, shunt):
         elif ln.startswith("h,") and ">START" in ln and t0 is None:
             t0 = int(ln.split(",")[1])
     t = (np.array([a for a, _ in s]) - t0) / TICK_HZ
-    i_ma = (np.array([b for _, b in s]) + 2) * 2.5e-6 / shunt * 1000.0
+    i_ma = (np.array([b for _, b in s]) - offset) * kp.SHUNT_LSB_V / shunt * 1000.0     # sama dengan run_bench.analyse
     ev = [((a - t0) / TICK_HZ, lv) for a, lv in e]
     return t, i_ma, ev
 
@@ -96,15 +104,23 @@ def selang_aktif(ev, a, b):
 
 
 # --------------------------------------------------------------------------- 4.1
-def gambar_41(out, shunt, i_idle):
+def _ymax_jejak(shunt, offset):
+    """Batas atas sumbu arus: puncak terbesar run contoh + 8 %, dibulatkan ke atas kelipatan 2 mA (bukan 21 mA tetap
+    seperti pada skala shunt nominal; puncak K2/K4 terkalibrasi ~23,8 mA)."""
+    puncak = max(float(baca_jejak(ROOT / "data" / "runs" / rel, shunt, offset)[1].max()) for rel in CONTOH.values())
+    return float(np.ceil(puncak * 1.08 / 2.0) * 2.0)
+
+
+def gambar_41(out, shunt, i_idle, offset=kp.OFFSET_LSB):
     fig, axs = plt.subplots(2, 2, figsize=(11, 6.4), sharex=True, sharey=True)
     pos = {"K1": (0, 0), "K2": (0, 1), "K3": (1, 0), "K4": (1, 1)}
     judul = {"K1": "(a) K1 Software, normal", "K2": "(b) K2 DS28E38, normal",
              "K3": "(c) K3 Software, barrage", "K4": "(d) K4 DS28E38, barrage"}
     A, B = 10.0, 13.0
+    ymax_j = _ymax_jejak(shunt, offset)
     for k, rel in CONTOH.items():
         ax = axs[pos[k]]
-        t, i, ev = baca_jejak(ROOT / "data" / "runs" / rel, shunt)
+        t, i, ev = baca_jejak(ROOT / "data" / "runs" / rel, shunt, offset)
         for a, b in selang_aktif(ev, A, B):
             ax.axvspan(a, b, color="#d9d9d9", lw=0)
         m = (t >= A) & (t <= B)
@@ -112,24 +128,9 @@ def gambar_41(out, shunt, i_idle):
         ax.axhline(i_idle, color="k", ls="--", lw=0.8)
         ax.set_title(judul[k], loc="left")
         ax.set_xlim(A, B)
-        ax.set_ylim(0, 21)
+        ax.set_ylim(0, ymax_j)
         ax.xaxis.set_major_formatter(FMT)
         ax.yaxis.set_major_formatter(FMT)
-        if False:                                 # inset 0,5 s untuk pulsa pendek
-            ins = ax.inset_axes([0.60, 0.42, 0.37, 0.48])
-            a2, b2 = 10.0, 10.5
-            for a, b in selang_aktif(ev, a2, b2):
-                ins.axvspan(a, b, color="#d9d9d9", lw=0)
-            mm = (t >= a2) & (t <= b2)
-            ins.plot(t[mm], i[mm], color=WARNA[k], lw=0.8)
-            ins.axhline(i_idle, color="k", ls="--", lw=0.6)
-            ins.set_xlim(a2, b2)
-            ins.set_ylim(0, 16)
-            ins.tick_params(labelsize=7)
-            ins.xaxis.set_major_formatter(FMT)
-            ins.yaxis.set_major_formatter(FMT)
-            ins.set_title("rinci 0,5 s", fontsize=7, pad=2)
-            ax.indicate_inset_zoom(ins, edgecolor="0.4")
     for ax in axs[1]:
         ax.set_xlabel("Waktu sejak awal jendela (s)")
     for ax in axs[:, 0]:
@@ -142,19 +143,20 @@ def gambar_41(out, shunt, i_idle):
     plt.close(fig)
 
 
-def gambar_41_rinci(out, shunt, i_idle):
+def gambar_41_rinci(out, shunt, i_idle, offset=kp.OFFSET_LSB):
     """Gambar 4.1b: rinci pulsa aktif. (a) K2 satu permintaan (dua pulsa), (b) K4 pulsa berselang-seling 0,5 s."""
     fig, axs = plt.subplots(1, 2, figsize=(11, 3.8), sharey=True)
+    ymax_j = _ymax_jejak(shunt, offset)
     for ax, k, (a, b), jd in [(axs[0], "K2", (10.9, 11.3), "(a) K2 DS28E38, normal: satu permintaan"),
                               (axs[1], "K4", (10.0, 10.5), "(b) K4 DS28E38, barrage: 0,5 s")]:
-        t, i, ev = baca_jejak(ROOT / "data" / "runs" / CONTOH[k], shunt)
+        t, i, ev = baca_jejak(ROOT / "data" / "runs" / CONTOH[k], shunt, offset)
         for x, y in selang_aktif(ev, a, b):
             ax.axvspan(x, y, color="#d9d9d9", lw=0)
         m = (t >= a) & (t <= b)
         ax.plot(t[m], i[m], color=WARNA[k], lw=1.0, marker=".", ms=2.5)
         ax.axhline(i_idle, color="k", ls="--", lw=0.8)
         ax.set_xlim(a, b)
-        ax.set_ylim(0, 21)
+        ax.set_ylim(0, ymax_j)
         ax.set_title(jd, loc="left")
         ax.set_xlabel("Waktu sejak awal jendela (s)")
         ax.xaxis.set_major_formatter(FMT)
@@ -199,6 +201,7 @@ def gambar_49(out):
     r = pd.read_csv(ANA / "runs.csv")
     idle = r[r.scen == "IDLE"].sort_values(["blok", "urut"])
     nama_blok = {"blok1": "Blok 1\nK2S", "blok2": "Blok 2\nK1S", "blok3": "Blok 3\nK1S", "blok4": "Blok 4\nK2S"}
+    rata = idle["I_avg_mA"].mean()                    # jendela sumbu mengikuti rerata IDLE (bukan nilai tetap 1,99 mA lama)
     fig, ax = plt.subplots(figsize=(7.4, 4.2))
     for n, (b, g) in enumerate(idle.groupby("blok")):
         g = g.sort_values("urut")
@@ -209,14 +212,13 @@ def gambar_49(out):
         ax.plot(n + 0.18, v[-1], "o", color=warna, ms=7)
         ax.text(n - 0.18, v[0] + 0.004, f"{v[0]:.3f}".replace(".", ","), ha="center", fontsize=8)
         ax.text(n + 0.18, v[-1] - 0.009, f"{v[-1]:.3f}".replace(".", ","), ha="center", fontsize=8)
-        ax.text(n, 1.935, f"selisih {(f'{v[-1] - v[0]:+.3f}').replace('.', ',')} mA", ha="center", fontsize=8, color="0.3")
-    rata = idle["I_avg_mA"].mean()
+        ax.text(n, rata - 0.055, f"selisih {(f'{v[-1] - v[0]:+.3f}').replace('.', ',')} mA", ha="center", fontsize=8, color="0.3")
     ax.axhspan(rata - 0.05, rata + 0.05, color="#e8e8e8", lw=0, zorder=0)
     ax.axhline(rata, color="0.5", lw=0.8, ls=":")
     ax.set_xticks(range(4))
     ax.set_xticklabels([nama_blok[f"blok{i}"] for i in range(1, 5)])
     ax.set_xlim(-0.6, 3.6)
-    ax.set_ylim(1.93, 2.05)
+    ax.set_ylim(rata - 0.06, rata + 0.06)
     ax.set_ylabel("Arus diam (mA)  [sumbu dipersempit]")
     ax.yaxis.set_major_formatter(FMT)
     ax.legend(handles=[plt.Line2D([0], [0], marker="o", mfc="white", mec="0.3", color="0.3", ls="", label="IDLE awal blok"),
@@ -358,25 +360,29 @@ def gambar_43(out):
 def _gambar_dengan_galat(out, metrik, label_y, ymax, berkas, ofs):
     v = _ambil(metrik)
     g = _ugab(metrik)
+    if ymax is None:                                  # sumbu mengikuti data (batang + galat + ruang label), bukan nilai tetap
+        ymax = max(v[k] + g[k] for k in v) * 1.14
+    if ofs is None:
+        ofs = 0.012 * ymax
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     _batang(ax, v, galat=g, ofs=ofs)
     ax.set_ylim(0, ymax)
     ax.set_ylabel(label_y)
     _legenda_arsitektur(ax)
-    ax.text(0.5, -0.30, "Batang galat = ketidakpastian gabungan (didominasi kalibrasi shunt ±5 %)", transform=ax.transAxes,
-            ha="center", fontsize=8, color="0.35")
+    ax.text(0.5, -0.30, f"Batang galat = ketidakpastian gabungan (didominasi kalibrasi shunt ±{koma(round(kp.U_REL_KAL * 100, 2))} %)",
+            transform=ax.transAxes, ha="center", fontsize=8, color="0.35")
     fig.tight_layout()
     fig.savefig(out / berkas, bbox_inches="tight")
     plt.close(fig)
 
 
 def gambar_44(out):
-    _gambar_dengan_galat(out, "P_dyn_mW", "Daya dinamis (mW)", 78, "gambar_4_4_daya_dinamis.png", 0.8)
+    _gambar_dengan_galat(out, "P_dyn_mW", "Daya dinamis (mW)", None, "gambar_4_4_daya_dinamis.png", None)
 
 
 def gambar_45(out):
-    _gambar_dengan_galat(out, "E_lyn_mJ", "Energi dinamis per permintaan terlayani (mJ)", 50,
-                         "gambar_4_5_energi_per_permintaan.png", 0.6)
+    _gambar_dengan_galat(out, "E_lyn_mJ", "Energi dinamis per permintaan terlayani (mJ)", None,
+                         "gambar_4_5_energi_per_permintaan.png", None)
 
 
 # --------------------------------------------------------------------------- 4.6
@@ -384,9 +390,11 @@ def gambar_46(out):
     dd = pd.read_csv(ANA / "interaksi_dd.csv").set_index("metrik")
     fig, axs = plt.subplots(1, 2, figsize=(10.4, 4.3))
     spes = [("S_cpu_log", "(a) Durasi tidur dalam CPU", "Durasi tidur dalam CPU (%)", 112, "poin"),
-            ("P_dyn_mW", "(b) Daya dinamis", "Daya dinamis (mW)", 74, "mW")]
+            ("P_dyn_mW", "(b) Daya dinamis", "Daya dinamis (mW)", None, "mW")]
     for ax, (m, jd, yl, ymax, sat) in zip(axs, spes):
         v = _ambil(m)
+        if ymax is None:                              # mengikuti data (daya dinamis tergantung kalibrasi shunt)
+            ymax = max(v.values()) * 1.15
         for arsi, (kn, kb), c, mk in [("Software", ("K1", "K3"), C_SW, "o"), ("DS28E38", ("K2", "K4"), C_HW, "s")]:
             ax.plot([0, 1], [v[kn], v[kb]], "-" + mk, color=c, lw=2, ms=8, label=arsi)
             ax.text(-0.05, v[kn], _dua_desimal(v[kn]), color=c, fontsize=9.5, ha="right", va="center")
@@ -444,7 +452,9 @@ def gambar_411(out):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--shunt", type=float, default=0.100)
+    ap.add_argument("--shunt", type=float, default=kp.RSHUNT_EFEKTIF,
+                    help="hambatan shunt efektif (Ohm); bawaan = kalibrasi 21 Nov 2026")
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB, help="offset nol (satuan 2,5 uV)")
     ap.add_argument("--keluar", default=str(ANA / "gambar_bab4"))
     a = ap.parse_args()
     out = Path(a.keluar)
@@ -452,8 +462,8 @@ def main():
     gaya()
     r = pd.read_csv(ANA / "runs.csv")
     i_idle = float(r[r.scen == "IDLE"]["I_avg_mA"].mean())
-    gambar_41(out, a.shunt, i_idle)
-    gambar_41_rinci(out, a.shunt, i_idle)
+    gambar_41(out, a.shunt, i_idle, a.offset)
+    gambar_41_rinci(out, a.shunt, i_idle, a.offset)
     gambar_42(out)
     gambar_43(out)
     gambar_44(out)

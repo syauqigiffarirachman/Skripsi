@@ -14,6 +14,7 @@ import serial
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import run_bench  # noqa: E402
+import kalibrasi_param as kp  # noqa: E402
 
 ROOT = run_bench.ROOT
 
@@ -206,8 +207,8 @@ def buat_parser():
     ap.add_argument("--secs", type=int, default=60)
     ap.add_argument("--hitung", type=int, default=5, help="hitung mundur sebelum BISA MULAI MENYERANG (s)")
     ap.add_argument("--jeda", type=int, default=5, help="jeda setelah BISA MULAI MENYERANG sebelum jendela host (s)")
-    ap.add_argument("--rshunt", type=float, default=0.100)
-    ap.add_argument("--offset", type=float, default=-2.0)
+    ap.add_argument("--rshunt", type=float, default=kp.RSHUNT_EFEKTIF)     # kalibrasi 21 Nov 2026 (nominal modul 0,100)
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB)
     ap.add_argument("--auto-attacker", metavar="PORT", help="CADANGAN: skrip memulai attacker setelah >START "
                     "(serial monitor attacker harus ditutup)")
     ap.add_argument("--kering", action="store_true", help="cetak urutan sesi saja, tanpa perangkat")

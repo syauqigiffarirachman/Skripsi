@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import run_bench as rb  # noqa: E402
+import kalibrasi_param as kp  # noqa: E402
 
 OUT = Path(__file__).resolve().parent.parent / "data" / "dev" / "err"
 
@@ -60,8 +61,8 @@ def main():
     ap.add_argument("--logger", default="COM18")
     ap.add_argument("--attacker", default="COM24")
     ap.add_argument("--skenario", default="B", choices=["A", "B"])
-    ap.add_argument("--rshunt", type=float, default=0.100)
-    ap.add_argument("--offset", type=float, default=-2.0)
+    ap.add_argument("--rshunt", type=float, default=kp.RSHUNT_EFEKTIF)
+    ap.add_argument("--offset", type=float, default=kp.OFFSET_LSB)
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     lg = rb.Logger(args.logger)
