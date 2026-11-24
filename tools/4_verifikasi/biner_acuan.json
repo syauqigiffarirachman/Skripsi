@@ -16,12 +16,40 @@
       "text": 41128,
       "ukuran": 41804
     },
+    "host_ds_od": {
+      "bss": 5492,
+      "data": 508,
+      "sha256": "44d756c5ced82ad0189690caaef8656cc17190a5647c6cb7025b51a847cc7878",
+      "text": 29548,
+      "ukuran": 30056
+    },
+    "host_ds_od_stress": {
+      "bss": 5452,
+      "data": 508,
+      "sha256": "e4a1e45a3320ad29c6eceb336f4542aa7866ee1c18f12ddaf1a114a408586e16",
+      "text": 29124,
+      "ukuran": 29632
+    },
     "host_k1_stop": {
       "bss": 8160,
       "data": 528,
       "sha256": "2ca6e8d0d86115d09cf9db24b72e511a24f4463b329c0ceaeb76ed485b814a5c",
       "text": 47156,
       "ukuran": 47684
+    },
+    "host_k1_stop_auto": {
+      "bss": 8160,
+      "data": 528,
+      "sha256": "ca1cee21304010c8d94f07bfeae8d9505dffe55e342d417fe2a466c80d8d2d7b",
+      "text": 47288,
+      "ukuran": 47816
+    },
+    "host_k1_stop_comb": {
+      "bss": 8160,
+      "data": 528,
+      "sha256": "72d8f5d05d72c68c3ab9b11f9f3a844dccee3fd0ca7fce672e6c3f06db14dc2e",
+      "text": 48708,
+      "ukuran": 49236
     },
     "host_k1_stop_comb_auto": {
       "bss": 8160,
@@ -44,12 +72,75 @@
       "text": 30792,
       "ukuran": 31308
     },
+    "host_k2_stop_auto": {
+      "bss": 8096,
+      "data": 516,
+      "sha256": "e85bdc434794a28c7a8e59093565b7caee63becbe9226c1a18a6c0a75c99845e",
+      "text": 30924,
+      "ukuran": 31440
+    },
+    "host_k2_stop_dbg": {
+      "bss": 8256,
+      "data": 516,
+      "sha256": "0c7c6bfa13e25467f099889acf0ec46973b06183765f40bb6ec45c7304f4eefd",
+      "text": 31340,
+      "ukuran": 31856
+    },
     "host_k2_stop_diag_auto": {
       "bss": 10032,
       "data": 516,
       "sha256": "36bc6bf032f07be084de4f89e51a546bfc0a8fdcd64b9f8a05d667bb76cb2477",
       "text": 31220,
       "ukuran": 31736
+    },
+    "host_k2_stop_long_auto": {
+      "bss": 12184,
+      "data": 516,
+      "sha256": "c74da911dd8017c9d1cb64b9e7104d066cea8cb1360ea332b993e07cffc6cc47",
+      "text": 31796,
+      "ukuran": 32312
+    },
+    "host_s0_stop": {
+      "bss": 2552,
+      "data": 104,
+      "sha256": "23eac664780713a650dcc386ac9b58f87e372e551a718d20adacc1eeacb91dfe",
+      "text": 11144,
+      "ukuran": 11248
+    },
+    "host_s0a_lse": {
+      "bss": 5436,
+      "data": 508,
+      "sha256": "41872dde5f28f55863d615a584f39d2c1a1e8c988a1d6c37716d5bfdb12efaca",
+      "text": 26508,
+      "ukuran": 27016
+    },
+    "host_s0a_lse_dingin": {
+      "bss": 5436,
+      "data": 508,
+      "sha256": "f0c934b881a8a8a44479cdb65aa44474636ffafbf3464c44fee44dc791fdf4c6",
+      "text": 26516,
+      "ukuran": 27024
+    },
+    "host_s1_rtc": {
+      "bss": 5412,
+      "data": 508,
+      "sha256": "bd6e2706ff52ce884f22109f07f587b120fb4d3a8c0cabd59170ff7eb2a43af5",
+      "text": 25936,
+      "ukuran": 26444
+    },
+    "host_s2_rx": {
+      "bss": 5508,
+      "data": 508,
+      "sha256": "62a28bf0523278deea0b8bab57695600a3e52cb5968657f73204de8e0e375292",
+      "text": 27784,
+      "ukuran": 28292
+    },
+    "host_s2_trace": {
+      "bss": 6140,
+      "data": 508,
+      "sha256": "ffb91a686f1784b1ae81a27119c83b39430df014893a7b2ffebef5d25a0b7640",
+      "text": 28008,
+      "ukuran": 28516
     },
     "k1_rx": {
       "bss": 5456,

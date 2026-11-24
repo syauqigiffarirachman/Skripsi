@@ -98,6 +98,9 @@ yang dicatat saat sesi. Yang dibuktikan di sini: sumber ini membangun biner yang
 | `logger` | `7ac6b702300d...` |
 | `attacker` | `faf092a1fff6...` |
 
+Acuan di `tools/4_verifikasi/biner_acuan.json` kini mencakup SEMUA 29 env (termasuk dev dan pendukung; dibuktikan identik
+dengan build struktur sebelum pemindahan).
+
 Periksa sendiri (membangun dari bersih, beberapa menit):
 `python tools/4_verifikasi/cek_biner.py banding host_k1_stop host_k2_stop logger attacker`
 
