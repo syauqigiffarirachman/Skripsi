@@ -7,4 +7,4 @@ Pustaka lokal proyek (dibangun PlatformIO lewat Library Dependency Finder).
 Aturan: hanya kode header-only yang boleh ditambahkan di sini untuk firmware pengukuran.
 Kode bersama yang punya .cpp (src/logger_common) tetap di src/, karena objek
 pustaka ditautkan dalam grup terpisah dan menggeser tata letak Flash, sehingga firmware.bin
-tidak lagi identik dengan biner yang dipakai pada data tahap D (cek: python tools/cek_biner.py banding).
+tidak lagi identik dengan biner yang dipakai pada data tahap D (cek: python tools/4_verifikasi/cek_biner.py banding).

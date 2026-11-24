@@ -1,7 +1,7 @@
 # Hasil B2: sensitivitas konfigurasi software, tabel comb Mbed TLS aktif (18 November 2026, malam)
 
 Build `host_k1_stop_comb_auto` (kode K1S identik; hanya `MBEDTLS_ECP_FIXED_POINT_OPTIM = 1`, `include/mbedtls_k1_comb_config.h`; sha256 biner `968cf7681a64…`).
-Diukur di bangku dengan `tools/k1s_run.py` (1 IDLE, 3 run skenario A, 2 run skenario B; semua run lolos pemeriksaan standar; `gagal` = 0 pada semua run,
+Diukur di bangku dengan `tools/dev/tahap_stop/k1s_run.py` (1 IDLE, 3 run skenario A, 2 run skenario B; semua run lolos pemeriksaan standar; `gagal` = 0 pada semua run,
 jadi tabel comb muat di heap). Berkas mentah: `data/dev/k1s/*_comb.csv`. **Data pengembangan, bukan data final**: host dalam keadaan setelah flash ST-Link
 (lantai IDLE 2,557 mA, bukan 1,99 mA), N kecil, shunt nominal 0,100 Ω. Energi dihitung relatif terhadap IDLE sesi yang sama sehingga lantai tak banyak memengaruhi.
 

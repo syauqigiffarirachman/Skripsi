@@ -1,4 +1,4 @@
-"""Uji tools/demo_sidang.py (demo sidang) tanpa perangkat: logika murni dan orkestrasi dengan logger PALSU.
+"""Uji tools/demo/demo_sidang.py (demo sidang) tanpa perangkat: logika murni dan orkestrasi dengan logger PALSU.
 
 Jalankan: .venv-analisis/Scripts/python -B -m unittest discover -s tests -v
 Tidak membuka port serial, tidak menyentuh .pio/ atau perangkat keras.
@@ -14,6 +14,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+import _jalur  # noqa: E402,F401  (semua subfolder tools/ masuk sys.path)
 try:
     import run_bench as rb
     import demo_sidang as ds
@@ -307,7 +308,7 @@ class TestCLI(unittest.TestCase):
             folder = js.call_args[0][1]
             catatan = (Path(folder) / "sesi.txt").read_text(encoding="utf-8")
             self.assertEqual(Path(folder).parent, Path(d))
-        # sesi.txt mencatat kalibrasi yang dipakai: bawaan CLI = hasil kalibrasi 21 Nov 2026 (tools/kalibrasi_param.py)
+        # sesi.txt mencatat kalibrasi yang dipakai: bawaan CLI = hasil kalibrasi 21 Nov 2026 (tools/2_kalibrasi/kalibrasi_param.py)
         self.assertIn(f"rshunt={ds.kp.RSHUNT_EFEKTIF}", catatan)
         self.assertIn(f"offset={ds.kp.OFFSET_LSB}", catatan)
         self.assertIn("ST-Link", catatan)

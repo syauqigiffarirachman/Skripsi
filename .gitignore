@@ -7,8 +7,8 @@ __pycache__/
 *.pyc
 
 # emulator estimasi siklus (artefak build, sumber luar)
-tools/emu_cycles/out/
-tools/emu_cycles/_ext/
+tools/dev/tahap_d/emu_cycles/out/
+tools/dev/tahap_d/emu_cycles/_ext/
 
 # naskah proposal/skripsi (PDF pribadi, tidak ikut repo)
 paper/

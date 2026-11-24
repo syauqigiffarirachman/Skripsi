@@ -1,4 +1,4 @@
-"""Uji metrik tools/run_bench.py dengan data SINTETIS yang jawabannya bisa dihitung tangan.
+"""Uji metrik tools/1_akuisisi/run_bench.py dengan data SINTETIS yang jawabannya bisa dihitung tangan.
 
 Jalankan (tanpa pytest; hanya pustaka standar + pyserial yang sudah ada di .venv-analisis):
     .venv-analisis/Scripts/python -B -m unittest discover -s tests -v
@@ -13,6 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+import _jalur  # noqa: E402,F401  (semua subfolder tools/ masuk sys.path)
 try:
     import run_bench as rb
 except ModuleNotFoundError as e:                       # mis. pyserial belum terpasang

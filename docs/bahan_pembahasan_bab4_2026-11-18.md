@@ -8,7 +8,7 @@ Skrip pembangkit tiap tabel disebut di kepala bagiannya. Butir daftar kekurangan
 
 ## 1. Sensitivitas toleransi frame hilang K4 (B3)
 
-Skrip `tools/analisis_sensitivitas.py`; berkas `data/analisis/stop_final/sensitivitas/`.
+Skrip `tools/3_analisis/analisis_sensitivitas.py`; berkas `data/analisis/stop_final/sensitivitas/`.
 
 Kriteria K4 (frame UART hilang < 0,25 % dari permintaan yang tiba) ditetapkan 18 Nov setelah melihat hasil, atas keputusan peneliti.
 Agar kesimpulan tidak bergantung pada ambang itu, K4 dianalisis ulang pada enam ambang dan dengan seluruh 41 run.
@@ -44,7 +44,7 @@ Sebaiknya laporkan p dengan satu kalimat bahwa semua perbandingan utama bermakna
 
 ## 3. Dekomposisi energi per tanda tangan (C1)
 
-Skrip `tools/dekomposisi_energi.py`; berkas `dekomposisi_energi.md/.csv` (Normal, 30 run K1 dan 30 run K2). Fase menurut pin status:
+Skrip `tools/3_analisis/dekomposisi_energi.py`; berkas `dekomposisi_energi.md/.csv` (Normal, 30 run K1 dan 30 run K2). Fase menurut pin status:
 aktif (CPU terjaga), menunggu (CPU tidur di dalam episode; pada K2 = IC DS28E38 menghitung), tidur di luar episode.
 Jumlah fase cocok dengan E_lyn utama (selisih +0,00 %).
 
@@ -66,7 +66,7 @@ Bahan pembahasan "mengapa DS28E38 hemat":
 
 ## 4. Latensi kecepatan biasa vs overdrive (C3)
 
-Sumber: eksperimen pengembangan 17 Nov (`data/dev/ds_od/`, `tools/ds_od.py --analyse`), tanda tangan diverifikasi di komputer (kunci publik pada
+Sumber: eksperimen pengembangan 17 Nov (`data/dev/ds_od/`, `tools/dev/tahap_stop/ds_od.py --analyse`), tanda tangan diverifikasi di komputer (kunci publik pada
 kurva; tanda tangan yang sengaja dirusak ditolak). Kolom ms; "kirim" = menulis perintah dan challenge, "sibuk" = IC menghitung,
 "baca" = membaca r‖s.
 
@@ -116,7 +116,7 @@ Kerangka: validitas internal, konstruk, eksternal, kesimpulan statistik.
 
 ## 6. Implikasi baterai (C7)
 
-Skrip `tools/proyeksi_baterai.py`; berkas `proyeksi_baterai.md/.csv`. Ilustrasi: 1000 mAh × 3,7 V (13,32 kJ), regulator diabaikan.
+Skrip `tools/3_analisis/proyeksi_baterai.py`; berkas `proyeksi_baterai.md/.csv`. Ilustrasi: 1000 mAh × 3,7 V (13,32 kJ), regulator diabaikan.
 
 | Kelompok | E/layanan (mJ) | Tanda tangan per baterai (ribu) | Arus rerata (mA) | Umur dgn lantai (jam) | Umur tanpa lantai (jam) | Tingkat layanan |
 |---|---|---|---|---|---|---|

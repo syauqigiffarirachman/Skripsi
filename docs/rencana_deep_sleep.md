@@ -10,7 +10,7 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
   (sama di data tahap D, jadi perbandingan Sleep vs Stop adil). Instrumen uA tidak diperlukan.
 - Titik ukur tetap di **input 5 V USB-C** (sama dengan tahap D). Lantai tidur papan terukur ~2 mA (LED PWR
   ~1,9 mA + MCU Stop ~14 uA + LDO XC6219B332MR ~25 uA typ), bukan 1-20 uA tingkat chip.
-- Firmware Stop dibuat di env baru; `k1_sw`/`k2_hw` dan `tools/biner_acuan.json` tidak disentuh.
+- Firmware Stop dibuat di env baru; `k1_sw`/`k2_hw` dan `tools/4_verifikasi/biner_acuan.json` tidak disentuh.
 
 ## Fakta papan host (17 Nov)
 
@@ -32,7 +32,7 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
 | 2 | H | Finalisasi papan (LED, jumper DS9121, CE LDO, PC14/15) | IDLE Sleep diukur ulang, foto + tanggal di logbook | 17 Nov: LED PWR Blue Pill (merah) SENGAJA dipertahankan (keputusan user); R seri 10 kOhm di logger->PA10 dan attacker->PA3 |
 | 3 | H | Instrumen uA tervalidasi (PPK2 / shunt) | galat <= 2-5 % pada ~33 uA dan ~3,3 mA | TIDAK DIPERLUKAN: lantai diterima ~2 mA (= ~80 LSB INA226) |
 | 4 | F | S0a uji LSE (`host_s0a_lse`, `_dingin`) | LSE start tiap start dingin (>= 10x), frekuensi 32768 Hz +- 50 ppm vs logger | LULUS 17 Nov (start dingin 3,5-4,1 s; -47 ppm stabil) |
-| 5 | F | S0 Stop minimal -> lantai papan (`host_s0_stop`, `tools/s0_stop.py`) | lantai stabil dan terjelaskan | LULUS 17 Nov: 1,99 mA (POR bersih, tanpa ST-Link), didominasi LED PWR |
+| 5 | F | S0 Stop minimal -> lantai papan (`host_s0_stop`, `tools/dev/tahap_stop/s0_stop.py`) | lantai stabil dan terjelaskan | LULUS 17 Nov: 1,99 mA (POR bersih, tanpa ST-Link), didominasi LED PWR |
 | 6 | F | S1 Stop + alarm RTC + pulih 48 MHz | T_sleep RTC = duty PB1 logger (< 1 ms/60 s) | LULUS 17 Nov: selisih 9-20 us per jendela 28,5 s (5 jendela), bangun palsu 0, arus tidur 1,988 mA |
 | 7 | F | S2 bangun dari attacker (EXTI PA3 + sinkron bit byte pertama, attacker TIDAK diubah) | 60 s @1 Hz dan 10 Hz: bad = hilang = 0 | LULUS 17 Nov dan DIULANG 18 Nov (setelah pemulihan host, kode final): 1 Hz 59/59, 10 Hz 602/602, bad = hilang = palsu = 0 |
 | 8 | F | S3 integrasi K1 (`host_k1_stop`, `_auto`) | run A/B 60 s lolos semua pemeriksaan run_bench | LULUS 18 Nov: A 59/59 (S_cpu logger 32,39 % = host 32,40 %, lat 683 ms @48 MHz), B jenuh seperti K1 baseline (604 tiba, 87 dilayani), semua pemeriksaan lolos |
@@ -51,7 +51,7 @@ Disusun 17 Nov 2026. Status tiap langkah dicatat di logbook harian; tabel ini di
 
 ## Tambahan 18 Nov: DS28E38 overdrive (eksperimen terpisah)
 
-`src/host/eksperimen/ds_overdrive` + `tools/ds_od.py`. Overdrive ternyata bisa (percobaan 11 Nov gagal karena library
+`src/host/eksperimen/ds_overdrive` + `tools/dev/tahap_stop/ds_od.py`. Overdrive ternyata bisa (percobaan 11 Nov gagal karena library
 OneWire tak mendukungnya). Titik baca sah 2,0-3,0 us; dipakai 2,5 us. 269/269 tanda tangan valid di PC.
 
 | Mode | Total per sign |

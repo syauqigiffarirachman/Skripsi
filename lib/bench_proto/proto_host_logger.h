@@ -3,7 +3,7 @@
 //
 // SATU-SATUNYA definisi perintah, awalan balasan, dan batas jendela. Dipakai host
 // (src/host_common/host_link.h dan CLI USB di src/host/k1_software, src/host/k2_hardware) dan logger
-// (src/logger/f103/main.cpp). PC (tools/run_bench.py) mengurai baris yang sama: sesuaikan juga bila
+// (src/logger/f103/main.cpp). PC (tools/1_akuisisi/run_bench.py) mengurai baris yang sama: sesuaikan juga bila
 // format diubah.
 //
 // Jalur fisik: host USART1 PA9 (TX) -> logger PA10 (RX), logger PA9 (TX) -> host PA10 (RX),

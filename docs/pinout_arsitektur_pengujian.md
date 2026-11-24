@@ -39,7 +39,7 @@ Satu board fisik, firmware diganti per blok arsitektur. Peta pin identik di kedu
 | PB1 | Pin status CPU (1 = aktif, 0 = akan WFI) | GPIO push-pull, BSRR | out | Logger PA0 | K1, K2 | Pembanding independen %S_cpu dan latensi. |
 | PC13 | LED onboard | – | – | – | tidak dipakai | Dibiarkan mati di semua run (variabel kontrol). |
 | (LED PWR) | LED merah power Blue Pill | – | – | – | selalu menyala | Dipertahankan (keputusan 17 Nov), ~1,9 mA. Beban tetap papan di tahap D dan **penentu lantai Stop ~2 mA**. |
-| BOOT0 | Pemulihan host terkunci | jumper | in | GND (normal) / 3V3 (pemulihan) | `tools/pulihkan_host.py` | Wajib dapat dijangkau: Stop membuat SWD mati. BOOT0 = 1 + cabut-pasang daya, setelah selesai kembalikan 0. |
+| BOOT0 | Pemulihan host terkunci | jumper | in | GND (normal) / 3V3 (pemulihan) | `tools/dev/tahap_stop/pulihkan_host.py` | Wajib dapat dijangkau: Stop membuat SWD mati. BOOT0 = 1 + cabut-pasang daya, setelah selesai kembalikan 0. |
 | PC14 / PC15 | Kristal LSE 32,768 kHz | OSC32 | – | kristal Epson MC-306 (CL 12,5 pF, ESR maks 50 kΩ, ±20 ppm) | varian Stop | Jangan probe langsung (kapasitansi probe menghentikan LSE); jangan beri kabel lain. |
 | 5V / VBUS | Catu | – | in | USB-C → shunt INA226 (IN+ → IN−) → host | – | Titik ukur energi = sisi beban (IN−). |
 | 3V3 | Rail logika | regulator onboard | – | pull-up 1-Wire DS28E38 (K2; chip tanpa pin VCC), ST-Link 3V3 (saat flash) | – | |

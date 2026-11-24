@@ -14,14 +14,14 @@
 //   - LED PC13 berkedip 1 Hz (aktif rendah), penghitung g_beat naik tiap 500 ms.
 //   - USB CDC; perintah I mencetak info jam, UID, dan penghitung.
 // L2 + L3 (dipindah dari versi F030 setelah L1 lulus di F103, 14 Nov): INA226 di I2C1 (SCL PB6,
-//   SDA PB7, 400 kHz) alamat 0x44 (terukur), shunt 0,100 Ohm; kodenya di src/logger_common/
+//   SDA PB7, 400 kHz) alamat 0x44 (terukur), shunt 0,100 Ohm; kodenya di src/logger/modul/
 //   (driver, cuplik L3, laporan) dan dipakai bersama dengan versi F030. Di sini hanya bagian
 //   khusus F103: jam, plat_cycles() = DWT->CYCCNT, keluaran USB CDC, peta pin.
 //   PERINTAH DARI PC LEWAT USB BELUM BISA (jalur OUT klon ini gagal, lihat memori/logbook), jadi
 //   laporan berjalan OTOMATIS: begitu port dibuka (DTR), 2 s kemudian tercetak laporan INA226 + rekam
 //   5 s, lalu diulang tiap 15 s. Perintah I/N/S/C tetap ada untuk bila jalur OUT nanti bekerja.
 // L4 (14 Nov): input-capture pin status host di PA0 (TIM2_CH1 naik + CH2->TI1 turun, 16-bit + overflow
-//   jadi 64-bit), statistik tepi di src/logger_common/edge_stats.*; dilaporkan bersama L3 dalam jendela 5 s.
+//   jadi 64-bit), statistik tepi di src/logger/modul/edge_stats.*; dilaporkan bersama L3 dalam jendela 5 s.
 //   Generator uji PWM 100 Hz/30% di PA6 (jumper ke PA0) HANYA di env logger_selftest (-DL4_SELFTEST_PWM);
 //   env logger biasa membiarkan PA6 input. Uji mandiri LULUS 15 Nov (HIGH 2999,944 / LOW 6999,972 us).
 // A1 (15 Nov): pemulihan bus I2C (INA226::recover = Wire.end + Wire.begin + init ulang). Dipanggil di
@@ -53,10 +53,10 @@
 // ============================================================================
 #include <Arduino.h>
 #include <Wire.h>
-#include "../../logger_common/ina226.h"
-#include "../../logger_common/l3_capture.h"
-#include "../../logger_common/ina_report.h"
-#include "../../logger_common/edge_stats.h"
+#include "../modul/ina226.h"
+#include "../modul/l3_capture.h"
+#include "../modul/ina_report.h"
+#include "../modul/edge_stats.h"
 #include <proto_host_logger.h>                    // perintah/balasan/batas jalur host<->logger (lib/bench_proto)
 #include <HardwareTimer.h>
 #include "usbd_cdc.h"
@@ -245,7 +245,7 @@ static void l4_start() {
 #endif
 }
 
-// Antarmuka platform untuk src/logger_common/l3_capture.*  (F103: DWT, 32-bit, wrap ~59,6 s di 72 MHz)
+// Antarmuka platform untuk src/logger/modul/l3_capture.*  (F103: DWT, 32-bit, wrap ~59,6 s di 72 MHz)
 uint32_t plat_cycles() { return DWT->CYCCNT; }
 uint32_t plat_hz()     { return SystemCoreClock; }
 

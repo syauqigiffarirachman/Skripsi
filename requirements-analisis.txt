@@ -1,4 +1,4 @@
-# Lingkungan alat analisis (tools/analisis_d.py, tools/run_bench.py).
+# Lingkungan alat analisis (tools/3_analisis/analisis_d.py, tools/1_akuisisi/run_bench.py).
 # Disalin dari paket yang TERPASANG di .venv-analisis pada 18 Nov 2026 (Python 3.12.10). Bukan hasil
 # `pip freeze`; bila venv diubah, cocokkan ulang dengan: .venv-analisis/Scripts/python -m pip freeze
 # Versi dikunci persis supaya angka Bab 4 dapat direproduksi. Pin versi TIDAK memverifikasi integritas

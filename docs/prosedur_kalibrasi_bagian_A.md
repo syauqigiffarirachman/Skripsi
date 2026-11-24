@@ -1,6 +1,6 @@
 # Prosedur Bagian A: kalibrasi shunt, offset, pull-up, osiloskop
 
-Disusun 18 November 2026. Alat bantu: `tools/kalibrasi_shunt.py` (merekam lewat logger dan menghitung). Hasil disimpan di
+Disusun 18 November 2026. Alat bantu: `tools/2_kalibrasi/kalibrasi_shunt.py` (merekam lewat logger dan menghitung). Hasil disimpan di
 `data/kalibrasi/`. Perkiraan waktu: 90–120 menit.
 
 ## Mengapa ini perlu
@@ -30,7 +30,7 @@ Kondisi awal: host berisi K2S (sedang terjaga di luar jendela, arus ±12,7 mA, k
 ### A2. Offset nol (kerjakan dulu, dua kali: awal dan akhir sesi)
 
 1. Lepas **IN− dari host** (kabel dari terminal IN− INA226 ke pin 5V host). Biarkan VBUS/IN+ INA226 tetap terpasang dan logger menyala.
-2. Jalankan: `python tools/kalibrasi_shunt.py offset --detik 60 --catatan awal`
+2. Jalankan: `python tools/2_kalibrasi/kalibrasi_shunt.py offset --detik 60 --catatan awal`
 3. Sambungkan kembali IN− ke host. Ulangi di akhir seluruh sesi dengan `--catatan akhir`.
 4. Catat nilainya. Bila selisih awal dan akhir > 0,5 satuan, ulangi setelah 10 menit penghangatan.
 
@@ -41,7 +41,7 @@ ketik rerata sebagai `--iref`).
 
 | Titik | Keadaan | Perintah |
 |---|---|---|
-| T1 | host terjaga di luar jendela (K2S), tanpa beban tambahan (±12,7 mA) | `python tools/kalibrasi_shunt.py titik --nama terjaga --iref <mA> --detik 30` |
+| T1 | host terjaga di luar jendela (K2S), tanpa beban tambahan (±12,7 mA) | `python tools/2_kalibrasi/kalibrasi_shunt.py titik --nama terjaga --iref <mA> --detik 30` |
 | T2 | T1 + resistor 1 kΩ dari pin 5V host ke GND (±17,9 mA) | `... titik --nama terjaga_1k --iref <mA> --vref <V>` |
 | T3 | T1 + resistor 2,2 kΩ (±15,0 mA) | `... titik --nama terjaga_2k2 --iref <mA> --vref <V>` |
 
@@ -50,8 +50,8 @@ sama dengan selisih arus T2 dan T1 (dalam ±1 %).
 
 ### A1b. Titik arus rendah (Stop), butuh pemrograman ulang
 
-1. Flash `host_s0_stop` (Stop terus-menerus): `python tools/flash_stop.py .pio/build/host_s0_stop/firmware.elf`. Bila gagal menangkap host, pakai
-   `tools/pulihkan_host.py` (BOOT0) seperti biasa.
+1. Flash `host_s0_stop` (Stop terus-menerus): `python tools/1_akuisisi/flash_stop.py .pio/build/host_s0_stop/firmware.elf`. Bila gagal menangkap host, pakai
+   `tools/dev/tahap_stop/pulihkan_host.py` (BOOT0) seperti biasa.
 2. **POR penuh** (USB-C, ST-Link, kabel sinyal dan GND dicabut 10 detik; GND dipasang dulu). Tunggu 10 detik: host menjalankan jendela 5 detik lalu Stop selamanya.
 3. Titik:
 
@@ -66,10 +66,10 @@ dengan pemeriksaan V/R.
 
 ### Menghitung
 
-`python tools/kalibrasi_shunt.py hitung --u-ref <persen akurasi multimeter pada titik itu>`
+`python tools/2_kalibrasi/kalibrasi_shunt.py hitung --u-ref <persen akurasi multimeter pada titik itu>`
 
 Keluaran: R_shunt efektif, faktor koreksi arus, residu per titik, intersep (cek offset), u_kal sebenarnya, dan perintah siap pakai untuk
-menjalankan ulang `tools/analisis_d.py` dan `tools/gambar_bab4_stop.py`. Kirim saya isi `data/kalibrasi/*.csv`, nilai resistor, spesifikasi
+menjalankan ulang `tools/3_analisis/analisis_d.py` dan `tools/3_analisis/gambar_bab4_stop.py`. Kirim saya isi `data/kalibrasi/*.csv`, nilai resistor, spesifikasi
 multimeter, dan catatan sesi; saya jalankan ulang analisis dan gambar, lalu perbarui Bab 3 dan panduan grafik.
 
 Kriteria penerimaan: residu relatif tiap titik < 2 %; intersep regresi bebas < 0,05 mA; hasil regresi stabil saat satu titik dibuang.

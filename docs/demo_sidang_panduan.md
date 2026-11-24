@@ -2,17 +2,17 @@
 
 Status: 19 Nov 2026, sudah diuji di bangku (logger COM18, attacker COM24) dengan peniru ketikan a/x.
 Hasil uji ada di bagian "Hasil uji bangku" pada dokumen rancangan.
-Rancangan: `docs/superpowers/specs/2026-11-19-demo-sidang-design.md`. Skrip: `tools/demo_sidang.py`.
+Rancangan: `docs/superpowers/specs/2026-11-19-demo-sidang-design.md`. Skrip: `tools/demo/demo_sidang.py`.
 
 ## Sebelum penguji datang
 1. **ELF host harus ada** di `.pio/build/host_k1_stop/firmware.elf` dan `.pio/build/host_k2_stop/firmware.elf`.
    Per 19 Nov keduanya sudah dibangun dan biner IDENTIK dengan acuan data skripsi
-   (`python tools/cek_biner.py banding host_k1_stop host_k2_stop`, ~3 menit).
+   (`python tools/4_verifikasi/cek_biner.py banding host_k1_stop host_k2_stop`, ~3 menit).
 2. Pasang: USB-C host (hanya daya), ST-Link host (`$`) terpasang (perlu untuk flash), logger USB, attacker CH340,
    kabel logger PA9 -> host PA10 dan PB1 host -> PA0 logger tersambung.
 3. Catat nomor COM logger dan attacker (berubah bila kabel dicabut-pasang). Buka serial monitor attacker
    (115200) pada COM attacker. Jangan buka serial monitor pada COM logger (dipakai skrip).
-4. `python tools/demo_sidang.py --logger COMxx` -> `ping` -> `mode k1` (flash ke K1S) -> `ping`
+4. `python tools/demo/demo_sidang.py --logger COMxx` -> `ping` -> `mode k1` (flash ke K1S) -> `ping`
    (harus `>ID,K1S,...,1`).
 
 ## Selama demo
@@ -36,7 +36,7 @@ Rancangan: `docs/superpowers/specs/2026-11-19-demo-sidang-design.md`. Skrip: `to
 - "host tidak menjawab": periksa kabel logger PA9 -> host PA10 dan daya host; `ping` lagi.
 - "host berisi ..., diminta ...": ketik `mode k1` atau `mode k2`.
 - Run gagal (timeout/NOSTART): sesi lanjut ke run berikutnya; ulangi dengan `run A` / `run B`.
-- Host terkunci (SWD mati): BOOT0=1 + power-on reset + `python tools/pulihkan_host.py`, lalu BOOT0=0 + POR.
+- Host terkunci (SWD mati): BOOT0=1 + power-on reset + `python tools/dev/tahap_stop/pulihkan_host.py`, lalu BOOT0=0 + POR.
 - Cadangan bila frame rusak muncul pada alur manual: tutup serial monitor attacker, jalankan dengan
   `--auto-attacker COMyy` (attacker dimulai skrip tepat setelah `>START`, persis prosedur data).
 - Pra-uji 20 run K2S.B dengan alur manual: frame rusak (`rx_bad`) 0 di semua run; alur manual layak.

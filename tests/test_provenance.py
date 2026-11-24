@@ -1,4 +1,4 @@
-"""Uji tools/provenance.py. Memakai repo git SEMENTARA di folder temp; repo proyek tidak disentuh.
+"""Uji tools/dev/provenance.py. Memakai repo git SEMENTARA di folder temp; repo proyek tidak disentuh.
 
 Jalankan: .venv-analisis/Scripts/python -B -m unittest discover -s tests -v
 """
@@ -13,6 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+import _jalur  # noqa: E402,F401  (semua subfolder tools/ masuk sys.path)
 import provenance  # noqa: E402
 
 GIT = shutil.which("git")

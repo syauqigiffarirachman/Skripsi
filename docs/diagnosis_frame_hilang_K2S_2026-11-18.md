@@ -13,7 +13,7 @@ Dari 41 run K4 (`data/analisis/stop_final/runs.csv`) dan latensi per tanda tanga
 - Hanya K2S barrage yang terpengaruh; K1S barrage dan semua Normal: 0 frame hilang.
 - Korelasi `rx_lost` dengan latensi rerata run: 0,89.
 
-## Bukti 2: pengukuran langsung (`tools/diag_long.py`, build `host_k2_stop_long_auto`, flag `-DDIAG_LONG`)
+## Bukti 2: pengukuran langsung (`tools/4_verifikasi/diag_long.py`, build `host_k2_stop_long_auto`, flag `-DDIAG_LONG`)
 16 siklus barrage 60 s (data: `data/dev/long/`). Setiap tanda tangan > 150 ms direkam bersama rincian fase dan tiap bangun dari Stop di dalamnya.
 - Siklus pertama (6 siklus): frame hilang = 5, tanda tangan lambat = 5, **satu banding satu**. Siklus kedua (10 siklus): 3 dan 3.
 - Semua tanda tangan lambat: waktu CPU terjaga selama menunggu chip ≈ 35 ms (normal ≈ 5,5 ms), `err = 0` (tanda tangan akhirnya benar), `gagal` = 0.
