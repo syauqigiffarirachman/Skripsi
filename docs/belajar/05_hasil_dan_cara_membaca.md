@@ -1,6 +1,6 @@
 # 05. Hasil Tahap D dan Cara Membacanya
 
-Sumber: `logbook/2026-11-15.md` (tahap D, langkah 11), `laporan/laporan_progres_revisi_paper_2026-11-15.md`,
+Sumber: `logbook/2026-11-15.md` (tahap D, langkah 11), `laporan/arsip/laporan_progres_revisi_paper_2026-11-15.md`,
 `logbook/2026-11-16.md`. Semua angka memakai shunt nominal 0,100 ohm kecuali dinyatakan lain; kalibrasi shunt
 (~0,080-0,083 ohm) menaikkan arus absolut sekitar 17-20 % tetapi **tidak** mengubah perbandingan.
 

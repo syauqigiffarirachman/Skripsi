@@ -23,7 +23,7 @@ Yang dimaksud "final" adalah kode yang dipakai pada pengambilan data varian Stop
                       │  └──── PA9/PA10 ◄──► PA10/PA9 (jalur kendali run, 115200)
                       └─ I2C1 ─► INA226 ─ shunt ─ 5 V ─► catu host (arus yang diukur)
 ```
-Pinout lengkap: `docs/pinout_arsitektur_pengujian.md`.
+Pinout lengkap: `docs/referensi/pinout_arsitektur_pengujian.md`.
 
 ## 2. Satu run, langkah demi langkah
 
@@ -122,5 +122,5 @@ Kode pendukung pun tidak mengubah angka utama; ia hanya bukti tambahan (B1 verif
 konfigurasi software, diagnosis frame hilang, uji galat).
 
 ## 7. Peta path lama ke baru
-Lihat `docs/PEMETAAN_PATH.md`. Hanya `logbook/`, `laporan/`, dan catatan harian `docs/belajar/2026-11-*.md` yang sengaja tidak ditulis ulang (riwayat bertanggal); path di dalamnya
+Lihat `docs/referensi/PEMETAAN_PATH.md`. Hanya `logbook/`, `laporan/`, dan catatan harian `docs/belajar/harian/` yang sengaja tidak ditulis ulang (riwayat bertanggal); path di dalamnya
 merujuk struktur lama. Dokumen hidup dan komentar kode sudah diperbarui.

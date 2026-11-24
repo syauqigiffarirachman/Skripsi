@@ -11,7 +11,7 @@ alurnya sampai grafik? Dari kode mana angka di pembahasan dan kesimpulan?" Semua
 ## 0. Jawaban singkat
 
 **Ya, perhitungannya mengikuti rumus paper, dan saya buktikan secara independen.** Saya menghitung ulang tiga run
-langsung dari baris CSV mentah, **tanpa** memakai `run_bench.py` (skrip `tools/hitung_ulang_satu_run.py`, hanya
+langsung dari baris CSV mentah, **tanpa** memakai `run_bench.py` (skrip `tools/3_analisis/hitung_ulang_satu_run.py`, hanya
 pustaka standar Python). Hasilnya sama dengan `runs.csv` sampai enam angka desimal untuk semua metrik (T_obs, S_cpu,
 I_avg, P_avg, E, latensi, TL, TL model, P_dyn, E_lyn, I_dyn). Saya juga menghitung ulang rerata kelompok, gain %, uji
 Welch, dan koreksi Holm dari `runs.csv`; semuanya sama dengan `ringkasan.md`.
@@ -22,7 +22,7 @@ Welch, dan koreksi Holm dari `runs.csv`; semuanya sama dengan `ringkasan.md`.
 2. **Angka mutlak (mA, mW, mJ) memakai shunt nominal 0,100 ohm**; shunt nyata ~0,080-0,083 ohm. Persentase, rasio,
    latensi, S_cpu, TL, dan p-value tidak terpengaruh. Angka mutlak belum final.
 3. Teks asli PROPO FIX_5 tidak ada di repositori, hanya dokumen revisinya (`laporan/revisi_bab3_propo_fix5_...md`,
-   `laporan/laporan_progres_revisi_paper_2026-11-15.md`). Rumus yang saya cocokkan adalah yang tertulis di dua
+   `laporan/arsip/laporan_progres_revisi_paper_2026-11-15.md`). Rumus yang saya cocokkan adalah yang tertulis di dua
    dokumen itu. Butir yang hanya ada di teks asli perlu Anda cocokkan sendiri.
 
 ---
@@ -39,7 +39,7 @@ Welch, dan koreksi Holm dari `runs.csv`; semuanya sama dengan `ringkasan.md`.
                   | run_bench.energi_sesi()   [pakai run IDLE sesi yang sama]
                   |     P_idle, P_dyn, I_dyn, E_lyn, Q_lyn
                   v
- data/analisis/stop_final/runs.csv        (139 run; 128 sah)    <- tools/analisis_d.py --stop
+ data/analisis/stop_final/runs.csv        (139 run; 128 sah)    <- tools/3_analisis/analisis_d.py --stop
                   |
                   |  hanya run sah (masalah == "") -> 4 kelompok x 30 run
                   v
@@ -47,8 +47,8 @@ Welch, dan koreksi Holm dari `runs.csv`; semuanya sama dengan `ringkasan.md`.
  layanan.csv     model_duty_per_run.csv  bland_altman.csv  leave_one_block_out.csv  pemeriksaan.md
                   |  (dirangkum otomatis)           |  (dibaca skrip gambar)
                   v                                  v
- ringkasan.md  --> tabel Bab 4 / 5               tools/gambar_bab4_stop.py --> gambar_4_x.png --> Gambar 4.x
-                                                  tools/dekomposisi_energi.py --> Gambar 4.12
+ ringkasan.md  --> tabel Bab 4 / 5               tools/3_analisis/gambar_bab4_stop.py --> gambar_4_x.png --> Gambar 4.x
+                                                  tools/3_analisis/dekomposisi_energi.py --> Gambar 4.12
 ```
 
 Kelompok: **K1** = software normal (K1S, 1/s), **K2** = DS28E38 normal (K2S), **K3** = software barrage (10/s),
@@ -95,7 +95,7 @@ Dari `>END`: `arrived=59`, `served=59`, `t_obs=59.999.572 us`, `t_sleep=58.910.0
 
 Cara mengecek sendiri (butuh 5 detik):
 ```
-python tools/hitung_ulang_satu_run.py data/runs/20261118_115044_K2S/033_K2S_A.csv ^
+python tools/3_analisis/hitung_ulang_satu_run.py data/runs/20261118_115044_K2S/033_K2S_A.csv ^
    --banding data/analisis/stop_final/runs.csv --sesi 20261118_115044_K2S
 ```
 Kolom "hitung ulang" dibuat dari rumus di atas tanpa `run_bench.py`; kolom "runs.csv" dari pipeline. Hasil saya
@@ -113,7 +113,7 @@ Hasil (`pemeriksaan.md`): 4 sesi, 139 run, **128 sah** (4 x 30 + 8 IDLE), **11 g
 selisih <= 0,004 mA. Aturan toleransi frame hilang < 0,25 % ditetapkan **setelah** melihat penyebabnya (frame
 yang mulai tepat saat CPU pulih dari Stop); paper (revisi Bab 3, butir 26) sudah menyatakannya terbuka.
 
-## 5. Langkah 3: dari 30 run ke angka kelompok (`tools/analisis_d.py --stop`)
+## 5. Langkah 3: dari 30 run ke angka kelompok (`tools/3_analisis/analisis_d.py --stop`)
 
 | Keluaran | Fungsi (baris) | Isi | Untuk apa |
 |---|---|---|---|
@@ -138,7 +138,7 @@ Mengapa p-value ekstrem (1e-113)? Sebaran kelompok sangat sempit (CV 0,01-0,1 %)
 nilai; paper (laporan progres, butir 33) sudah menyarankan menekankan **ukuran efek**, bukan p. Mann-Whitney
 mentok di 3,0e-11 (nilai minimum untuk 30 vs 30).
 
-## 6. Langkah 4: dari tabel ke gambar (`tools/gambar_bab4_stop.py`)
+## 6. Langkah 4: dari tabel ke gambar (`tools/3_analisis/gambar_bab4_stop.py`)
 
 | Gambar | Isi | Data yang dibaca | Fungsi |
 |---|---|---|---|
@@ -152,14 +152,14 @@ mentok di 3,0e-11 (nilai minimum untuk 30 vs 30).
 | 4.9 | Arus diam IDLE awal/akhir blok | `runs.csv` | `gambar_49` |
 | 4.10 | Distribusi frame hilang K4 (41 run) | `runs.csv` | `gambar_410` |
 | 4.11 | Bland-Altman S_cpu | `runs.csv`, `bland_altman.csv` | `gambar_411` |
-| 4.12 | Dekomposisi energi (CPU aktif / IC menghitung / tidur) | CSV mentah via `tools/dekomposisi_energi.py` | `gambar_412` |
+| 4.12 | Dekomposisi energi (CPU aktif / IC menghitung / tidur) | CSV mentah via `tools/3_analisis/dekomposisi_energi.py` | `gambar_412` |
 
 Jalankan ulang bila angka berubah (mis. setelah kalibrasi): `analisis_d.py --stop --rshunt <R> --offset <o> --u-rel <u>`,
 `dekomposisi_energi.py --rshunt <R>`, `gambar_bab4_stop.py --shunt <R>`.
 
 ## 7. Asal angka di pembahasan dan kesimpulan
 
-Sumber rancangan kesimpulan: `laporan/laporan_rekap_logbook_pendukung_bab4_2026-11-18.md` Bagian 10.1.
+Sumber rancangan kesimpulan: `laporan/1_rekap_penelitian/rekap_logbook_17-18_nov_2026-11-18.md` Bagian 10.1.
 
 | Klaim di naskah | Angka | Berkas dan kolom | Dihitung oleh |
 |---|---|---|---|
@@ -221,7 +221,7 @@ dilaporkan sebagai **selisih poin persentase**, bukan persen (`satuan_delta` di 
 > "Pada barrage DS28E38 hilang sekitar 1 frame per run (<0,25 %), karena frame yang mulai persis saat CPU pulih dari
 > Stop tidak diterima. Ini dilaporkan, bukan disembunyikan. Saya menganalisis ulang K4 pada enam ambang (0 % sampai
 > 1 %, 17 sampai 41 run): daya dinamis 25,68-25,70 mW, tidur CPU 83,96-83,97 %, TL 85,46-85,53 %, jadi kesimpulan
-> tidak bergantung pada ambang (`tools/analisis_sensitivitas.py`, `docs/bahan_pembahasan_bab4_2026-11-18.md` bagian 1).
+> tidak bergantung pada ambang (`tools/3_analisis/analisis_sensitivitas.py`, `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` bagian 1).
 > Frame **rusak** nol."
 
 **"Mengapa angka demo hari ini beda dengan tabel?"** (hasil uji bangku 19 Nov)
@@ -243,6 +243,6 @@ dilaporkan sebagai **selisih poin persentase**, bukan persen (`satuan_delta` di 
    (mA/mW/mJ naik ~20 %) dan mana yang tidak (gain %, TL, S_cpu, p).
 5. Jelaskan dengan kata sendiri mengapa `u_kal` tidak dipakai pada gain %.
 
-**Berkas rujukan**: `tools/run_bench.py` (per run), `tools/analisis_d.py` (statistik), `tools/gambar_bab4_stop.py`
-dan `tools/dekomposisi_energi.py` (gambar), `tools/hitung_ulang_satu_run.py` (pembuktian independen),
-`laporan/panduan_grafik_bab4_2026-11-18.md` (detail tiap gambar), `docs/ringkasan_bab4_varian_stop.md`.
+**Berkas rujukan**: `tools/1_akuisisi/run_bench.py` (per run), `tools/3_analisis/analisis_d.py` (statistik), `tools/3_analisis/gambar_bab4_stop.py`
+dan `tools/3_analisis/dekomposisi_energi.py` (gambar), `tools/3_analisis/hitung_ulang_satu_run.py` (pembuktian independen),
+`laporan/2_hasil_dan_pembahasan/panduan_grafik_bab4_2026-11-18.md` (detail tiap gambar), `laporan/2_hasil_dan_pembahasan/ringkasan_bab4_varian_stop.md`.

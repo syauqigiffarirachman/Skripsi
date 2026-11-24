@@ -90,7 +90,7 @@ Verifikasi sintaks `AddPostAction` dengan versi SCons yang terpasang sebelum dip
 **H2. Bangun dari Stop lewat heuristik pewaktuan bit belum andal.**
 `stop_common.h` menunggu garis tinggi tak putus >= 11 us di akhir byte pertama `0xA5` (jendela sinkron 40-85 us
 sejak bangun, `SYNC_MIN_US`/`SYNC_MAX_US`), lalu menyalakan USART+DMA untuk 35 byte sisanya. Hasil terdokumentasi: K2S barrage kehilangan/merusak 1-4 frame per 600
-(`docs/rencana_deep_sleep.md`, langkah 9). Perubahan 18 Nov menambah dua lapis tambalan (`rx_idle_strict` 120 us, penerima
+(`docs/referensi/rencana_deep_sleep.md`, langkah 9). Perubahan 18 Nov menambah dua lapis tambalan (`rx_idle_strict` 120 us, penerima
 dini di HSI sebelum PLL siap). Setiap tambalan memperbaiki satu mode kegagalan, tetapi rancangan dasarnya tetap
 bergantung pada jitter bangun yang tidak dijamin.
 **Dampak:** `N_dtg`, TL, dan S_cpu varian Stop pada barrage bisa tercemar frame yang hilang karena bangun, bukan karena
@@ -143,7 +143,7 @@ memakai nilai ini (`STOP_LAT_RTC`), ia harus dijelaskan sebelum data final. **La
 dan lihat sebarannya antar run dalam satu sesi; bila stabil dalam sesi tetapi berbeda antar sesi, itu soal HSI/suhu, bukan bug.
 
 **M4. Dokumentasi menyimpang dari kode.** `README.md` tidak menyebut varian Stop, `flash_stop.py`, `k1s_run.py`, `s0*_*.py`,
-`ds_od.py`. `docs/pinout_arsitektur_pengujian.md` (16 Nov) masih menulis R seri attacker->host ~1 kOhm (baris 30, 101, 115, 168),
+`ds_od.py`. `docs/referensi/pinout_arsitektur_pengujian.md` (16 Nov) masih menulis R seri attacker->host ~1 kOhm (baris 30, 101, 115, 168),
 padahal sejak 17 Nov 10 kOhm. Butir `[cek]` pull-up 1-Wire masih terbuka.
 **Perbaikan:** tambah satu bagian "Varian Stop" di README, perbarui tabel alat dan pinout, hapus butir `[cek]` yang sudah
 diukur. Dokumen yang menggambarkan wiring wajib ikut berubah ketika wiring berubah.

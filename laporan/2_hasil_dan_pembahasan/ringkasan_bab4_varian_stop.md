@@ -104,7 +104,7 @@ Persentase tidur K3/K4 harus dibaca bersama layanan: CPU K4 tampak tidur lama ju
 3. Keterbatasan dan prosedur (bagian 6).
 
 Gambar sudah dibuat di `data/analisis/stop_final/gambar/` (box plot, interaction plot, drift, Bland-Altman) dan mengikuti
-`laporan/panduan_grafik_bab4_2026-11-16.md`; 
+`laporan/arsip/panduan_grafik_bab4_2026-11-16.md`; 
 
 ## 8. Yang jangan diklaim
 

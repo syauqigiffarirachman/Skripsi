@@ -1,7 +1,11 @@
-# Pemetaan path lama ke baru (24 Nov 2026)
+# Pemetaan path lama ke baru (24 Nov 2026): kode dan dokumen
+
+Bagian 1 = kode (firmware dan skrip PC). Bagian 2 = dokumen (`docs/`, `laporan/`).
 
 Pemindahan memisahkan kode FINAL (data 18 Nov) dari kode PENGEMBANGAN. Isi berkas tidak berubah selain path `#include`,
 impor, dan komentar. Logbook, laporan, dan catatan belajar lama memakai path LAMA; cari di tabel ini.
+
+## 1. Kode
 
 | Path lama | Path baru |
 |---|---|
@@ -95,3 +99,43 @@ impor, dan komentar. Logbook, laporan, dan catatan belajar lama memakai path LAM
 | `tools/window_test.py` | `tools/dev/tahap_d/window_test.py` |
 
 Berkas yang ditambah: `tools/_jalur.py` (jalur impor bersama), `tools/3_analisis/jalankan_analisis.py`, `tools/4_verifikasi/cek_pemisahan.py`, `tools/4_verifikasi/cek_reproduksi_analisis.py`, `tests/test_pemisahan.py`, `.githooks/pre-commit`, `GLOSSARY.md`, `docs/adr/`, `docs/PETA_ALUR.md`, `docs/PEMETAAN_PATH.md`, README per folder.
+
+
+## 2. Dokumen
+
+Dokumen yang dilebur menunjuk ke satu berkas baru; isinya utuh sebagai bagian di dalamnya.
+
+| Path lama | Path baru |
+|---|---|
+| `docs/PEMETAAN_PATH.md` | `docs/referensi/PEMETAAN_PATH.md` |
+| `docs/bahan_pembahasan_bab4_2026-11-18.md` | `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` |
+| `docs/belajar/2026-11-18.md` | `docs/belajar/harian/2026-11-18.md` |
+| `docs/belajar/2026-11-19.md` | `docs/belajar/harian/2026-11-19.md` |
+| `docs/belajar/2026-11-20.md` | `docs/belajar/harian/2026-11-20.md` |
+| `docs/belajar/2026-11-21.md` | `docs/belajar/harian/2026-11-21.md` |
+| `docs/belajar/2026-11-22.md` | `docs/belajar/harian/README.md` |
+| `docs/belajar/2026-11-23.md` | `docs/belajar/harian/README.md` |
+| `docs/daftar_kekurangan_data_analisis_2026-11-18.md` | `laporan/5_status_dan_referensi/daftar_kekurangan_data_analisis_2026-11-18.md` |
+| `docs/demo_sidang_panduan.md` | `docs/prosedur/demo_sidang_panduan.md` |
+| `docs/diagnosis_frame_hilang_K2S_2026-11-18.md` | `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md` |
+| `docs/hasil_B1_verifikasi_tanda_tangan_2026-11-18.md` | `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md` |
+| `docs/hasil_B2_sensitivitas_comb_2026-11-18.md` | `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md` |
+| `docs/pinout_arsitektur_pengujian.md` | `docs/referensi/pinout_arsitektur_pengujian.md` |
+| `docs/prosedur_B1_B2.md` | `docs/prosedur/prosedur_B1_B2.md` |
+| `docs/prosedur_kalibrasi_bagian_A.md` | `docs/prosedur/prosedur_kalibrasi_bagian_A.md` |
+| `docs/referensi_dokumen_E3_2026-11-18.md` | `laporan/5_status_dan_referensi/referensi_dokumen_E3_2026-11-18.md` |
+| `docs/rencana_deep_sleep.md` | `docs/referensi/rencana_deep_sleep.md` |
+| `docs/ringkasan_bab4_varian_stop.md` | `laporan/2_hasil_dan_pembahasan/ringkasan_bab4_varian_stop.md` |
+| `laporan/antisipasi_pertanyaan_penguji_2026-11-18.md` | `laporan/4_sidang/antisipasi_pertanyaan_penguji_2026-11-18.md` |
+| `laporan/kerangka_bab4_bab5_2026-11-18.md` | `laporan/2_hasil_dan_pembahasan/README.md` |
+| `laporan/laporan_perubahan_skripsi_v3_2026-11-20.md` | `laporan/3_revisi_naskah/perubahan_skripsi_v3_2026-11-20.md` |
+| `laporan/laporan_perubahan_skripsi_v4_kalibrasi_2026-11-21.md` | `laporan/3_revisi_naskah/perubahan_skripsi_v4_kalibrasi_2026-11-21.md` |
+| `laporan/laporan_progres_revisi_paper_2026-11-15.md` | `laporan/arsip/laporan_progres_revisi_paper_2026-11-15.md` |
+| `laporan/laporan_rekap_logbook_pendukung_bab4_2026-11-17.md` | `laporan/1_rekap_penelitian/rekap_logbook_10-16_nov_2026-11-17.md` |
+| `laporan/laporan_rekap_logbook_pendukung_bab4_2026-11-18.md` | `laporan/1_rekap_penelitian/rekap_logbook_17-18_nov_2026-11-18.md` |
+| `laporan/panduan_grafik_bab4_2026-11-16.md` | `laporan/arsip/panduan_grafik_bab4_2026-11-16.md` |
+| `laporan/panduan_grafik_bab4_2026-11-18.md` | `laporan/2_hasil_dan_pembahasan/panduan_grafik_bab4_2026-11-18.md` |
+| `laporan/revisi_bab1_propo_fix5_2026-11-18.md` | `laporan/3_revisi_naskah/revisi_bab1_propo_fix5_2026-11-18.md` |
+| `laporan/revisi_bab2_propo_fix5_2026-11-18.md` | `laporan/3_revisi_naskah/revisi_bab2_propo_fix5_2026-11-18.md` |
+| `laporan/revisi_bab3_propo_fix5_2026-11-18.md` | `laporan/3_revisi_naskah/revisi_bab3_propo_fix5_2026-11-18.md` |
+| `laporan/revisi_bab3_v4_2026-11-16.md` | `laporan/arsip/revisi_bab3_v4_2026-11-16.md` |

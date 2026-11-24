@@ -1,9 +1,9 @@
 # Panduan Grafik Inti Bab 4 (Hasil dan Pembahasan), Data *Deep Sleep*
 
 Tanggal: 18 November 2026
-Sumber angka: `data/analisis/stop_final/` (keluaran `tools/analisis_d.py --stop`, 18 November 2026 pukul 15.31; manifest `data/tahap_stop.txt`)
+Sumber angka: `data/analisis/stop_final/` (keluaran `tools/3_analisis/analisis_d.py --stop`, 18 November 2026 pukul 15.31; manifest `data/tahap_stop.txt`)
 
-Dokumen ini adalah lembar kerja untuk memplot dan menggantikan panduan grafik sebelumnya (`laporan/panduan_grafik_bab4_2026-11-16.md`) untuk keperluan skripsi. **Hanya data dan analisis varian *deep sleep* (Stop mode) yang dipakai.** Tiap grafik punya: berkas data dan kolom yang dipakai, isi sumbu X dan Y, usulan keterangan gambar, catatan, dan tabel pendukung berisi angka yang seharusnya muncul di grafik (untuk mencocokkan hasil plot). Bahasa naskah mengikuti Bab 3 hasil revisi (`laporan/revisi_bab3_propo_fix5_2026-11-18.md`).
+Dokumen ini adalah lembar kerja untuk memplot dan menggantikan panduan grafik sebelumnya (`laporan/arsip/panduan_grafik_bab4_2026-11-16.md`) untuk keperluan skripsi. **Hanya data dan analisis varian *deep sleep* (Stop mode) yang dipakai.** Tiap grafik punya: berkas data dan kolom yang dipakai, isi sumbu X dan Y, usulan keterangan gambar, catatan, dan tabel pendukung berisi angka yang seharusnya muncul di grafik (untuk mencocokkan hasil plot). Bahasa naskah mengikuti Bab 3 hasil revisi (`laporan/3_revisi_naskah/revisi_bab3_propo_fix5_2026-11-18.md`).
 
 Perubahan terhadap panduan sebelumnya: nomor gambar 4.1–4.8 mempertahankan peran yang sama, tetapi isinya diganti data *deep sleep*; ditambah tiga gambar baru (4.9–4.11) untuk bukti keabsahan pengukuran (keadaan bersih, frame UART, kesesuaian instrumen).
 
@@ -24,7 +24,7 @@ Perubahan terhadap panduan sebelumnya: nomor gambar 4.1–4.8 mempertahankan per
 | Ketidakpastian (batang galat) | `data/analisis/stop_final/ketidakpastian.csv` | kolom `U_gab` |
 | Kesesuaian instrumen | `data/analisis/stop_final/bland_altman.csv`, `latensi_pin_vs_dwt.csv` | bias dan batas kesesuaian |
 | Jejak arus mentah | `data/runs/<sesi>/<nnn>_<K1S|K2S>_<A|B>.csv` | cuplikan INA226 dan tepi pin status |
-| Gambar yang sudah jadi | `data/analisis/stop_final/gambar/` | 24 PNG keluaran `tools/analisis_d.py` |
+| Gambar yang sudah jadi | `data/analisis/stop_final/gambar/` | 24 PNG keluaran `tools/3_analisis/analisis_d.py` |
 
 Sesi sumber (blok): blok1 `20261118_115044_K2S`, blok2 `20261118_124646_K1S`, blok3 `20261118_132320_K1S`, blok4 `20261118_140335_K2S`.
 
@@ -64,7 +64,7 @@ Sesi sumber (blok): blok1 `20261118_115044_K2S`, blok2 `20261118_124646_K1S`, bl
 
 ## Gambar 4.1 Jejak arus terhadap waktu (SUDAH DIBUAT)
 
-**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_1_jejak_arus.png` dan rincian `gambar_4_1b_jejak_arus_rinci.png`. Skrip: `python tools/gambar_bab4_stop.py [--shunt <nilai>]`.
+**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_1_jejak_arus.png` dan rincian `gambar_4_1b_jejak_arus_rinci.png`. Skrip: `python tools/3_analisis/gambar_bab4_stop.py [--shunt <nilai>]`.
 
 **Tujuan:** menunjukkan mekanismenya secara langsung: kapan host bangun dari tidur dalam dan kapan kembali tidur pada tiap kelompok. Grafik ini menjadi pembuka sebelum angka-angka statistik.
 
@@ -121,7 +121,7 @@ Sesi sumber (blok): blok1 `20261118_115044_K2S`, blok2 `20261118_124646_K1S`, bl
 
 ## Gambar 4.2 Latensi tanda tangan (SUDAH DIBUAT)
 
-**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_2_latensi.png` (batang bernilai; menggantikan `gambar/box_lat_mean_ms_nyata.png`). Skrip: `tools/gambar_bab4_stop.py`.
+**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_2_latensi.png` (batang bernilai; menggantikan `gambar/box_lat_mean_ms_nyata.png`). Skrip: `tools/3_analisis/gambar_bab4_stop.py`.
 
 **Menjawab:** H1a (latensi DS28E38 lebih rendah).
 
@@ -291,7 +291,7 @@ Penghematan E_lyn: 38,02 mJ atau 92,7 % (Normal); 37,59 mJ atau 92,6 % (Barrage)
 
 ## Gambar 4.7 Tingkat layanan terukur dan model (SUDAH DIBUAT)
 
-**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_7_tingkat_layanan_vs_model.png`. Skrip: `tools/gambar_bab4_stop.py`. Terukur = batang penuh; model = batang berbingkai; Barrage berarsir.
+**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_7_tingkat_layanan_vs_model.png`. Skrip: `tools/3_analisis/gambar_bab4_stop.py`. Terukur = batang penuh; model = batang berbingkai; Barrage berarsir.
 
 **Menjawab:** H4, ketahanan layanan saat barrage dan kecocokan dengan model utilisasi.
 
@@ -325,7 +325,7 @@ Penghematan E_lyn: 38,02 mJ atau 92,7 % (Normal); 37,59 mJ atau 92,6 % (Barrage)
 
 ## Gambar 4.8 Throughput terukur dan batas model (SUDAH DIBUAT)
 
-**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_8_throughput_vs_batas.png`. Dua garis putus-putus penuh menandai kapasitas (Software 1,53/s biru, DS28E38 8,60/s oranye). Skrip: `tools/gambar_bab4_stop.py`.
+**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_8_throughput_vs_batas.png`. Dua garis putus-putus penuh menandai kapasitas (Software 1,53/s biru, DS28E38 8,60/s oranye). Skrip: `tools/3_analisis/gambar_bab4_stop.py`.
 
 **Menjawab:** H4 dari sisi kapasitas: berapa tanda tangan per detik yang sanggup dihasilkan.
 
@@ -359,7 +359,7 @@ Penghematan E_lyn: 38,02 mJ atau 92,7 % (Normal); 37,59 mJ atau 92,6 % (Barrage)
 
 ## Gambar 4.9 Arus diam dan kestabilan antar-blok (BARU, SUDAH DIBUAT)
 
-**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_9_arus_diam_antar_blok.png`. Skrip: `tools/gambar_bab4_stop.py`.
+**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_9_arus_diam_antar_blok.png`. Skrip: `tools/3_analisis/gambar_bab4_stop.py`.
 
 **Menjawab:** keabsahan pengukuran (Bab 3.5.4 dan 3.6.4): papan berada dalam keadaan bersih dan tidak bergeser antar-blok.
 
@@ -394,7 +394,7 @@ Rerata IDLE: K1S 1,991 mA (10,40 mW), K2S 1,988 mA (10,37 mW).
 
 ## Gambar 4.10 Frame permintaan hilang pada K4 (BARU, SUDAH DIBUAT)
 
-**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_10_frame_hilang_K4.png`. Skrip: `tools/gambar_bab4_stop.py`.
+**Berkas:** `data/analisis/stop_final/gambar_bab4/gambar_4_10_frame_hilang_K4.png`. Skrip: `tools/3_analisis/gambar_bab4_stop.py`.
 
 **Menjawab:** batas keabsahan pada Bab 3.5.1 butir 4 dan keterbatasan 1.3 butir 11.
 
@@ -525,6 +525,6 @@ Bias tetap ditafsirkan sebagai kerja CPU di luar jendela ukur firmware (pengumpu
 | 4.10 Frame hilang K4 | **dibuat** (`gambar_bab4/`) | tidak |
 | 4.11 Bland-Altman S_cpu | **dibuat** (`gambar_bab4/`) | tidak |
 
-**Semua gambar inti (4.1–4.11) kini seragam** (warna per arsitektur, Barrage berarsir, desimal koma, 300 dpi) dan dibuat satu skrip: `python tools/gambar_bab4_stop.py [--shunt <nilai>]` → `data/analisis/stop_final/gambar_bab4/`. Gambar keluaran `analisis_d.py` di `gambar/` (boxplot, plot interaksi, drift) tetap ada dan hanya dipakai sebagai lampiran: `drift_*.png`, `box_I_avg_mA`, `box_P_avg_mW`, `box_E_mJ`, `box_Q_lyn_mC`.
+**Semua gambar inti (4.1–4.11) kini seragam** (warna per arsitektur, Barrage berarsir, desimal koma, 300 dpi) dan dibuat satu skrip: `python tools/3_analisis/gambar_bab4_stop.py [--shunt <nilai>]` → `data/analisis/stop_final/gambar_bab4/`. Gambar keluaran `analisis_d.py` di `gambar/` (boxplot, plot interaksi, drift) tetap ada dan hanya dipakai sebagai lampiran: `drift_*.png`, `box_I_avg_mA`, `box_P_avg_mW`, `box_E_mJ`, `box_Q_lyn_mC`.
 
-Setelah kalibrasi shunt selesai: jalankan ulang skrip dengan `--shunt <nilai>` (memperbarui 4.1, 4.1b), jalankan ulang `python tools/analisis_d.py --manifest data/tahap_stop.txt --stop --rshunt <nilai> --keluar data/analisis/stop_final` agar `ketidakpastian.csv` dan `deskriptif.csv` ikut berubah, lalu jalankan skrip gambar lagi (4.4, 4.5, 4.6b, 4.9 membaca berkas itu).
+Setelah kalibrasi shunt selesai: jalankan ulang skrip dengan `--shunt <nilai>` (memperbarui 4.1, 4.1b), jalankan ulang `python tools/3_analisis/analisis_d.py --manifest data/tahap_stop.txt --stop --rshunt <nilai> --keluar data/analisis/stop_final` agar `ketidakpastian.csv` dan `deskriptif.csv` ikut berubah, lalu jalankan skrip gambar lagi (4.4, 4.5, 4.6b, 4.9 membaca berkas itu).

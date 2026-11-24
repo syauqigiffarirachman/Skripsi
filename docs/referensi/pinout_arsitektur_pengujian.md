@@ -1,7 +1,7 @@
 # Pinout Arsitektur Pengujian (bangku uji Tahap D)
 
 Disusun 16 Nov 2026 dari kode firmware yang dipakai pada 120 run final (commit `448befe`), `platformio.ini`, dan logbook 12–15 Nov.
-**Diperbarui 18 Nov 2026** dari logbook 17–18 Nov, `docs/rencana_deep_sleep.md`, dan `src/host/final/bersama/stop_common.h`: resistor seri jalur sinyal
+**Diperbarui 18 Nov 2026** dari logbook 17–18 Nov, `docs/referensi/rencana_deep_sleep.md`, dan `src/host/final/bersama/stop_common.h`: resistor seri jalur sinyal
 kini 10 kΩ (sejak 17 Nov; data tahap D memakai ~1 kΩ), varian host Stop mode (bagian 2b), daya balik lewat jalur sinyal, kemasan DS28E38 terkonfirmasi parasit, nomor COM terakhir. Isi bagian 2–8 untuk firmware
 tahap D (Sleep/WFI, `k1_sw`/`k2_hw`) tetap berlaku.
 Tujuannya jadi acuan saat merancang PCB/board yang lebih rapi. Butir bertanda **[cek]** belum tercatat di kode/logbook dan perlu diukur langsung di bangku.
@@ -142,7 +142,7 @@ Konfigurasi: cfg 0x4127 (AVG 1, 1,1 ms shunt + bus, kontinu), CAL 0x0800; laju c
 | PA2 | USART2 TX: konsol | Serial2 | out | CH340 RX | Perintah `a/b/x/s/f`. Auto-start 1 Hz (`ATTACKER_AUTOSTART_HZ`). |
 | PA3 | USART2 RX: konsol | Serial2 | in | CH340 TX | |
 | PA13 / PA14 | SWD | – | – | ST-Link (hanya saat flash) | |
-| BOOT0 / NRST | Auto-reset bootloader | DTR/RTS CH340 | – | onboard | Jalur lama (`extra_script_attacker.py`), tidak dipakai lagi. |
+| BOOT0 / NRST | Auto-reset bootloader | DTR/RTS CH340 | – | onboard | Jalur lama (`tools/dev/extra_script_attacker.py`), tidak dipakai lagi. |
 | GND | Ground bersama | – | – | Host | |
 
 ---

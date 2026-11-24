@@ -100,7 +100,7 @@ Kerangka: validitas internal, konstruk, eksternal, kesimpulan statistik.
 
 **Konstruk**
 8. *"Latensi" = lama pembuatan satu tanda tangan,* bukan waktu tunggu antrean (tidak ada antrean pada model ini).
-9. *Konfigurasi software 1c* (Mbed TLS dengan tabel comb dimatikan) adalah baseline; dengan comb aktif latensi software ±278,6 ms (catatan 13 Nov) sehingga keunggulan waktu DS28E38 jauh lebih kecil (±58 %); bila energi software diperkirakan sebanding dengan waktunya (±17 mJ per tanda tangan), keunggulan energi turun dari ±93 % ke ±83 % (perkiraan awal). **Terukur 18 Nov malam (B2, data pengembangan N=5):** latensi software 278,6 ms, energi 16,9 mJ per tanda tangan, sehingga keunggulan DS28E38 58,3 % (waktu) dan 82,2 % (energi); lihat `docs/hasil_B2_sensitivitas_comb_2026-11-18.md`.
+9. *Konfigurasi software 1c* (Mbed TLS dengan tabel comb dimatikan) adalah baseline; dengan comb aktif latensi software ±278,6 ms (catatan 13 Nov) sehingga keunggulan waktu DS28E38 jauh lebih kecil (±58 %); bila energi software diperkirakan sebanding dengan waktunya (±17 mJ per tanda tangan), keunggulan energi turun dari ±93 % ke ±83 % (perkiraan awal). **Terukur 18 Nov malam (B2, data pengembangan N=5):** latensi software 278,6 ms, energi 16,9 mJ per tanda tangan, sehingga keunggulan DS28E38 58,3 % (waktu) dan 82,2 % (energi); lihat `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md`.
 10. *K2S memakai overdrive + polling.* Kontribusi overdrive, polling, dan mode Stop tidak dipisah pada data final (lihat bagian 4).
 11. *Daya "dinamis"* dihitung terhadap IDLE varian Stop (10,4 mW) sehingga hanya sah untuk membandingkan dua arsitektur di data ini.
 
@@ -146,6 +146,6 @@ satu permintaan, waktu respons terburuk dibatasi dua kali latensi."* Bila ingin 
 
 ## 8. Penyebab sisa frame hilang ±0,17 % (C5): terdiagnosis sebagian
 
-Lihat `docs/diagnosis_frame_hilang_K2S_2026-11-18.md`. Ringkas: tiap run dengan frame hilang memuat tanda tangan berdurasi tepat ±210 ms (sd 0,3 ms) bukan 116 ms; jumlahnya sama dengan
+Lihat `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md`. Ringkas: tiap run dengan frame hilang memuat tanda tangan berdurasi tepat ±210 ms (sd 0,3 ms) bukan 116 ms; jumlahnya sama dengan
 frame hilang pada pengukuran langsung (8 dan 8). Mekanisme yang konsisten: frame tiba hampir bersamaan dengan alarm RTC penanda selesainya perhitungan chip, alarm tak terdeteksi,
 host tidur satu interval (≈96 ms) tambahan. Penyebab tingkat register belum dibuktikan (hipotesis: baca-ubah-tulis `RTC->CRL` yang menghapus ALRF). Data final tetap sah; ditulis sebagai batasan.

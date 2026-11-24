@@ -1,7 +1,7 @@
 # Revisi Bab 1 dan Intisari (PROPO_BAB1-3_FIX_5 → versi data *deep sleep*)
 
 Tanggal: 18 November 2026
-Acuan: `paper/PROPO_BAB1-3_FIX_5.pdf`, Intisari (halaman 5) dan Bab 1 (halaman 6–9). Revisi ini mengikuti revisi Bab 3 (`laporan/revisi_bab3_propo_fix5_2026-11-18.md`) dan Bab 2 (`laporan/revisi_bab2_propo_fix5_2026-11-18.md`).
+Acuan: `paper/PROPO_BAB1-3_FIX_5.pdf`, Intisari (halaman 5) dan Bab 1 (halaman 6–9). Revisi ini mengikuti revisi Bab 3 (`laporan/3_revisi_naskah/revisi_bab3_propo_fix5_2026-11-18.md`) dan Bab 2 (`laporan/3_revisi_naskah/revisi_bab2_propo_fix5_2026-11-18.md`).
 
 Aturan: Bab 1 menyatakan masalah, batasan, dan tujuan. Perubahan utamanya hanya satu hal besar: **mode hemat daya yang diuji kini mode Stop (tidur dalam), bukan mode Sleep (WFI).** Butir ini harus tampak konsisten di Intisari, 1.1, 1.3, dan 1.4. Tidak ada perbandingan dengan data pengembangan awal.
 

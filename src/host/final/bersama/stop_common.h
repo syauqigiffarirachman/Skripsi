@@ -1,6 +1,6 @@
 // ============================================================================
 // HOST deep sleep (Stop mode): alat dasar bersama S2 dan integrasi K1/K2 (langkah 7-9).
-// Rencana: docs/rencana_deep_sleep.md. Dasar teruji: S0a (LSE/RTC), S0 (lantai Stop), S1 (alarm RTC).
+// Rencana: docs/referensi/rencana_deep_sleep.md. Dasar teruji: S0a (LSE/RTC), S0 (lantai Stop), S1 (alarm RTC).
 //
 // Isi:
 //   - RTC dari LSE (CNT 1024 Hz, alarm = event EXTI17), waktu halus 1/32768 s.

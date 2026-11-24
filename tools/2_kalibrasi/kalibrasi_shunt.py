@@ -7,7 +7,7 @@ Alur:
   1. python tools/2_kalibrasi/kalibrasi_shunt.py offset --detik 60
          beban NOL: lepas IN- dari host (tegangan VBUS tetap ada). Hasil: offset (satuan 2,5 uV).
   2. python tools/2_kalibrasi/kalibrasi_shunt.py titik --nama stop --iref 1.98 [--vref 5.20] [--detik 30]
-         ulangi untuk tiap titik arus tunak (lihat docs/prosedur_kalibrasi_bagian_A.md).
+         ulangi untuk tiap titik arus tunak (lihat docs/prosedur/prosedur_kalibrasi_bagian_A.md).
   3. python tools/2_kalibrasi/kalibrasi_shunt.py hitung [--u-ref 1.0]
          regresi: R_shunt efektif, offset hasil regresi, residu per titik, saran nilai --rshunt/--offset.
   Metode SELISIH (disarankan, 21 Nov 2026; offset terhapus, acuan = V_bus / R_nominal resistor 1 %):

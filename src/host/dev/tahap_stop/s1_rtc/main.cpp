@@ -1,6 +1,6 @@
 // ============================================================================
 // HOST deep sleep, LANGKAH 6 = S1: Stop + bangun dari ALARM RTC + pulih 48 MHz + T_sleep dari RTC.
-// Rencana: docs/rencana_deep_sleep.md. Dasar: S0a (LSE/RTC, LULUS) dan S0 (Stop, lantai 1,99 mA, LULUS).
+// Rencana: docs/referensi/rencana_deep_sleep.md. Dasar: S0a (LSE/RTC, LULUS) dan S0 (Stop, lantai 1,99 mA, LULUS).
 //
 // Fungsi tahap ini satu: siklus periodik bangun-kerja-tidur dengan Stop, dan waktu tidur yang diukur host
 // (RTC) cocok dengan pengukuran independen logger (PB1, kristal 72 MHz).

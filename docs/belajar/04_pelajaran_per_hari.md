@@ -62,7 +62,7 @@ Hari terpadat.
 
 ## 14 Nov: Logger, F030 sementara lalu F103, INA226, USB klon
 
-- **Logger sementara F030C8**, lalu F103 pesanan tiba. Refaktor ke `src/logger_common/` (kode bebas-chip) supaya
+- **Logger sementara F030C8**, lalu F103 pesanan tiba. Refaktor ke `src/logger/modul/` (kode bebas-chip) supaya
   berpindah chip murah.
 - **INA226**: alamat 0x44 (bukan 0x40), laju 495,75/s (bukan ~450), VBUS belum tersambung sehingga akurasi arus belum diuji.
 - **`cycles()` mundur di F030** (tanpa DWT, dari SysTick + COUNTFLAG): rekam berakhir seketika. Diganti pola
@@ -104,7 +104,7 @@ Catatan jujur: bagian L4 hari itu ditulis dari kode, **tanpa hasil uji**, dan di
 
 ## 16 Nov: Refaktor aman, analisis sesuai paper v4
 
-- **Refaktor host** ke `src/host_common/`; verifikasi **biner identik bit per bit** (`firmware.bin` sama,
+- **Refaktor host** ke `src/host/bersama/ dan src/host/dev/tahap_d/bersama/ `; verifikasi **biner identik bit per bit** (`firmware.bin` sama,
   ELF berbeda hanya info debug). Lanjut ke perapian per board (tahap 1-5) dengan gerbang yang sama.
 - **Hal yang diam-diam menggeser tata letak Flash**: kode `.cpp` bersama di `lib/`, `lib_archive = no`, urutan path
   berkas di `src/`. Ketiganya dicoba lalu dibatalkan.

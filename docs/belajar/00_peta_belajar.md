@@ -2,7 +2,9 @@
 
 Dibuat 18 Nov 2026 dari: README, `docs/`, `laporan/`, `logbook/2026-11-10` s.d. `2026-11-17`, dan kode utama.
 Hanya sekali ini disusun mundur. Mulai malam ini, catatan harian otomatis (jam 21.00) masuk ke
-`docs/belajar/YYYY-MM-DD.md` dan membahas progres hari itu saja.
+`docs/belajar/harian/YYYY-MM-DD.md` (indeks: `docs/belajar/harian/README.md`) dan membahas progres hari itu saja.
+
+> Folder ini untuk **belajar**. Bahan menulis skripsi ada di `laporan/`; alur kode final di `docs/PETA_ALUR.md`; peta semua dokumen di `docs/README.md`.
 
 Progres 18 Nov (hasil Stop mode K1S/K2S, overdrive DS28E38, crash pasca-Stop dan NOP sled) sengaja TIDAK
 dibahas di sini. Itu bahan catatan malam ini.
@@ -35,16 +37,16 @@ CPU tidur jauh lebih lama, dan layanan saat barrage naik dari 15 % ke 49 %.
 | Tanda tangan hardware | `src/host/dev/tahap_d/k2_hardware/main.cpp` (`xpc`, `sign_digest`, `wait_ms`) |
 | Cara CPU tidur dan diukur | `src/host/dev/tahap_d/bersama/host_time.h`, loop di `cmd_window` K1 |
 | Penerimaan frame attacker | `src/host/dev/tahap_d/bersama/host_rx.h`, `lib/bench_proto/proto_attacker_host.h` |
-| Kendali run PC-logger-host | `lib/bench_proto/proto_host_logger.h`, `src/host/dev/tahap_d/bersama/host_link.h`, `tools/run_bench.py` |
+| Kendali run PC-logger-host | `lib/bench_proto/proto_host_logger.h`, `src/host/dev/tahap_d/bersama/host_link.h`, `tools/1_akuisisi/run_bench.py` |
 | Konfigurasi Mbed TLS | `include/mbedtls_k1_config.h` |
-| Stop mode (deep sleep) | `docs/rencana_deep_sleep.md`, `src/host/final/bersama/stop_window.h` |
-| Statistik akhir | `tools/analisis_d.py` |
-| Pinout dan kabel | `docs/pinout_arsitektur_pengujian.md` |
+| Stop mode (deep sleep) | `docs/referensi/rencana_deep_sleep.md`, `src/host/final/bersama/stop_window.h` |
+| Statistik akhir | `tools/3_analisis/analisis_d.py` |
+| Pinout dan kabel | `docs/referensi/pinout_arsitektur_pengujian.md` |
 
 ## Tiga kebiasaan kerja proyek ini (patut ditiru)
 
 1. **Build from base**: satu fungsi per tahap, dites dan distabilkan sebelum menambah fungsi.
-2. **Gerbang biner identik**: setelah merapikan kode, `firmware.bin` harus sama bit demi bit (`tools/cek_biner.py banding`),
+2. **Gerbang biner identik**: setelah merapikan kode, `firmware.bin` harus sama bit demi bit (`tools/4_verifikasi/cek_biner.py banding`),
    supaya data yang sudah diambil tetap sah.
 3. **Catat yang gagal dan yang salah**: logbook memuat dugaan yang terbukti SALAH beserta alasannya (mis. 13 Nov
    "comb tidak mengubah latensi" yang dicabut). Itu yang membuat hasilnya bisa dipercaya.
@@ -53,4 +55,4 @@ CPU tidur jauh lebih lama, dan layanan saat barrage naik dari 15 % ke 49 %.
 - `08_alur_data_lengkap_2026-11-21.md`: **alur lengkap** dari kabel/firmware sampai kesimpulan (pengambilan data, kalibrasi INA226, analisis per run, tiap analisis statistik, penetapan kesimpulan), lengkap dengan berkas:baris, rumus, library, angka terbaru (R_eff 0,0821 Ohm), dan jebakan. Mulai dari sini bila ingin satu bacaan yang menyambung semuanya; `07` tetap berguna untuk pembuktian independen dan jawaban penguji, tetapi angkanya memakai shunt lama.
 
 ## Tambahan 19 Nov
-- `07_dari_csv_ke_kesimpulan.md`: asal setiap angka dari CSV mentah sampai kesimpulan, kesenjangan paper-kode (Shapiro-Wilk, ANOVA), naskah menjawab penguji. Pembuktian independen: `tools/hitung_ulang_satu_run.py`.
+- `07_dari_csv_ke_kesimpulan.md`: asal setiap angka dari CSV mentah sampai kesimpulan, kesenjangan paper-kode (Shapiro-Wilk, ANOVA), naskah menjawab penguji. Pembuktian independen: `tools/3_analisis/hitung_ulang_satu_run.py`.

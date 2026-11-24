@@ -1,7 +1,7 @@
 # Revisi Bab 3 (PROPO_BAB1-3_FIX_5 → versi data *deep sleep*)
 
 Tanggal: 18 November 2026
-Acuan: `paper/PROPO_BAB1-3_FIX_5.pdf`, Bab 3 (halaman 20–36). Dasar revisi: data final varian *deep sleep* (Stop mode) `data/tahap_stop.txt`, analisis `data/analisis/stop_final/`, logbook 17–18 November 2026, dan `laporan/laporan_rekap_logbook_pendukung_bab4_2026-11-18.md`.
+Acuan: `paper/PROPO_BAB1-3_FIX_5.pdf`, Bab 3 (halaman 20–36). Dasar revisi: data final varian *deep sleep* (Stop mode) `data/tahap_stop.txt`, analisis `data/analisis/stop_final/`, logbook 17–18 November 2026, dan `laporan/1_rekap_penelitian/rekap_logbook_17-18_nov_2026-11-18.md`.
 
 Aturan penulisan revisi ini: **hanya data dan analisis varian *deep sleep* yang disebut sebagai hasil.** Teks pengganti tidak memuat perbandingan dengan data pengembangan awal (Sleep/WFI). Angka yang dipakai berasal dari uji pendahuluan pada firmware final varian *deep sleep*.
 
@@ -76,7 +76,7 @@ Format: tiap butir menyebut **lokasi**, **teks FIX_5** (diringkas), **teks pengg
 **Pengganti:**
 > Tahap berikutnya meliputi perancangan papan prototipe STM32F103-DS28E38, pengembangan firmware software-based dan hardware offloading dengan mode tidur dalam, perakitan sistem ukur INA226 logger, serta penyusunan attacker node. Pengembangan mode tidur dalam dilakukan bertahap dan setiap tahap diuji sampai stabil sebelum fungsi berikutnya ditambahkan: uji osilator jam RTC (LSE), uji arus Stop minimal, uji bangun oleh alarm RTC, uji bangun oleh permintaan attacker node tanpa mengubah attacker node, pembuatan driver 1-Wire berkecepatan tinggi (overdrive) untuk DS28E38, serta integrasi ke kedua firmware. Setelah kalibrasi instrumen dan uji pendahuluan untuk menetapkan laju uji (Sub-bab 3.5.2), dilakukan pengambilan data utama sebanyak 120 run sah (30 run per kelompok K1–K4), disusul uji ketahanan dan uji jalur galat (Sub-bab 3.5.5). Data yang tervalidasi kemudian diolah melalui statistik deskriptif, gain analysis, uji beda statistik, dan analisis kesesuaian instrumen untuk menarik kesimpulan penelitian.
 
-**Alasan/sumber:** logbook 17–18 Nov; langkah 1–12 pada `docs/rencana_deep_sleep.md`.
+**Alasan/sumber:** logbook 17–18 Nov; langkah 1–12 pada `docs/referensi/rencana_deep_sleep.md`.
 
 ---
 
@@ -124,7 +124,7 @@ FIX_5: "...clock inti 48 MHz (HSI-PLL), input USB Type-C 5 V, header SWD (UPLOAD
 
 **Baris 9 (Peralatan pendukung):** tambahkan "ST-Link V2 hanya untuk pemrograman dan pemulihan, tidak dioperasikan selama pengukuran".
 
-**Alasan/sumber:** `docs/pinout_arsitektur_pengujian.md` (bagian 2, 2b), logbook 17 Nov (resistor seri 10 kΩ, regulator XC6219B332MR, kristal Epson MC-306).
+**Alasan/sumber:** `docs/referensi/pinout_arsitektur_pengujian.md` (bagian 2, 2b), logbook 17 Nov (resistor seri 10 kΩ, regulator XC6219B332MR, kristal Epson MC-306).
 
 ---
 
@@ -190,7 +190,7 @@ FIX_5: "...clock inti 48 MHz (HSI-PLL), input USB Type-C 5 V, header SWD (UPLOAD
 **Pengganti:**
 > a. Sub-sistem mikrokontroler host (STM32F103): Dioperasikan pada 48 MHz saat terjaga. Di antara permintaan CPU masuk mode tidur dalam (Stop): jam utama, bus, dan hampir seluruh periferal mati, kecuali jam RTC berkristal 32,768 kHz. Dua sumber bangun dipakai, keduanya sebagai event EXTI: alarm RTC (penanda akhir jendela 60 detik dan, pada perlakuan hardware offloading, penanda selesainya komputasi IC) dan tepi turun pada pin PA3 (tanda awal frame permintaan dari attacker node). Karena UART tidak aktif selama Stop, awal frame yang membangunkan CPU sudah terlewat; host mengenali pola tepi byte pertama frame (0xA5) lalu menyalakan penerima sekitar 17 µs sebelum byte kedua sehingga frame diterima utuh tanpa mengubah attacker node. Setelah bangun, CPU berjalan pada HSI 8 MHz dan PLL 48 MHz dipulihkan. Pencacah DWT berhenti selama Stop, sehingga lama tidur dan durasi jendela dihitung dari RTC. Pin PA15 dikonfigurasi untuk 1-Wire dengan menonaktifkan fungsi JTAG (SWD tetap terkonfigurasi). Seluruh pin yang tidak dipakai diatur sebagai analog dan USB dimatikan untuk menekan arus bocor.
 
-**Alasan/sumber:** `src/host/deepsleep/stop_common.h`, logbook 18 Nov (S2: 59/59, 602/602).
+**Alasan/sumber:** `src/host/final/bersama/stop_common.h`, logbook 18 Nov (S2: 59/59, 602/602).
 
 ---
 
@@ -201,7 +201,7 @@ FIX_5: "...clock inti 48 MHz (HSI-PLL), input USB Type-C 5 V, header SWD (UPLOAD
 **Pengganti (tambahkan sesudah kalimat terakhir):**
 > Komunikasi dengan IC dilakukan pada kecepatan overdrive: perintah Overdrive Skip ROM dikirim pada kecepatan standar, kemudian seluruh transaksi berikutnya memakai pewaktuan overdrive (titik pembacaan bit 2,5 µs setelah tepi turun) dengan bit-banging pada PA15. Komputasi tanda tangan di dalam IC berlangsung sekitar 106,6 ms (rentang 105,9–107,3 ms). Selama itu CPU tidur dalam (Stop) dan dibangunkan oleh alarm RTC sekitar 100 ms setelah perintah dikirim; hasil kemudian dinantikan dengan polling singkat sebelum dibaca. Waktu total satu tanda tangan sekitar 116 ms (kirim ±3,4 ms, komputasi IC ±106,6 ms, baca ±5,6 ms).
 
-**Alasan/sumber:** logbook 18 Nov (karakterisasi overdrive: 115,6 ms, 269 dari 269 tanda tangan valid, busy 105,9–107,3 ms); `src/host/deepsleep/ds28e38_od.h`.
+**Alasan/sumber:** logbook 18 Nov (karakterisasi overdrive: 115,6 ms, 269 dari 269 tanda tangan valid, busy 105,9–107,3 ms); `src/host/final/bersama/ds28e38_od.h`.
 
 ---
 
@@ -246,7 +246,7 @@ FIX_5: "...clock inti 48 MHz (HSI-PLL), input USB Type-C 5 V, header SWD (UPLOAD
 | baru | "Host PC14/PC15 — kristal 32,768 kHz — Sumber jam RTC (jangan disentuh probe)" |
 | baru | "Host BOOT0 — jumper (GND saat normal, 3V3 saat pemulihan)" |
 
-**Alasan:** `docs/pinout_arsitektur_pengujian.md` bagian 2 dan 2b.
+**Alasan:** `docs/referensi/pinout_arsitektur_pengujian.md` bagian 2 dan 2b.
 
 ---
 
@@ -352,12 +352,12 @@ FIX_5: "...clock inti 48 MHz (HSI-PLL), input USB Type-C 5 V, header SWD (UPLOAD
 > 3.5.5 Uji Ketahanan dan Jalur Galat
 > Selain data utama, sistem diuji ketahanannya agar data tidak berasal dari perilaku yang rapuh. Ketahanan dinilai dari tidak adanya kegagalan sistem (crash atau macet) selama seluruh run. Jalur galat diuji pada perlakuan hardware offloading karena memuat kedua sumber bangun (alarm RTC dan permintaan attacker node): (1) attacker node berhenti total di tengah jendela; (2) attacker node dimatikan lalu dinyalakan ulang; (3) attacker node dinyalakan dan dimatikan berulang setiap 1,5 detik; (4) IC DS28E38 dilepas ketika run berlangsung; (5) IC dipasang kembali tanpa memulai ulang host; (6) IC tidak ada saat host dinyalakan. Kriteria lulus: jendela pengamatan tetap utuh, SCPU menurut logger dan firmware berbeda tidak lebih dari 0,5 poin persentase, tidak ada frame rusak, kegagalan tanda tangan tercatat sebagai gagal (bukan sebagai sukses), host pulih tanpa memulai ulang, dan host yang tidak menemukan IC melaporkan kondisi "belum siap" sehingga skrip kendali menolak merekam data.
 
-**Alasan/sumber:** `tools/uji_galat_stop.py`; rekap 18 Nov Bagian 7.7 (7 dari 7 lulus).
+**Alasan/sumber:** `tools/4_verifikasi/uji_galat_stop.py`; rekap 18 Nov Bagian 7.7 (7 dari 7 lulus).
 
 **Tambahan pada 3.5.5 (verifikasi keabsahan tanda tangan):**
 > Keabsahan kriptografis tanda tangan tidak diperiksa pada setiap run pengukuran, karena firmware hanya melaporkan keberhasilan penandatanganan agar tidak membebani jendela ukur. Keabsahannya diverifikasi terpisah pada tahap pengembangan dengan menurunkan ulang kunci publik dan memverifikasi setiap tanda tangan ECDSA P-256 (r, s) di komputer terhadap ringkasan pesan yang ditandatangani, termasuk pemeriksaan bahwa tanda tangan yang sengaja dirusak ditolak. Pada perlakuan hardware offloading dengan kecepatan overdrive, 269 dari 269 tanda tangan berturut-turut valid. Blok kripto perlakuan software-based pada firmware mode tidur dalam adalah salinan harfiah blok yang telah diverifikasi pada tahap pengembangan.
 
-**Alasan/sumber:** `tools/k1_check.py`, `tools/k2_check.py`, `tools/ds_od.py`; logbook 18 Nov Bagian 1.3. Pernyataan ini juga perlu disebut sebagai batasan di Bab 1.3 butir 2.
+**Alasan/sumber:** `tools/dev/tahap_d/k1_check.py`, `tools/dev/tahap_d/k2_check.py`, `tools/dev/tahap_stop/ds_od.py`; logbook 18 Nov Bagian 1.3. Pernyataan ini juga perlu disebut sebagai batasan di Bab 1.3 butir 2.
 
 ---
 

@@ -95,7 +95,7 @@ mungkin muncul di sidang.
     sebagai nilai tetap + validasi model.
 23. Contoh: (a) offloading "mencegah" serangan; (b) DS28E38 "tahan tampering/side-channel"; (c) "HW 3x lebih
     cepat" tanpa menyebut konfigurasi comb mati. Juga: kesimpulan apa pun tentang ketahanan fisik.
-24. Agar data tahap D tetap sah untuk kode yang di-commit. Gerbang: `python tools/cek_biner.py banding`.
+24. Agar data tahap D tetap sah untuk kode yang di-commit. Gerbang: `python tools/4_verifikasi/cek_biner.py banding`.
     Tiga hal yang diam-diam menggeser tata letak Flash: `.cpp` bersama di `lib/`, `lib_archive = no`, dan
     urutan path berkas di `src/`. Bandingkan hash `firmware.bin`, bukan ELF (ELF memuat info debug yang berubah).
 25. Misalnya bug DMA terkunci pada resync (13 Nov). Uji normal `bad = 0`; baru ketahuan setelah sengaja menggeser frame

@@ -5,9 +5,9 @@
 Judul penelitian (ringkas): Perbandingan pembuatan tanda tangan digital ECDSA P-256 secara perangkat lunak (*software*) pada mikrokontroler STM32F103 dengan pengalihan ke chip keamanan DS28E38 (*hardware offloading*) pada kondisi normal dan kondisi serangan *barrage* (*Denial of Sleep*).
 
 Tanggal penyusunan: 18 November 2026
-Sumber: logbook harian 17 dan 18 November 2026, rencana varian *deep sleep* (`docs/rencana_deep_sleep.md`), berkas hasil analisis statistik data *deep sleep* (`data/analisis/stop_final/`, keluaran 18 November 2026 pukul 14.49), ringkasan Bab 4 (`docs/ringkasan_bab4_varian_stop.md`), serta laporan rekap sebelumnya.
+Sumber: logbook harian 17 dan 18 November 2026, rencana varian *deep sleep* (`docs/referensi/rencana_deep_sleep.md`), berkas hasil analisis statistik data *deep sleep* (`data/analisis/stop_final/`, keluaran 18 November 2026 pukul 14.49), ringkasan Bab 4 (`laporan/2_hasil_dan_pembahasan/ringkasan_bab4_varian_stop.md`), serta laporan rekap sebelumnya.
 
-**Hubungan dengan laporan sebelumnya.** Dokumen ini adalah **lanjutan** dari *Laporan Rekapitulasi Logbook Penelitian 10–16 November 2026* (`laporan/laporan_rekap_logbook_pendukung_bab4_2026-11-17.md`, selanjutnya disebut "Rekap 1"). Rekap 1 menguraikan pembuatan alat, pengambilan data tahap D, dan analisisnya. Dokumen ini menguraikan apa yang terjadi sesudahnya, menyatakan secara tegas **data mana yang kini dipakai untuk skripsi**, dan menunjukkan bagian Rekap 1 mana yang berubah peran. Nomor bagian di dokumen ini sengaja mengikuti urutan Rekap 1 agar mudah dibandingkan.
+**Hubungan dengan laporan sebelumnya.** Dokumen ini adalah **lanjutan** dari *Laporan Rekapitulasi Logbook Penelitian 10–16 November 2026* (`laporan/1_rekap_penelitian/rekap_logbook_10-16_nov_2026-11-17.md`, selanjutnya disebut "Rekap 1"). Rekap 1 menguraikan pembuatan alat, pengambilan data tahap D, dan analisisnya. Dokumen ini menguraikan apa yang terjadi sesudahnya, menyatakan secara tegas **data mana yang kini dipakai untuk skripsi**, dan menunjukkan bagian Rekap 1 mana yang berubah peran. Nomor bagian di dokumen ini sengaja mengikuti urutan Rekap 1 agar mudah dibandingkan.
 
 ---
 
@@ -248,7 +248,7 @@ Rumusan masalah, hipotesis, dan prosedur analisis tidak berubah. Yang perlu diub
    - Sisa ±0,17 % tidak dapat dihilangkan tanpa mengubah desain; peneliti memutuskan toleransi < 0,25 % per run.
 2. **Data final (langkah 12).** Urutan ABBA dengan POR penuh tiap ganti firmware dan tanpa OpenOCD: blok 1 K2S (31 dari 35 sah), blok 2 K1S (32 dari 32), blok 3 K1S (32 dari 32), blok 4 K2S (33 dari 40 sah). Hasilnya **tepat 30 run sah per kelompok**. Pemeriksaan keutuhan: **memenuhi standar** (Bagian 7.1).
 3. **Uji jalur galat (langkah 10): 7 dari 7 lulus** (Bagian 7.7).
-4. **Analisis dan ringkasan Bab 4** (`docs/ringkasan_bab4_varian_stop.md`) dibuat.
+4. **Analisis dan ringkasan Bab 4** (`laporan/2_hasil_dan_pembahasan/ringkasan_bab4_varian_stop.md`) dibuat.
 5. **Kekeliruan kecil yang dicatat:** dua run percobaan uji galat gagal sebelum mulai karena saya salah mengira batas jendela logger (batasnya 80 detik); datanya dipindah ke `data/dev/gugur/`.
 
 **Kaitan dengan Bab 4:** seluruh Bagian 5–7 di bawah.
@@ -368,7 +368,7 @@ Rerata [minimum–maksimum] dari 30 run sah per kelompok (sumber: `ringkasan.md`
 
 ### 5.8 Daftar gambar yang tersedia
 
-Berkas di `data/analisis/stop_final/gambar/` (24 gambar), mengikuti `laporan/panduan_grafik_bab4_2026-11-16.md`:
+Berkas di `data/analisis/stop_final/gambar/` (24 gambar), mengikuti `laporan/arsip/panduan_grafik_bab4_2026-11-16.md`:
 
 | Jenis | Berkas | Dipakai untuk |
 |---|---|---|
@@ -594,8 +594,8 @@ Pengganti Bagian 10 Rekap 1. Angka energi mutlak perlu diperbarui setelah kalibr
 | Isi | Lokasi |
 |---|---|
 | Logbook harian | `logbook/2026-11-17.md`, `logbook/2026-11-18.md` (dan 10–16 Nov untuk riwayat) |
-| Rencana *deep sleep* dan status langkah | `docs/rencana_deep_sleep.md` |
-| Ringkasan hasil untuk Bab 4 | `docs/ringkasan_bab4_varian_stop.md` |
+| Rencana *deep sleep* dan status langkah | `docs/referensi/rencana_deep_sleep.md` |
+| Ringkasan hasil untuk Bab 4 | `laporan/2_hasil_dan_pembahasan/ringkasan_bab4_varian_stop.md` |
 | **Data mentah *deep sleep* final** | `data/runs/20261118_115044_K2S`, `20261118_124646_K1S`, `20261118_132320_K1S`, `20261118_140335_K2S` (manifest `data/tahap_stop.txt`) |
 | **Analisis *deep sleep* final** | `data/analisis/stop_final/` (`ringkasan.md`, `pemeriksaan.md`, `runs.csv`, `deskriptif.csv`, `banding_sw_hw.csv`, `pengaruh_barrage.csv`, `interaksi_dd.csv`, `layanan.csv`, `ketidakpastian.csv`, `bland_altman.csv`, `leave_one_block_out.csv`, `latensi_pin_vs_dwt.csv`, `model_duty_per_run.csv`, `gambar/`) |
 | Data awal pengembangan (tahap D) | `data/runs/<sesi>/` (manifest `data/tahap_d.txt`), analisis `data/analisis/20261116_012530_r0.1/` |
@@ -606,8 +606,8 @@ Pengganti Bagian 10 Rekap 1. Angka energi mutlak perlu diperbarui setelah kalibr
 | Run dan sesi gugur | `data/dev/gugur/` |
 | Skrip kendali dan analisis | `tools/run_bench.py`, `tools/analisis_d.py` (opsi `--stop`), `tools/k1s_run.py`, `tools/s2_rx.py`, `tools/flash_stop.py`, `tools/pulihkan_host.py`, `tools/ds_od.py` |
 | Firmware Stop | `src/host/deepsleep/` (`stop_common.h`, `stop_window.h`, `stop_link.h`, `k1_stop/`, `k2_stop/`, `ds28e38_od.h`, `s2_rx/`), `src/host/eksperimen/ds_overdrive/` |
-| Laporan rekap sebelumnya | `laporan/laporan_rekap_logbook_pendukung_bab4_2026-11-17.md` |
-| Revisi Bab 3 (v4 ke v5) dan panduan grafik Bab 4 | `laporan/revisi_bab3_v4_2026-11-16.md`, `laporan/panduan_grafik_bab4_2026-11-16.md` |
+| Laporan rekap sebelumnya | `laporan/1_rekap_penelitian/rekap_logbook_10-16_nov_2026-11-17.md` |
+| Revisi Bab 3 (v4 ke v5) dan panduan grafik Bab 4 | `laporan/arsip/revisi_bab3_v4_2026-11-16.md`, `laporan/arsip/panduan_grafik_bab4_2026-11-16.md` |
 
 ### Lampiran D. Data pendukung pengembangan *deep sleep*
 

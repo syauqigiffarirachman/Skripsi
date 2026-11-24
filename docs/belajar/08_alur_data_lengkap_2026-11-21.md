@@ -61,11 +61,11 @@ Kelompok: **K1** software normal (K1S, 1/s), **K2** DS28E38 normal (K2S), **K3**
 | Kripto hardware (K2S) | C++ | tanpa library: **driver 1-Wire buatan sendiri** (bit-banging PA15, overdrive) `src/host/final/bersama/ds28e38_od.h` | `k2_stop/main.cpp` |
 | Sensor arus | C++ | I2C 400 kHz lewat `Wire`; driver `src/logger/modul/ina226.*` | logger |
 | Protokol bersama | C++ header-only | `lib/bench_proto/proto_attacker_host.h` (frame 36 B), `proto_host_logger.h` (perintah dan balasan USART1) | attacker, host, logger |
-| Pemrograman | Python + OpenOCD (`subprocess`) | `~/.platformio/packages/tool-openocd`, `tools/flash_stop.py`, `tools/pulihkan_host.py` | bangku |
-| Kendali dan perekaman PC | Python 3 | **pyserial** (`serial.Serial`), `argparse`, `csv`, `hashlib`, `random`, `datetime`, `pathlib` | `tools/run_bench.py` |
-| Statistik | Python 3, venv `.venv-analisis` | **NumPy** (bootstrap, persentil), **pandas** (tabel, groupby), **SciPy** `stats.ttest_ind` (Welch), `stats.mannwhitneyu`, `stats.t.ppf`, **statsmodels** `multipletests` (Holm) | `tools/analisis_d.py` |
-| Gambar | Python 3 | **matplotlib** (backend Agg, 300 dpi) | `tools/gambar_bab4_stop.py`, `analisis_d.py` |
-| Verifikasi independen | Python murni | `tools/p256.py` (ECDSA P-256 dari nol), `hashlib` | `tools/b1_verifikasi.py` |
+| Pemrograman | Python + OpenOCD (`subprocess`) | `~/.platformio/packages/tool-openocd`, `tools/1_akuisisi/flash_stop.py`, `tools/dev/tahap_stop/pulihkan_host.py` | bangku |
+| Kendali dan perekaman PC | Python 3 | **pyserial** (`serial.Serial`), `argparse`, `csv`, `hashlib`, `random`, `datetime`, `pathlib` | `tools/1_akuisisi/run_bench.py` |
+| Statistik | Python 3, venv `.venv-analisis` | **NumPy** (bootstrap, persentil), **pandas** (tabel, groupby), **SciPy** `stats.ttest_ind` (Welch), `stats.mannwhitneyu`, `stats.t.ppf`, **statsmodels** `multipletests` (Holm) | `tools/3_analisis/analisis_d.py` |
+| Gambar | Python 3 | **matplotlib** (backend Agg, 300 dpi) | `tools/3_analisis/gambar_bab4_stop.py`, `analisis_d.py` |
+| Verifikasi independen | Python murni | `tools/4_verifikasi/p256.py` (ECDSA P-256 dari nol), `hashlib` | `tools/4_verifikasi/b1_verifikasi.py` |
 | Desain PCB | KiCad 9 | ERC/DRC (PCB logger/attacker belum difabrikasi); berkas proyek KiCad tidak ada di repositori ini | (di luar repo) |
 | Uji alat | Python `unittest` (hanya pustaka standar) | `.venv-analisis/Scripts/python -B -m unittest discover -s tests -v` | `tests/` |
 
@@ -74,17 +74,17 @@ supaya angka Bab 4/5 dapat direproduksi.
 
 Lingkungan build yang dipakai data akhir: `host_k1_stop`, `host_k2_stop`, `logger`, `attacker` (`platformio.ini`). Mengubah
 `platformio.ini` menghapus `.pio/build`; bangun ulang dulu sebelum flash. Firmware dibuktikan identik lewat sha256
-`firmware.bin` (`data/manifes_firmware_stop.md`, `tools/cek_biner.py`).
+`firmware.bin` (`data/manifes_firmware_stop.md`, `tools/4_verifikasi/cek_biner.py`).
 
 ---
 
 ## 2. Flow A: pengambilan data (satu run = satu berkas CSV)
 
 ### A0. Persiapan sebelum blok (keadaan bersih)
-1. Bangun dan flash firmware host: K2S/K1S memakai `tools/flash_stop.py` (menangkap CPU saat terjaga karena SWD mati selama Stop;
+1. Bangun dan flash firmware host: K2S/K1S memakai `tools/1_akuisisi/flash_stop.py` (menangkap CPU saat terjaga karena SWD mati selama Stop;
    `run_bench.py:97-112`, `flash_host()`); firmware lain memakai OpenOCD `program ... verify reset exit`.
 2. **POR penuh**: cabut USB-C, ST-Link, kabel sinyal dan GND 10 detik; pasang GND dulu, sinyal, USB-C terakhir. Alasan: sesi
-   debugger menyalakan `DBGMCU_CR` yang menaikkan arus Stop ~0,58 mA pada shunt nominal (~0,71 mA terkalibrasi; lihat `docs/pinout_arsitektur_pengujian.md`);
+   debugger menyalakan `DBGMCU_CR` yang menaikkan arus Stop ~0,58 mA pada shunt nominal (~0,71 mA terkalibrasi; lihat `docs/referensi/pinout_arsitektur_pengujian.md`);
    firmware menolkan `DBGMCU->CR = 0` sesudah jendela aman 5 s (`k1_stop/main.cpp:168`).
 3. Urutan run direncanakan oleh `run_bench.py plan` (`run_bench.py:531-562`): acak urutan skenario dalam blok (`random.Random(seed)`),
    **IDLE di awal dan akhir blok** untuk P_idle dan drift. Empat blok pola ABBA: K2S | K1S | K1S | K2S (`data/tahap_stop.txt`).
@@ -176,10 +176,10 @@ Baca `>END`: `t_obs_us=59.999.572`, `t_sleep_us=58.910.048`, `arrived=59`, `serv
 ### A9. Verifikasi independen yang memastikan data bukan sampah
 | Pemeriksaan | Skrip | Apa |
 |---|---|---|
-| Tanda tangan firmware sah | `tools/b1_verifikasi.py` + `tools/p256.py` | build diagnostik (`-DIAG_SIG`) mengirim r||s 30 tanda tangan; PC memverifikasi ECDSA P-256 sendiri (tanpa Mbed TLS) dan menolak tanda tangan yang dirusak (`s xor 1`) -> 30/30 |
-| Jalur galat | `tools/uji_galat_stop.py` | attacker mati/hidup/bolak-balik saat jendela berjalan; host tidak boleh crash |
-| Hitung ulang satu run | `tools/hitung_ulang_satu_run.py` | menghitung ulang run dari CSV mentah tanpa `run_bench.py`; harus sama sampai 6 desimal |
-| Ketertelusuran firmware | `tools/cek_biner.py`, `data/manifes_firmware_stop.md` | sha256 `firmware.bin` final |
+| Tanda tangan firmware sah | `tools/4_verifikasi/b1_verifikasi.py` + `tools/4_verifikasi/p256.py` | build diagnostik (`-DIAG_SIG`) mengirim r||s 30 tanda tangan; PC memverifikasi ECDSA P-256 sendiri (tanpa Mbed TLS) dan menolak tanda tangan yang dirusak (`s xor 1`) -> 30/30 |
+| Jalur galat | `tools/4_verifikasi/uji_galat_stop.py` | attacker mati/hidup/bolak-balik saat jendela berjalan; host tidak boleh crash |
+| Hitung ulang satu run | `tools/3_analisis/hitung_ulang_satu_run.py` | menghitung ulang run dari CSV mentah tanpa `run_bench.py`; harus sama sampai 6 desimal |
+| Ketertelusuran firmware | `tools/4_verifikasi/cek_biner.py`, `data/manifes_firmware_stop.md` | sha256 `firmware.bin` final |
 
 **Uji pemahaman A**: (1) Mengapa PB1 diberi dua peran (S_cpu dan penanda jendela)? (2) Mengapa `>START` dikirim tuntas sebelum t0?
 (3) Mengapa latensi K2S memakai RTC dan K1S memakai DWT? (4) Apa akibatnya bila checksum `sh_sum` tidak cocok?
@@ -197,10 +197,10 @@ I (mA) = (X - X0) x 2,5e-6 V / R_eff x 1000        V (V) = bus x 1,25e-3
 ```
 `run_bench.py:410-412` (`conv`). Karena CSV menyimpan angka mentah, kalibrasi bisa diganti **tanpa mengulang pengukuran**: cukup
 `--rshunt` dan `--offset` pada `analisis_d.py`. **Sejak 21 Nov 2026 default baris perintah = hasil kalibrasi** (`R_eff 0,0821`, offset `-2,83`, `u_rel 0,015`), diambil dari satu modul
-`tools/kalibrasi_param.py` (konstanta `RSHUNT_EFEKTIF`, `OFFSET_LSB`, `U_REL_KAL`; nominal lama `RSHUNT_NOMINAL=0,100`, `OFFSET_NOMINAL=-2,0`). Default **fungsi** `run_bench.analyse(text, rshunt=0.100, offset=-2.0)` sengaja tetap nominal:
+`tools/2_kalibrasi/kalibrasi_param.py` (konstanta `RSHUNT_EFEKTIF`, `OFFSET_LSB`, `U_REL_KAL`; nominal lama `RSHUNT_NOMINAL=0,100`, `OFFSET_NOMINAL=-2,0`). Default **fungsi** `run_bench.analyse(text, rshunt=0.100, offset=-2.0)` sengaja tetap nominal:
 uji `tests/test_metrik.py` menghitung nilai harapan dengan tangan pada 0,100 Ohm. Mereproduksi hasil lama: `--rshunt 0.100 --offset -2.0 --u-rel 0.05`.
 
-### B2. Metode (kode: `tools/kalibrasi_shunt.py`)
+### B2. Metode (kode: `tools/2_kalibrasi/kalibrasi_shunt.py`)
 | Langkah | Perintah | Kode | Rumus |
 |---|---|---|---|
 | 1. Offset nol | `kalibrasi_shunt.py offset --detik 60` (IN- dilepas; V_bus tetap ada) | `cmd_offset` (76) | `X0 = rerata(X)` pada beban nol |
@@ -232,7 +232,7 @@ sebaran 2,2 kOhm 2,3 %, pembanding multimeter hanya tiga titik.
 
 ---
 
-## 4. Flow C: analisis per run (`run_bench.analyse`, `tools/run_bench.py:321-448`)
+## 4. Flow C: analisis per run (`run_bench.analyse`, `tools/1_akuisisi/run_bench.py:321-448`)
 
 Satu berkas CSV -> satu baris `runs.csv`. Urutan di dalam fungsi:
 
@@ -260,7 +260,7 @@ Satu berkas CSV -> satu baris `runs.csv`. Urutan di dalam fungsi:
 - `P_idle` sesi ini = 12,7657 mW -> **`P_dyn = 16,3617 - 12,7657 = 3,5960 mW`**; **`E_lyn = 3,5960 x 60,00242 / 59 = 3,657 mJ`**.
 - `TL = 59/59 = 100 %`; `rho = (59/60,00242) x 0,11612 = 0,114` -> `TL_model = 100 %`.
 
-Periksa sendiri: `python tools/hitung_ulang_satu_run.py data/runs/20261118_115044_K2S/033_K2S_A.csv --rshunt 0.0821 --offset -2.83 --p-idle 12.766 --i-idle 2.449`.
+Periksa sendiri: `python tools/3_analisis/hitung_ulang_satu_run.py data/runs/20261118_115044_K2S/033_K2S_A.csv --rshunt 0.0821 --offset -2.83 --p-idle 12.766 --i-idle 2.449`.
 
 ---
 
@@ -280,7 +280,7 @@ Konsekuensi: P_dyn dan E_lyn hanya sah dalam satu sesi/varian dan tidak boleh di
 
 ---
 
-## 7. Flow F: analisis statistik, satu per satu (`tools/analisis_d.py`)
+## 7. Flow F: analisis statistik, satu per satu (`tools/3_analisis/analisis_d.py`)
 
 `muat()` (122-152) memproses semua CSV sesi, memanggil `analyse` + `energi_sesi`, dan menghasilkan `df`; `sah = df[sah & kelompok in K1..K4]` (30 run per kelompok).
 Bootstrap memakai `numpy.random.default_rng(20261116)`, 10.000 resampel (`N_BOOT`).
@@ -297,10 +297,10 @@ Bootstrap memakai `numpy.random.default_rng(20261116)`, 10.000 resampel (`N_BOOT
 | **F8 Bland-Altman** | `bland_altman` (201) -> `bland_altman.csv` (**mode Stop: hanya baris S_cpu**, lihat jebakan 7) | S_cpu pin vs firmware (120 run); latensi pin vs DWT/RTC per tanda tangan (`episode_pin`, 89-119 -> `latensi_pin_vs_dwt.csv`) | `d = y - x`; bias = rerata d; **batas kesesuaian = bias +- 1,96 sd(d)** |
 | **F9 Leave-one-block-out** | `leave_one_block_out` (430) -> `leave_one_block_out.csv` | hitung ulang gain tanpa tiap blok | rentang gain (ketahanan terhadap drift antar-blok) |
 | **F10 Pencilan** | `pemeriksaan` bagian 5 | Tukey 3 x IQR | dilaporkan, tidak dibuang |
-| **F11 Sensitivitas ambang** | `tools/analisis_sensitivitas.py` (**tanpa argparse; membaca `stop_final/runs.csv`**) | K4 dianalisis ulang pada ambang frame hilang 0; 0,15; 0,25; 0,35; 0,5; 1,0 % (17-41 run) dan K3 vs K4 dengan 41 run | Welch dihitung manual dengan `log10 p` (`welch`, baris 25-32) agar tidak jatuh ke 0; teks "< 1e-100" |
-| **F12 Dekomposisi energi** | `tools/dekomposisi_energi.py` (`fase_run`, 28-75) | CSV mentah run K1/K2 normal | episode = pulsa PB1 tinggi (>= 1 ms) dipisah jeda < 200 ms; tiap cuplikan dikelompokkan **aktif** (PB1=1) / **menunggu** (PB1=0 di dalam episode; K2 = IC menghitung) / **tidur**; `E_dyn,fase = (E_fase - P_idle x dt_fase)`, dibagi N_lyn; jumlah fase harus = `E_lyn` utama (selisih 0,00 %) |
-| **F13 Proyeksi baterai** | `tools/proyeksi_baterai.py` | `runs.csv` | `E_baterai = 1000 mAh x 3,7 V x 3600 = 13,32 kJ`; tanda tangan/baterai = `E_baterai/E_lyn`; umur dengan lantai = `1000/I_avg`; tanpa lantai = `1000/I_dyn` (ilustrasi, asumsi disetujui 20 Nov) |
-| **F14 Gambar** | `tools/gambar_bab4_stop.py` (matplotlib), `analisis_d.gambar` | `deskriptif`, `ketidakpastian`, `layanan`, `interaksi`, CSV mentah | warna: Software biru, DS28E38 oranye, barrage berarsir, desimal koma, 300 dpi; batang galat = `U_gab` |
+| **F11 Sensitivitas ambang** | `tools/3_analisis/analisis_sensitivitas.py` (**tanpa argparse; membaca `stop_final/runs.csv`**) | K4 dianalisis ulang pada ambang frame hilang 0; 0,15; 0,25; 0,35; 0,5; 1,0 % (17-41 run) dan K3 vs K4 dengan 41 run | Welch dihitung manual dengan `log10 p` (`welch`, baris 25-32) agar tidak jatuh ke 0; teks "< 1e-100" |
+| **F12 Dekomposisi energi** | `tools/3_analisis/dekomposisi_energi.py` (`fase_run`, 28-75) | CSV mentah run K1/K2 normal | episode = pulsa PB1 tinggi (>= 1 ms) dipisah jeda < 200 ms; tiap cuplikan dikelompokkan **aktif** (PB1=1) / **menunggu** (PB1=0 di dalam episode; K2 = IC menghitung) / **tidur**; `E_dyn,fase = (E_fase - P_idle x dt_fase)`, dibagi N_lyn; jumlah fase harus = `E_lyn` utama (selisih 0,00 %) |
+| **F13 Proyeksi baterai** | `tools/3_analisis/proyeksi_baterai.py` | `runs.csv` | `E_baterai = 1000 mAh x 3,7 V x 3600 = 13,32 kJ`; tanda tangan/baterai = `E_baterai/E_lyn`; umur dengan lantai = `1000/I_avg`; tanpa lantai = `1000/I_dyn` (ilustrasi, asumsi disetujui 20 Nov) |
+| **F14 Gambar** | `tools/3_analisis/gambar_bab4_stop.py` (matplotlib), `analisis_d.gambar` | `deskriptif`, `ketidakpastian`, `layanan`, `interaksi`, CSV mentah | warna: Software biru, DS28E38 oranye, barrage berarsir, desimal koma, 300 dpi; batang galat = `U_gab` |
 
 **Angka kunci terbaru (kalibrasi 21 Nov; `data/analisis/stop_final/`)**
 | Metrik | K1 SW normal | K2 HW normal | K3 SW barrage | K4 HW barrage |
@@ -358,7 +358,7 @@ Arti persen: gain % = (SW - HW)/SW x 100 untuk metrik yang lebih kecil lebih bai
 
 ### G3. Dari tabel ke naskah
 `ringkasan.md` (dibuat `analisis_d.main` 596-675) merangkum semua tabel; Tabel dan Gambar Bab 5 diambil dari sana. Daftar perubahan naskah akibat kalibrasi:
-`laporan/laporan_perubahan_skripsi_v4_kalibrasi_2026-11-21.md`.
+`laporan/3_revisi_naskah/perubahan_skripsi_v4_kalibrasi_2026-11-21.md`.
 
 ### G4. Keterbatasan yang menentukan kalimat kesimpulan
 Satu papan dan satu IC; K2S mencampur overdrive + polling + Stop; kalibrasi hanya 12-21 mA; lantai LED papan 2,45 mA (daya tingkat papan, bukan cip);
@@ -374,22 +374,22 @@ Jalankan dari akar repo dengan `.venv-analisis/Scripts/python`. Verifikasi 21 No
 
 ```
 # 1. (hanya bila data berubah) ringkas per sesi dengan kalibrasi final
-python tools/run_bench.py ringkas data/runs/<sesi> --rshunt 0.0821 --offset -2.83
+python tools/1_akuisisi/run_bench.py ringkas data/runs/<sesi> --rshunt 0.0821 --offset -2.83
 # 2. statistik utama -> data/analisis/stop_final/
-python tools/analisis_d.py --manifest data/tahap_stop.txt --stop --rshunt 0.0821 --offset -2.83 --u-rel 0.015 --keluar data/analisis/stop_final
+python tools/3_analisis/analisis_d.py --manifest data/tahap_stop.txt --stop --rshunt 0.0821 --offset -2.83 --u-rel 0.015 --keluar data/analisis/stop_final
 # 3. turunan (membaca stop_final/runs.csv)
-python tools/analisis_sensitivitas.py                       # tanpa argumen
-python tools/dekomposisi_energi.py --rshunt 0.0821 --offset -2.83
-python tools/proyeksi_baterai.py
-python tools/gambar_bab4_stop.py --shunt 0.0821
+python tools/3_analisis/analisis_sensitivitas.py                       # tanpa argumen
+python tools/3_analisis/dekomposisi_energi.py --rshunt 0.0821 --offset -2.83
+python tools/3_analisis/proyeksi_baterai.py
+python tools/3_analisis/gambar_bab4_stop.py --shunt 0.0821
 # 4. kumpulkan gambar dengan NOMOR naskah (menolak bila gambar lebih tua dari runs.csv atau kalibrasi tak cocok)
-python tools/ekspor_gambar_naskah.py                         # -> data/analisis/stop_final/gambar_naskah/Gambar_5.x_*.png + README.md
+python tools/3_analisis/ekspor_gambar_naskah.py                         # -> data/analisis/stop_final/gambar_naskah/Gambar_5.x_*.png + README.md
 ```
 **Urutan itu penting**: gambar dan tabel turunan harus dibuat SESUDAH `analisis_d.py` terakhir. Setelah mengganti kalibrasi, **lihat gambarnya** (jangan hanya menjalankan skrip): sumbu yang dikunci pada skala lama pernah memotong atau mengosongkan gambar.
 
 **Jebakan yang sudah pernah terjadi**
 1. **Default kalibrasi (diubah 21 Nov 2026).** Default baris perintah `--rshunt/--offset` (dan `--u-rel` di `analisis_d.py`) di `run_bench`, `analisis_d`, `dekomposisi_energi`, `gambar_bab4_stop`, `hitung_ulang_satu_run`, `demo_sidang`, `uji_galat_stop`, `k1s_run` kini memakai
-   `tools/kalibrasi_param.py`. Yang TETAP nominal (0,100 / -2,0): default fungsi `analyse()` (untuk uji `tests/`) dan skrip uji tahap awal `s0_stop.py`, `s1_rtc.py`, `s2_rx.py`, `a3_clock.py` (angka tahap awal di Tabel 4.5/4.6/4.7 naskah dikonversi dengan `I_baru = 1,218 x I_lama + 0,025 mA`).
+   `tools/2_kalibrasi/kalibrasi_param.py`. Yang TETAP nominal (0,100 / -2,0): default fungsi `analyse()` (untuk uji `tests/`) dan skrip uji tahap awal `s0_stop.py`, `s1_rtc.py`, `s2_rx.py`, `a3_clock.py` (angka tahap awal di Tabel 4.5/4.6/4.7 naskah dikonversi dengan `I_baru = 1,218 x I_lama + 0,025 mA`).
    Akibat: `run_bench.py ringkas` pada sesi lama, atau `analisis_d.py` tanpa argumen pada tahap D (`data/tahap_d.txt`, data pengembangan 15 Nov), sekarang mengeluarkan angka terkalibrasi; tulis `--rshunt 0.100 --offset -2.0` bila ingin angka lama. `sesi.txt` mencatat nilai yang dipakai.
    Juga: arus demo (`demo_sidang.py`) dulu memakai 0,100 sehingga selisih arus demo vs skripsi **bukan** soal kalibrasi; kini keduanya terkalibrasi.
    Sumbu gambar tidak lagi tetap: Gambar 4.4/4.5/4.6(b)/4.9/4.1 disesuaikan data (sebelumnya batas 21 mA, 50 mJ, 74 mW, 1,93-2,05 mA dibuat untuk skala nominal dan akan memotong atau mengosongkan gambar terkalibrasi).
@@ -413,6 +413,6 @@ python tools/ekspor_gambar_naskah.py                         # -> data/analisis/
 5. Mengapa baseline B-R-B mengapit resistor? Apa yang terjadi pada hasil bila hanya ada baseline sebelum?
 6. Sebutkan satu keputusan yang diputuskan manusia, bukan kode, dan di mana ia dilaporkan sebagai keterbatasan.
 
-**Berkas rujukan utama**: `tools/run_bench.py`, `tools/analisis_d.py`, `tools/kalibrasi_shunt.py`, `tools/dekomposisi_energi.py`, `tools/analisis_sensitivitas.py`,
-`tools/proyeksi_baterai.py`, `tools/gambar_bab4_stop.py`, `tools/hitung_ulang_satu_run.py`, `src/logger/f103/main.cpp`, `src/host/final/ (K1S/K2S) dan src/host/dev/tahap_stop/ (S0-S2) {stop_common,stop_window,stop_link}.h`,
+**Berkas rujukan utama**: `tools/1_akuisisi/run_bench.py`, `tools/3_analisis/analisis_d.py`, `tools/2_kalibrasi/kalibrasi_shunt.py`, `tools/3_analisis/dekomposisi_energi.py`, `tools/3_analisis/analisis_sensitivitas.py`,
+`tools/3_analisis/proyeksi_baterai.py`, `tools/3_analisis/gambar_bab4_stop.py`, `tools/3_analisis/hitung_ulang_satu_run.py`, `src/logger/f103/main.cpp`, `src/host/final/ (K1S/K2S) dan src/host/dev/tahap_stop/ (S0-S2) {stop_common,stop_window,stop_link}.h`,
 `src/host/final/ (K1S/K2S) dan src/host/dev/tahap_stop/ (S0-S2) {k1_stop,k2_stop}/main.cpp`, `src/host/final/bersama/ds28e38_od.h`, `src/attacker/main.cpp`, `lib/bench_proto/*`, `data/kalibrasi/*`.

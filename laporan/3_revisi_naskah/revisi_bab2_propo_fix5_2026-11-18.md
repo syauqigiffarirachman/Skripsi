@@ -1,7 +1,7 @@
 # Revisi Bab 2 (PROPO_BAB1-3_FIX_5 → versi data *deep sleep*)
 
 Tanggal: 18 November 2026
-Acuan: `paper/PROPO_BAB1-3_FIX_5.pdf`, Bab 2 (halaman 10–19). Revisi ini mengikuti revisi Bab 3 (`laporan/revisi_bab3_propo_fix5_2026-11-18.md`) agar istilah, angka, dan pilihan teknis seragam.
+Acuan: `paper/PROPO_BAB1-3_FIX_5.pdf`, Bab 2 (halaman 10–19). Revisi ini mengikuti revisi Bab 3 (`laporan/3_revisi_naskah/revisi_bab3_propo_fix5_2026-11-18.md`) agar istilah, angka, dan pilihan teknis seragam.
 
 Aturan: Bab 2 membekali pembaca dengan teori dan literatur yang dipakai Bab 3 dan Bab 4. Karena penelitian kini memakai mode tidur dalam (Stop), Bab 2 perlu memuat teori mode tidur STM32F103 dan jam RTC, yang belum ada di FIX_5. Tidak ada perbandingan dengan data pengembangan awal; hanya hasil literatur dan teori.
 

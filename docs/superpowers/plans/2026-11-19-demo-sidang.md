@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- HANYA berkas baru: `tools/demo_sidang.py`, `tests/test_demo_sidang.py`, `docs/demo_sidang_panduan.md`. Jangan ubah firmware, `platformio.ini`, `tools/run_bench.py`, atau `data/` yang sudah ada (spec: bukan tujuan).
+- HANYA berkas baru: `tools/demo_sidang.py`, `tests/test_demo_sidang.py`, `docs/prosedur/demo_sidang_panduan.md`. Jangan ubah firmware, `platformio.ini`, `tools/run_bench.py`, atau `data/` yang sudah ada (spec: bukan tujuan).
 - Jendela host 60 s (`--secs` bawaan 60); perintah logger 4 = run S<detik> dengan attacker nyata; perintah 3 = tanya identitas host.
 - Analisis memakai `run_bench.analyse` dengan `rshunt=0.100`, `offset=-2.0` (sama dengan `data/analisis/stop_final`).
 - Urutan sesi tetap `K1S.A, K1S.B, K2S.A, K2S.B` (satu kali flash di depan penguji).
@@ -120,7 +120,7 @@
 ### Task 4: Uji bangku nyata dan panduan hari-H (BUTUH IZIN PENELITI)
 
 **Files:**
-- Create: `docs/demo_sidang_panduan.md`
+- Create: `docs/prosedur/demo_sidang_panduan.md`
 - Modify: `docs/superpowers/specs/2026-11-19-demo-sidang-design.md` (tambah bagian "Hasil uji bangku")
 
 **Interfaces:**
@@ -131,7 +131,7 @@
 - [ ] **Step 2: Satu run A** (attacker diketik manual `a`), lalu `python tools/run_bench.py analyse data/demo/<sesi>/001_*.csv` pada CSV yang sama. Expected: angka ringkasan demo SAMA dengan keluaran `analyse`; `N_rusak=0`.
 - [ ] **Step 3: Sesi penuh** (`sesi`): catat lama flash K1S->K2S dan total waktu dari Enter pertama sampai tabel. Expected: empat run selesai; total dalam 7-12 menit (spec); catat bila meleset.
 - [ ] **Step 4: Pra-uji frame di tengah jalan:** 20 run mode B berturut-turut dengan attacker sudah berjalan sebelum jendela (alur demo). Expected: `N_rusak = 0` di seluruh 20 run. Bila ada rusak: catat persentase, aktifkan cadangan `--auto-attacker`, uji ulang 20 run B dengan cadangan itu, dan laporkan ke peneliti sebelum menyatakan alur manual layak.
-- [ ] **Step 5: Tulis `docs/demo_sidang_panduan.md`** (bahasa Indonesia, maksimal satu halaman): urutan periksa sebelum penguji datang (flash ke K1S, `ping`, serial monitor attacker dibuka pada COM yang benar, ST-Link terpasang), perintah selama demo (`sesi`, `a`/`b`/`x`), apa yang dikatakan ke penguji tentang prosedur yang sedikit berbeda dan catatan ST-Link, dan langkah pemulihan (host tidak menjawab, run gagal, host terkunci -> `tools/pulihkan_host.py`). Tambahkan hasil Step 2-4 ke spec.
+- [ ] **Step 5: Tulis `docs/prosedur/demo_sidang_panduan.md`** (bahasa Indonesia, maksimal satu halaman): urutan periksa sebelum penguji datang (flash ke K1S, `ping`, serial monitor attacker dibuka pada COM yang benar, ST-Link terpasang), perintah selama demo (`sesi`, `a`/`b`/`x`), apa yang dikatakan ke penguji tentang prosedur yang sedikit berbeda dan catatan ST-Link, dan langkah pemulihan (host tidak menjawab, run gagal, host terkunci -> `tools/pulihkan_host.py`). Tambahkan hasil Step 2-4 ke spec.
 - [ ] **Step 6: Commit** (hanya bila diminta): panduan dan spec.
 
 ---

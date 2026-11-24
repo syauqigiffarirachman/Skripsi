@@ -43,7 +43,7 @@ Tiga cara menghasilkan `k`:
 setara RFC 6979 karena `d || digest` ikut di seed. Sumber entropi (`harvest_entropy`): derau ADC PA0 yang mengambang,
 `CYCCNT`, `micros()`, UID chip, penghitung, semuanya di-SHA-256. Kode sendiri menyebut: **bukan TRNG**.
 
-**Konsekuensi uji.** Tanda tangan K1 tidak identik dengan referensi, jadi `tools/k1_check.py` memeriksa dua hal
+**Konsekuensi uji.** Tanda tangan K1 tidak identik dengan referensi, jadi `tools/dev/tahap_d/k1_check.py` memeriksa dua hal
 lain: setiap tanda tangan valid saat diverifikasi di PC, dan semua `r` unik.
 
 **Cari lebih lanjut.** "nonce reuse ECDSA", "RFC 6979", "hedged signatures".

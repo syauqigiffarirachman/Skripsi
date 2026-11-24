@@ -21,4 +21,4 @@ Status: BERUBAH = nilai atau sumbu berbeda dari v4 (wajib diganti); tetap = isi 
 | 5.12 | `Gambar_5.12_throughput_vs_batas.png` | `gambar_bab4/gambar_4_8_throughput_vs_batas.png` | tetap | sign/s; tidak bergantung kalibrasi |
 | baru | `Gambar_baru_dekomposisi_energi_opsional.png` | `gambar_bab4/gambar_4_12_dekomposisi_energi.png` | BARU (opsional) | memperkuat Tabel 5.10; v4 hanya memuat tabel |
 
-Diagram Bab 2-3 (Gambar 2.1, 3.1-3.5) digambar terpisah dan TIDAK dibuat skrip ini; lihat laporan/laporan_perubahan_skripsi_v4_kalibrasi_2026-11-21.md bagian H.
+Diagram Bab 2-3 (Gambar 2.1, 3.1-3.5) digambar terpisah dan TIDAK dibuat skrip ini; lihat laporan/3_revisi_naskah/perubahan_skripsi_v4_kalibrasi_2026-11-21.md bagian H.

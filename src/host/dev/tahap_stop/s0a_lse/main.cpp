@@ -1,6 +1,6 @@
 // ============================================================================
 // HOST deep sleep, LANGKAH 4 = S0a: uji kristal LSE 32,768 kHz (Epson MC-306) untuk RTC.
-// Rencana: docs/rencana_deep_sleep.md. BELUM ada Stop mode di tahap ini (CPU tetap jalan / WFI).
+// Rencana: docs/referensi/rencana_deep_sleep.md. BELUM ada Stop mode di tahap ini (CPU tetap jalan / WFI).
 //
 // Fungsi tahap ini satu: membuktikan LSE selalu start dan frekuensinya benar, karena seluruh varian
 // Stop (pewaktu tidur, alarm bangun, akhir jendela) akan bergantung pada RTC ber-LSE.

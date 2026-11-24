@@ -1,9 +1,24 @@
-# Kerangka Bab 4 dan Bab 5 (draf kerja, 18 November 2026)
+# Hasil dan pembahasan (Bab 4 dan Bab 5)
+
+Folder ini berisi semua bahan untuk Bab 4 (Hasil dan Pembahasan) dan Bab 5 (Kesimpulan). Baca urutannya:
+
+| No | Berkas | Untuk apa |
+|---|---|---|
+| 1 | `laporan/2_hasil_dan_pembahasan/ringkasan_bab4_varian_stop.md` | Inti hasil dalam lima kalimat dan semua angka utama |
+| 2 | `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` | Bahan pembahasan per tabel dan skrip pembangkitnya |
+| 3 | `laporan/2_hasil_dan_pembahasan/panduan_grafik_bab4_2026-11-18.md` | Lembar kerja tiap gambar (data, sumbu, keterangan) |
+| 4 | `bukti_pendukung_B1_B2_C5_2026-11-18.md` | Bukti tambahan: tanda tangan sah, sensitivitas konfigurasi, diagnosis frame hilang |
+
+Bagian di bawah memetakan tiap sub-bab naskah ke berkas sumbernya (dulu `laporan/2_hasil_dan_pembahasan/README.md`).
+
+---
+
+## Kerangka Bab 4 dan Bab 5 (peta sumber, 18 November 2026)
 
 Dibuat untuk menempatkan semua bahan yang sudah ada ke dalam urutan naskah. Isi tiap butir sudah ada di berkas sumbernya; dokumen ini hanya peta.
 **Angka mutlak (mA, mW, mJ) menunggu kalibrasi A1/A2**; persentase, latensi, S_cpu, tingkat layanan, dan p-value sudah final. Hanya data *deep sleep*; jangan menyebut atau membandingkan dengan tahap D.
 
-## Bab 4. Hasil dan Pembahasan
+### Bab 4. Hasil dan Pembahasan
 
 | Subbab | Isi | Gambar/tabel | Sumber | Status angka |
 |---|---|---|---|---|
@@ -19,15 +34,15 @@ Dibuat untuk menempatkan semua bahan yang sudah ada ke dalam urutan naskah. Isi 
 | 4.10 Pembahasan | Mengapa DS28E38 hemat; implikasi baterai; perbandingan literatur | tabel C7; C2 menunggu | `bahan_pembahasan` bagian 3, 6 | C2 butuh angka paper (Anda) |
 | 4.11 Ancaman terhadap validitas | 17 butir dikelompokkan | tabel teks | `bahan_pembahasan` bagian 5 | final |
 
-Hal yang jangan diklaim: lihat `docs/ringkasan_bab4_varian_stop.md` bagian 8. Tambahan: jangan menyatakan tanda tangan final terverifikasi sebelum B1 dijalankan.
+Hal yang jangan diklaim: lihat `laporan/2_hasil_dan_pembahasan/ringkasan_bab4_varian_stop.md` bagian 8. Tambahan: jangan menyatakan tanda tangan final terverifikasi sebelum B1 dijalankan.
 
-## Bab 5. Kesimpulan dan Saran
+### Bab 5. Kesimpulan dan Saran
 
-Bahan lengkap ada di rekap 18 Nov Bagian 10 (`laporan/laporan_rekap_logbook_pendukung_bab4_2026-11-18.md`): 6 butir kesimpulan, 8 butir saran. Penyesuaian yang disarankan:
+Bahan lengkap ada di rekap 18 Nov Bagian 10 (`laporan/1_rekap_penelitian/rekap_logbook_17-18_nov_2026-11-18.md`): 6 butir kesimpulan, 8 butir saran. Penyesuaian yang disarankan:
 - Kesimpulan 1: tambahkan "pada konfigurasi software dengan tabel comb dimatikan; hasil B2 menunjukkan batas keunggulan pada konfigurasi lain" setelah B2 dijalankan.
 - Saran 1 (memisahkan overdrive, polling, Stop) sebagian sudah dijawab oleh eksperimen pengembangan (bagian 4 bahan pembahasan); tulis sebagai "dijawab pada kondisi tanpa Stop".
 - Tambahkan saran: pengukuran waktu tunggu antrean (C4), penerima frame terpisah (C5), kalibrasi lantai papan tanpa LED (C7).
 
-## Pekerjaan yang tersisa untuk naskah
+### Pekerjaan yang tersisa untuk naskah
 1. Tempel revisi Bab 1-3 (E1); isi tahun/revisi dokumen ST dan halaman datasheet overdrive (E3); gambar ulang Gambar 2.1, 3.1, 3.2, 3.4 (E4).
 2. Setelah kalibrasi: jalankan `analisis_d.py --stop --rshunt <> --offset <> --u-rel <>`, `dekomposisi_energi.py --rshunt <> --offset <>`, `gambar_bab4_stop.py --shunt <>`, `proyeksi_baterai.py`, lalu perbarui angka mutlak di bab.

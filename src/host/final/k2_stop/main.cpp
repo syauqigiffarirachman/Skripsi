@@ -1,6 +1,6 @@
 // ============================================================================
 // K2 hardware (DS28E38) + STOP MODE + OVERDRIVE  --  LANGKAH 9 = S4 (integrasi K2, 17 Nov 2026)
-// Rencana: docs/rencana_deep_sleep.md. Menggabungkan:
+// Rencana: docs/referensi/rencana_deep_sleep.md. Menggabungkan:
 //   - stop_common.h / stop_window.h / stop_link.h : Stop mode, alarm RTC, penerima frame dengan sinkron bit,
 //     mesin jendela, kendali run lewat logger (arsitektur "K2S");
 //   - ds28e38_od.h : driver DS28E38 overdrive (PA15) + tunggu sign berbasis polling (hasil eksperimen

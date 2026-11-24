@@ -190,7 +190,7 @@ Jumlah per kelompok: K1 49,98 mJ, K2 3,67 mJ (sama dengan energi per permintaan 
 | # | Letak | Perubahan |
 |---|---|---|
 | F1 | **Lampiran B, Tabel B.1**, hal. 96 (PDF 109): judul "Kronologi Kegiatan 10–18 November 2026" dan baris 18 Nov malam, kolom status "Data akhir memenuhi standar; kalibrasi shunt tersisa" | judul → "10–21 November 2026"; status → "Data akhir memenuhi standar"; **tambah baris** "21 Nov \| Kalibrasi INA226 (offset, metode selisih, pembanding multimeter), pengukuran pull-up, analisis ulang nilai mutlak \| R_eff 0,0821 Ω; u_kal 1,5 %" |
-| F2 | **Lampiran D, Tabel D.1**, baris `tools/kalibrasi_shunt.py`, hal. 98 (PDF 111) | deskripsi → "Perekaman dan perhitungan kalibrasi shunt INA226 (offset, metode selisih); data di data/kalibrasi/" |
+| F2 | **Lampiran D, Tabel D.1**, baris `tools/2_kalibrasi/kalibrasi_shunt.py`, hal. 98 (PDF 111) | deskripsi → "Perekaman dan perhitungan kalibrasi shunt INA226 (offset, metode selisih); data di data/kalibrasi/" |
 | F3 | **Daftar Pustaka**, hal. 90+ | tambah: SANWA Electric Instrument Co., Ltd. (t.t.). *CD800a Digital Multimeter* [katalog]. Tokyo. (tahun terbit pada katalog tidak tercantum; isi bila ada; dirujuk dari Tabel 3.3 dan Sub-bab 3.4.10) |
 | F4 | **Daftar Lambang**, hal. vii–viii (PDF 8–9) | tambah "R_eff \| Hambatan shunt efektif INA226 \| Ω" dan "X_0 \| Offset nol pembacaan shunt \| satuan (2,5 µV)" |
 | F5 | **Lampiran C** teks pengantar, hal. 96 (PDF 109) | tidak wajib diubah; bila ingin konsisten, tambah satu kalimat: "Resistor shunt R4 pada PCB logger 0,1 Ω 1 % menggantikan shunt modul yang terukur 0,0821 Ω; kalibrasi perlu diulang setelah fabrikasi." |
@@ -219,7 +219,7 @@ Jumlah per kelompok: K1 49,98 mJ, K2 3,67 mJ (sama dengan energi per permintaan 
 
 Berkas sumber: `data/analisis/stop_final/gambar_bab4/` (dibuat ulang 21 Nov dengan shunt 0,0821 Ω; ukuran dan gaya sama) dan `data/analisis/stop_final/gambar/`. Gambar 5.x di naskah berurutan berbeda dengan nama berkas 4.x.
 
-**Pemeriksaan visual 21 Nov (saya melihat gambarnya).** Regenerasi pertama ternyata cacat karena skrip gambar mengunci sumbu dan teks untuk skala nominal; sudah diperbaiki di `tools/gambar_bab4_stop.py` dan semua gambar di bawah dibuat ulang sesudahnya:
+**Pemeriksaan visual 21 Nov (saya melihat gambarnya).** Regenerasi pertama ternyata cacat karena skrip gambar mengunci sumbu dan teks untuk skala nominal; sudah diperbaiki di `tools/3_analisis/gambar_bab4_stop.py` dan semua gambar di bawah dibuat ulang sesudahnya:
 - Gambar 5.3 (arus diam): batas sumbu tetap 1,93–2,05 mA akan membuat data 2,44–2,45 mA di luar bingkai. Kini sumbu mengikuti rerata IDLE.
 - Gambar 5.4/5.5 (jejak arus): batas atas tetap 21 mA memotong puncak K2/K4 (23,8 mA terkalibrasi). Kini 26 mA (mengikuti puncak data); offset pada jejak sebelumnya masih −2,0 tertanam, kini −2,83 sama dengan analisis.
 - Gambar 5.8/5.9 (daya dan energi): batas atas tetap 78 mW dan 50 mJ (batang K1 energi 49,98 + galat melewati 50) dan teks "kalibrasi shunt ±5 %" tercetak di gambar; kini sumbu mengikuti data dan teks "±1,5 %".
@@ -238,7 +238,7 @@ Gambar 5.1, 5.2, 5.6, 5.7, 5.11, 5.12 tidak berubah.
 
 Gambar yang **tidak perlu diganti** (isi sama dengan v4; sudah saya bandingkan secara visual dengan halaman PDF v4): 5.1 (frame hilang), 5.2 (Bland–Altman durasi tidur), 5.6 (latensi), 5.7 (durasi tidur), 5.11 (tingkat layanan vs model), 5.12 (throughput).
 
-**Semua gambar Bab 5 sudah diekspor dengan nomor naskah ke `data/analisis/stop_final/gambar_naskah/`** (`Gambar_5.<n>_<isi>.png` + `README.md`), oleh `tools/ekspor_gambar_naskah.py`, yang menolak menyalin bila gambar lebih tua dari `runs.csv` atau kalibrasi analisis berbeda dari `kalibrasi_param.py`. Gunakan folder itu untuk mengganti gambar di Word (wajib: 5.3, 5.4, 5.5, 5.8, 5.9, 5.10; opsional: dekomposisi energi).
+**Semua gambar Bab 5 sudah diekspor dengan nomor naskah ke `data/analisis/stop_final/gambar_naskah/`** (`Gambar_5.<n>_<isi>.png` + `README.md`), oleh `tools/3_analisis/ekspor_gambar_naskah.py`, yang menolak menyalin bila gambar lebih tua dari `runs.csv` atau kalibrasi analisis berbeda dari `kalibrasi_param.py`. Gunakan folder itu untuk mengganti gambar di Word (wajib: 5.3, 5.4, 5.5, 5.8, 5.9, 5.10; opsional: dekomposisi energi).
 
 **Diagram di bab lain (Gambar 2.1, 3.1–3.5): tidak memuat angka yang berubah akibat kalibrasi** (saya periksa halaman PDF v4: tidak ada nilai arus, daya, energi, shunt, atau lantai 1,99 mA), jadi tidak perlu diganti karena kalibrasi. Bab 4 tidak memuat gambar. Tetapi saya melihat beberapa isi diagram yang tidak sesuai varian Stop. Ini masalah lama (butir E4 daftar kekurangan 18 Nov), bukan akibat kalibrasi, dan diagramnya tidak dihasilkan skrip sehingga harus Anda gambar ulang:
 | Gambar | Isi di v4 | Seharusnya (data final) |
@@ -266,7 +266,7 @@ Semua nilai latensi (654,9/116,2 ms) dan persentasenya (82,25 %, 82,24 %); duras
 | J3 | **Demo sidang**: arus K2S.A demo 3,12 mA vs skripsi 2,55 mA | kalibrasi **tidak** menjelaskannya, karena demo (`demo_sidang.py`) juga memakai shunt 0,100 Ω (demo terkoreksi ≈ 3,8 mA vs skripsi terkoreksi 3,14 mA). Selisih ±22 % tetap belum dijelaskan (M10). Tidak perlu masuk naskah; siapkan jawaban sidang. |
 | J4 | **Lampiran B** | rangkaian "10–18 November" belum mencatat kerja 19–21 November (demo, perbaikan naskah, kalibrasi); cukup baris 21 Nov (F1). |
 | J5 | Penomoran tabel | menambah tabel kalibrasi (D4b) menggeser nomor Tabel 5.5 dst. Gunakan Insert Caption dan Update Field agar daftar tabel dan rujukan silang (misalnya "Tabel 5.14") ikut berubah; periksa rujukan manual "Tabel 5.x" di teks. |
-| J6 | `tools/analisis_d.py` mode `--stop`, baris 580-583 | `bland_altman.csv` hanya berisi baris S_cpu; baris latensi pin vs DWT/RTC tidak terbentuk karena `pins["arch"]` berisi `K1S/K2S` sedangkan pencocokan memakai `K1/K2`. Angka Tabel 5.4 di v4 (K1 +9,29 ms sd 0,06; K2 +3,28 ms sd 0,26) **benar** (cocok dengan hitungan ulang dari `latensi_pin_vs_dwt.csv`), tetapi tidak dihasilkan otomatis. Tidak memengaruhi naskah; perbaikan kode opsional. |
+| J6 | `tools/3_analisis/analisis_d.py` mode `--stop`, baris 580-583 | `bland_altman.csv` hanya berisi baris S_cpu; baris latensi pin vs DWT/RTC tidak terbentuk karena `pins["arch"]` berisi `K1S/K2S` sedangkan pencocokan memakai `K1/K2`. Angka Tabel 5.4 di v4 (K1 +9,29 ms sd 0,06; K2 +3,28 ms sd 0,26) **benar** (cocok dengan hitungan ulang dari `latensi_pin_vs_dwt.csv`), tetapi tidak dihasilkan otomatis. Tidak memengaruhi naskah; perbaikan kode opsional. |
 
 ---
 

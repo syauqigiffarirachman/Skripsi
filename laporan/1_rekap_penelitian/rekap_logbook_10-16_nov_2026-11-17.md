@@ -646,7 +646,7 @@ Butir berikut adalah rancangan isi kesimpulan berdasarkan data. Angka energi mut
 | Hasil analisis final | `data/analisis/20261116_012530_r0.1/` (`ringkasan.md`, `pemeriksaan.md`, berkas CSV, `gambar/`) |
 | Rekaman galat jam host | `data/a3_clock_20261115_1259_run1.txt` |
 | Log uji jalur kesalahan | `data/dev/err/` |
-| Revisi Bab 3 (v4 ke v5) | `laporan/revisi_bab3_v4_2026-11-16.md` |
-| Panduan grafik Bab 4 | `laporan/panduan_grafik_bab4_2026-11-16.md` |
-| Laporan progres dan revisi paper | `laporan/laporan_progres_revisi_paper_2026-11-15.md` |
+| Revisi Bab 3 (v4 ke v5) | `laporan/arsip/revisi_bab3_v4_2026-11-16.md` |
+| Panduan grafik Bab 4 | `laporan/arsip/panduan_grafik_bab4_2026-11-16.md` |
+| Laporan progres dan revisi paper | `laporan/arsip/laporan_progres_revisi_paper_2026-11-15.md` |
 | Skrip kendali run dan analisis | `tools/run_bench.py`, `tools/analisis_d.py` |

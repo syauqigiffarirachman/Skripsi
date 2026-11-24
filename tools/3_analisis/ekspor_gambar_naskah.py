@@ -92,7 +92,7 @@ def main():
         "Penomoran = naskah v4 (Gambar 5.x); sumber memakai penomoran lama 4.x. Ganti gambar di Word dengan berkas pada kolom 2.\n"
         "Status: BERUBAH = nilai atau sumbu berbeda dari v4 (wajib diganti); tetap = isi sama (boleh dibiarkan, berkas disertakan agar seragam).\n\n"
         "| Gambar | Berkas | Sumber | Status | Perubahan |\n|---|---|---|---|---|\n" + "\n".join(baris) + "\n\n"
-        "Diagram Bab 2-3 (Gambar 2.1, 3.1-3.5) digambar terpisah dan TIDAK dibuat skrip ini; lihat laporan/laporan_perubahan_skripsi_v4_kalibrasi_2026-11-21.md bagian H.\n",
+        "Diagram Bab 2-3 (Gambar 2.1, 3.1-3.5) digambar terpisah dan TIDAK dibuat skrip ini; lihat laporan/3_revisi_naskah/perubahan_skripsi_v4_kalibrasi_2026-11-21.md bagian H.\n",
         encoding="utf-8")
     print(f"{len(PETA)} gambar disalin ke {OUT}")
 

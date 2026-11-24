@@ -14,7 +14,19 @@ Hanya empat firmware yang dipakai, dan keempatnya dapat dibuktikan identik denga
 | **Attacker** | STM32F030C8 | Pembangkit permintaan: frame 36 B (A = 1/s, B = 10/s) | `attacker` | `src/attacker/` |
 
 Selain itu ada **kode pengembangan** (tangga menuju Stop, firmware tahap D tanpa Stop, eksperimen awal) yang sengaja
-dipisah di `src/host/dev/` dan `tools/dev/`. Pinout dan arsitektur bangku: `docs/pinout_arsitektur_pengujian.md`.
+dipisah di `src/host/dev/` dan `tools/dev/`. Pinout dan arsitektur bangku: `docs/referensi/pinout_arsitektur_pengujian.md`.
+
+## Peta dokumen
+
+| Untuk | Buka |
+|---|---|
+| **Belajar** (konsep, kode, hasil, kuis) | `docs/belajar/` (mulai `00_peta_belajar.md`) |
+| **Menulis/merevisi skripsi** (bahan paper) | `laporan/` (mulai `laporan/README.md`; naskah terbaru: `3_revisi_naskah/perubahan_skripsi_v4_kalibrasi_2026-11-21.md`) |
+| **Memahami alur kode** | `docs/PETA_ALUR.md` |
+| **Bangku ukur dan prosedur** | `docs/referensi/` dan `docs/prosedur/` |
+| **Riwayat harian** | `logbook/` |
+
+Peta lengkap: `docs/README.md`. Path lama ke baru (kode dan dokumen): `docs/referensi/PEMETAAN_PATH.md`.
 
 ## Struktur kode
 
@@ -37,7 +49,7 @@ boards/                    definisi board kustom STM32F030C8
 tools/                     skrip PC menurut aliran data: 1_akuisisi 2_kalibrasi 3_analisis 4_verifikasi demo dev (lihat tools/README.md)
 tests/                     uji unit alat PC (unittest, tanpa perangkat keras)
 data/                      runs/ (CSV mentah), analisis/stop_final/ (hasil), kalibrasi/, manifes
-docs/ laporan/ logbook/    dokumen; docs/PETA_ALUR.md dan docs/PEMETAAN_PATH.md (path lama -> baru)
+docs/ laporan/ logbook/    dokumen menurut audiens (lihat docs/README.md): docs/ = teknis + belajar, laporan/ = bahan paper skripsi, logbook/ = jurnal harian
 ds9481_comm/               pustaka Python/C untuk bicara ke DS28E38/DS2476 (pengembangan awal)
 ```
 
@@ -85,7 +97,7 @@ python tools/1_akuisisi/flash_stop.py .pio/build/host_k1_stop/firmware.elf
 - Jangan probe langsung PC14/PC15 (kapasitansi probe menghentikan LSE) dan jangan beri 3V3 eksternal bersamaan dengan 5 V.
 - Ukur arus Stop **tanpa ST-Link** dan setelah POR bersih: ST-Link menyumbang ~0,58 mA.
 - Resistor seri jalur sinyal antar-board adalah **10 kOhm** sejak 17 Nov (logger PA9 -> host PA10, attacker PA9 -> host PA3);
-  tahap D memakai ~1 kOhm. Pinout lengkap (diperbarui 18 Nov, termasuk bagian 2b host Stop): `docs/pinout_arsitektur_pengujian.md`.
+  tahap D memakai ~1 kOhm. Pinout lengkap (diperbarui 18 Nov, termasuk bagian 2b host Stop): `docs/referensi/pinout_arsitektur_pengujian.md`.
 - Status keandalan bangun-dari-Stop (frame rusak/hilang pada K2S barrage) dan keputusan terbuka: `docs/review/laporan_review_kode_2026-11-18.md` (H1, H2).
 
 ## Alat PC (`tools/`)
@@ -112,7 +124,7 @@ Hal yang diketahui menggeser tata letak Flash walau kodenya sama:
 
 ## Hook pre-commit
 
-Pemeriksaan cepat sebelum tiap commit (sintaks skrip, pemisahan final/dev, 55 uji unit; < 10 detik) ada di `.githooks/pre-commit`.
+Pemeriksaan cepat sebelum tiap commit (sintaks skrip, pemisahan final/dev, tautan dokumen, 55 uji unit; < 10 detik) ada di `.githooks/pre-commit`.
 Aktifkan sekali per klon: `git config core.hooksPath .githooks`. Bila sumber firmware berubah, hook mengingatkan agar menjalankan
 gerbang biner; `CEK_BINER=1 git commit ...` menjalankannya di hook (beberapa menit). Darurat: `git commit --no-verify`.
 (Husky/Prettier tidak dipakai: repo ini bukan proyek Node dan Prettier akan memformat ulang JSON/Markdown yang hash-nya dijaga.)

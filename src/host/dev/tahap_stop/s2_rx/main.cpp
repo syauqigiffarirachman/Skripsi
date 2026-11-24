@@ -1,6 +1,6 @@
 // ============================================================================
 // HOST deep sleep, LANGKAH 7 = S2: bangun dari Stop oleh FRAME attacker (EXTI3 PA3) + terima utuh.
-// Rencana: docs/rencana_deep_sleep.md. Dasar: S1 (Stop + alarm RTC, LULUS), stop_common.h (alat bersama).
+// Rencana: docs/referensi/rencana_deep_sleep.md. Dasar: S1 (Stop + alarm RTC, LULUS), stop_common.h (alat bersama).
 //
 // Fungsi tahap ini satu: Stop di antara frame attacker; tiap frame (36 B, 115200) membangunkan host dari
 // Stop, diterima UTUH tanpa mengubah attacker (sinkron bit di byte pertama 0xA5, lihat stop_common.h), lalu

@@ -5,7 +5,7 @@
 Tiga board, masing-masing dengan satu tugas supaya pengukuran tidak saling mengganggu.
 
 ```
-                PC (tools/run_bench.py)
+                PC (tools/1_akuisisi/run_bench.py)
         USB CDC (CSV)  │            │ CH340 (konsol a/b/x)
                        │            │
         ┌──────────────┴───┐   ┌────┴─────────────┐

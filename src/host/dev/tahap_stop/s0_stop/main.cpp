@@ -1,6 +1,6 @@
 // ============================================================================
 // HOST deep sleep, LANGKAH 5 = S0: Stop mode minimal -> LANTAI arus papan host.
-// Rencana: docs/rencana_deep_sleep.md. Tanpa bangun (tidak ada sumber EXTI/RTC): Stop selamanya.
+// Rencana: docs/referensi/rencana_deep_sleep.md. Tanpa bangun (tidak ada sumber EXTI/RTC): Stop selamanya.
 //
 // Fungsi tahap ini satu: mengukur arus papan saat MCU di Stop dengan semua yang bisa dimatikan mati.
 //   1. Jendela aman 5 s setelah boot (PB1 = 1, CPU sibuk): SWD masih bisa tersambung untuk flash ulang.

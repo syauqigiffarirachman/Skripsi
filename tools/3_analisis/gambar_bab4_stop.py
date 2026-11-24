@@ -1,6 +1,6 @@
 """Gambar Bab 4 varian Stop (deep sleep) yang belum dibuat oleh analisis_d.py (18 Nov 2026).
 
-Membuat SEMUA gambar Bab 4 (4.1, 4.1b, 4.2 sampai 4.11) dengan gaya seragam sesuai laporan/panduan_grafik_bab4_2026-11-18.md:
+Membuat SEMUA gambar Bab 4 (4.1, 4.1b, 4.2 sampai 4.11) dengan gaya seragam sesuai laporan/2_hasil_dan_pembahasan/panduan_grafik_bab4_2026-11-18.md:
   4.1  Jejak arus terhadap waktu (4 panel, satu run contoh per kelompok)
   4.2  Latensi tanda tangan (batang bernilai)
   4.7  Tingkat layanan terukur vs model utilisasi

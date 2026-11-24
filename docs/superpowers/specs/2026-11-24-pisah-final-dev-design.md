@@ -60,4 +60,4 @@ Modul tetap bernama sama; tiap skrip memuat `tools/_jalur.py` yang menambahkan s
 
 ## Diserahkan ke pelaksana
 Penamaan berkas README, isi `PETA_ALUR.md`, dan pembaruan path di dokumen. Logbook lama tidak ditulis ulang
-(riwayat); tabel pemetaan path lama→baru ada di `docs/PEMETAAN_PATH.md`.
+(riwayat); tabel pemetaan path lama→baru ada di `docs/referensi/PEMETAAN_PATH.md`.

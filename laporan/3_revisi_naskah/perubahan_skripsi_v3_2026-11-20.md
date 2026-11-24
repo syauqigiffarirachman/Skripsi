@@ -8,7 +8,7 @@ Keputusan Anda yang dipakai di laporan ini:
 2. Hasil B2 (Mbed TLS dengan tabel comb aktif) **tidak dipakai**; baseline tetap Mbed TLS ±655 ms dan kesimpulan tidak berubah.
 3. **Varian konfigurasi Mbed TLS dihapus dari naskah** (Kelompok H di bawah), **termasuk penyebutan "tabel comb dimatikan"** (Opsi B dipilih, 20 November).
 4. Asumsi baterai ilustratif (1000 mAh, 3,7 V) **disetujui** untuk subbab 5.11.9.
-5. Jawaban sidang untuk pertanyaan B2 ditambahkan sebagai butir 19 di `laporan/antisipasi_pertanyaan_penguji_2026-11-18.md`; butir 3 di berkas itu tidak diubah.
+5. Jawaban sidang untuk pertanyaan B2 ditambahkan sebagai butir 19 di `laporan/4_sidang/antisipasi_pertanyaan_penguji_2026-11-18.md`; butir 3 di berkas itu tidak diubah.
 
 Catatan pembacaan: saya membaca teks PDF, bukan tampilan halamannya. Format tabel dan isi gambar tidak bisa saya periksa. Nomor halaman mengikuti nomor cetak di PDF.
 
@@ -88,7 +88,7 @@ Pengganti: "Software-based (Mbed TLS 3.6.7, konfigurasi tetap) dan hardware offl
 Judul baru: **5.11.5 Sensitivitas terhadap Cara Akses DS28E38**
 > Besar keunggulan hardware offloading bergantung pada cara akses DS28E38. Cara akses kecepatan standar dengan penantian tetap 130 ms menghasilkan sekitar 192,5 ms per tanda tangan (Tabel 4.3), sehingga latensi 116 ms pada penelitian ini adalah hasil konfigurasi overdrive dan polling. Kontribusi overdrive, polling, dan mode Stop terhadap hasil akhir tidak dipisahkan dalam data penelitian. Hal ini sejalan dengan Noseda dkk. (2022) bahwa manfaat offloading tidak dapat digeneralisasi begitu saja, karena bergantung pada perangkat dan implementasinya.
 
-Tambahan opsional (dari eksperimen pengembangan Tabel 4.3, tanpa Stop; sumber `docs/bahan_pembahasan_bab4_2026-11-18.md` bagian 4):
+Tambahan opsional (dari eksperimen pengembangan Tabel 4.3, tanpa Stop; sumber `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` bagian 4):
 > Pada eksperimen pengembangan tanpa mode Stop, penurunan dari 192,5 ms menjadi 115,6 ms (76,9 ms) berasal sekitar 70 % dari kecepatan overdrive dan sekitar 30 % dari polling; kedua efek hampir aditif.
 
 ### H9. Tabel 5.14, baris Noseda dkk., kolom "Keterangan" (hal. 79)
@@ -118,7 +118,7 @@ Data pengembangan (`data/dev/k1s/*_comb.csv`) dan dokumen `docs/hasil_B2_...md` 
 ## Kelompok T. Penambahan dan penyesuaian isi
 
 ### T1. Verifikasi tanda tangan pada jalur layanan final (B1)
-**Sumber:** `docs/hasil_B1_verifikasi_tanda_tangan_2026-11-18.md`, `tools/b1_verifikasi.py`, `tools/p256.py`, rekaman `data/dev/b1/`.
+**Sumber:** `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md`, `tools/4_verifikasi/b1_verifikasi.py`, `tools/4_verifikasi/p256.py`, rekaman `data/dev/b1/`.
 
 **(a) Sub-bab 3.4.4, paragraf kedua (hal. 38).** Ganti paragraf "Keabsahan kriptografis tanda tangan tidak diperiksa pada setiap run pengukuran..." dengan:
 > Keabsahan kriptografis tanda tangan tidak diperiksa pada setiap run pengukuran, karena firmware hanya melaporkan keberhasilan penandatanganan agar tidak membebani jendela ukur. Keabsahannya diverifikasi terpisah di komputer dengan implementasi verifikasi ECDSA P-256 yang independen dari Mbed TLS dan dari DS28E38, pada dua tahap. Pada tahap pengembangan, tanda tangan perangkat lunak diverifikasi 30 dari 30 dan tanda tangan DS28E38 pada kecepatan overdrive 269 dari 269, termasuk pemeriksaan bahwa tanda tangan yang sengaja dirusak ditolak. Pada jalur layanan firmware varian Stop, build diagnostik (bendera kompilasi DIAG_SIG; lingkungan host_k1_stop_diag_auto dan host_k2_stop_diag_auto) mengirim nilai r‖s dari 30 tanda tangan pertama ke komputer sebelum pesan >DONE, tanpa mengubah kode layanan. Hasilnya 30 dari 30 tanda tangan K1S dan 30 dari 30 tanda tangan K2S sah, dan seluruh tanda tangan yang sengaja dirusak ditolak. Pada K1S kunci publik sama dengan d × G dan ke-30 nilai r berbeda (nonce hedged); pada K2S kunci publik IC terletak pada kurva P-256. Yang diverifikasi adalah build diagnostik, bukan biner data akhir itu sendiri, sehingga kesahan tanda tangan pada biner data akhir bersifat tak langsung. Blok kripto perlakuan software-based pada firmware mode tidur dalam adalah salinan harfiah blok yang telah diverifikasi pada tahap pengembangan.
@@ -133,10 +133,10 @@ Data pengembangan (`data/dev/k1s/*_comb.csv`) dan dokumen `docs/hasil_B2_...md` 
 
 **(c) Sub-bab 5.12 butir 12 (lihat daftar lengkap di T6).**
 
-**(d) Lampiran D (Tabel D.1):** tambahkan `tools/b1_verifikasi.py` dan `tools/p256.py` (verifikasi tanda tangan independen) ke baris skrip uji.
+**(d) Lampiran D (Tabel D.1):** tambahkan `tools/4_verifikasi/b1_verifikasi.py` dan `tools/4_verifikasi/p256.py` (verifikasi tanda tangan independen) ke baris skrip uji.
 
 ### T2. Sensitivitas batas frame hilang (B3)
-**Sumber:** `tools/analisis_sensitivitas.py`, `data/analisis/stop_final/sensitivitas/`, `docs/bahan_pembahasan_bab4_2026-11-18.md` bagian 1.
+**Sumber:** `tools/3_analisis/analisis_sensitivitas.py`, `data/analisis/stop_final/sensitivitas/`, `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` bagian 1.
 
 **(a) Sub-bab 3.4.6 (hal. 40):** pada kalimat "...ditetapkan peneliti sebagai toleransi kurang dari 0,25 % setelah penyebab kehilangan frame diselidiki." tambahkan: "Pengaruh pilihan ambang ini terhadap kesimpulan diperiksa pada Sub-bab 5.2.6."
 
@@ -175,7 +175,7 @@ Sidik lengkap untuk lampiran atau catatan kaki:
 Sesuaikan juga 5.12 butir 13: "Pemakaian RAM firmware varian Stop belum diukur, dan PCB logger serta attacker node telah dirancang tetapi belum difabrikasi."
 
 ### T4. Mekanisme sisa frame hilang (C5)
-**Sumber:** `docs/diagnosis_frame_hilang_K2S_2026-11-18.md`, `tools/diag_long.py`.
+**Sumber:** `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md`, `tools/4_verifikasi/diag_long.py`.
 
 **(a) Sub-bab 4.3.3, dua kalimat terakhir paragraf "Dua perbaikan" (hal. 49).** Sekarang: "...Sisa kehilangan sekitar 0,17 % tidak dapat dihilangkan tanpa mengubah desain penerima, sehingga ditetapkan toleransi kurang dari 0,25 % per run (Sub-bab 3.4.5)."
 Pengganti:
@@ -189,7 +189,7 @@ Pengganti:
 **(d) Sub-bab 5.12 butir 5:** lihat T6.
 
 ### T5. Dekomposisi energi per tanda tangan (C1)
-**Sumber:** `tools/dekomposisi_energi.py`, `data/analisis/stop_final/dekomposisi_energi.md`, gambar `data/analisis/stop_final/gambar_bab4/gambar_4_12_dekomposisi_energi.png`.
+**Sumber:** `tools/3_analisis/dekomposisi_energi.py`, `data/analisis/stop_final/dekomposisi_energi.md`, gambar `data/analisis/stop_final/gambar_bab4/gambar_4_12_dekomposisi_energi.png`.
 
 **(a) Subbab baru 5.6.4, sesudah 5.6.3 (hal. 70):**
 > **5.6.4 Dekomposisi Energi per Tanda Tangan**
@@ -232,7 +232,7 @@ Butir comb dihapus (H10); butir keabsahan tanda tangan dan frame hilang diperbar
 Catatan: bila Anda ingin 5.12 lebih ringkas, butir 13-16 dapat digabung menjadi satu butir "Ancaman terhadap validitas lainnya".
 
 ### T7. Implikasi umur baterai (C7)
-**Sumber:** `tools/proyeksi_baterai.py`, `data/analisis/stop_final/proyeksi_baterai.md`. Asumsi baterai (1000 mAh, 3,7 V, regulator diabaikan) **disetujui Anda** (20 November). Nilai mutlak menunggu kalibrasi.
+**Sumber:** `tools/3_analisis/proyeksi_baterai.py`, `data/analisis/stop_final/proyeksi_baterai.md`. Asumsi baterai (1000 mAh, 3,7 V, regulator diabaikan) **disetujui Anda** (20 November). Nilai mutlak menunggu kalibrasi.
 
 Subbab baru **5.11.9 Implikasi bagi Umur Baterai** (sesudah 5.11.8), dan ubah kalimat pembuka 5.11 (hal. 75) dari "Sub-bab 5.11.6-5.11.8" menjadi "Sub-bab 5.11.6-5.11.9":
 
@@ -288,8 +288,8 @@ Catatan di bawah tabel: "t dihitung sebagai perangkat lunak dikurangi hardware o
 | K2 | Intisari (hal. ix) | "...menurunkan energi per permintaan terlayani sebesar 92,6 % (dari sekitar 41 mJ menjadi 3,0 mJ) pada kedua skenario..." | Hapus tanda kurung: "...sebesar 92,6 % pada kedua skenario..." Alasan: mJ mutlak belum dikalibrasi. |
 | K3 | Abstract (hal. xi) | "...reduced energy per served request by 92.6 % (from about 41 mJ to 3.0 mJ) in both scenarios..." | Hapus tanda kurung: "...by 92.6 % in both scenarios..." |
 | K4 | Sub-bab 2.3.2 (hal. 13) | "IC mendukung kecepatan komunikasi standar dan overdrive pada bus 1-Wire (Maxim Integrated, 2020)." | Tambahkan sumber: "...(Maxim Integrated, 2020, tabel perintah ROM: Overdrive-Skip ROM 3Ch dan Overdrive-Match ROM 69h)". Cantumkan halaman dari PDF datasheet Anda. |
-| K5 | Daftar Pustaka | "Datasheet 19-100093 Rev. 2" untuk DS28E38 | Cocokkan nomor dokumen dan revisi dengan halaman judul PDF yang Anda pakai; hasil pencarian saya tidak dapat memastikannya (`docs/referensi_dokumen_E3_2026-11-18.md`). |
-| K6 | Lampiran D (Tabel D.1) | Skrip uji tercantum sebagian | Tambahkan `tools/b1_verifikasi.py`, `tools/p256.py`, `tools/analisis_sensitivitas.py`, `tools/dekomposisi_energi.py`, `tools/proyeksi_baterai.py`, `tools/diag_long.py`, `tools/cek_biner.py`, `tools/manifes_firmware.py`, `tools/kalibrasi_shunt.py` (peran masing-masing satu baris). |
+| K5 | Daftar Pustaka | "Datasheet 19-100093 Rev. 2" untuk DS28E38 | Cocokkan nomor dokumen dan revisi dengan halaman judul PDF yang Anda pakai; hasil pencarian saya tidak dapat memastikannya (`laporan/5_status_dan_referensi/referensi_dokumen_E3_2026-11-18.md`). |
+| K6 | Lampiran D (Tabel D.1) | Skrip uji tercantum sebagian | Tambahkan `tools/4_verifikasi/b1_verifikasi.py`, `tools/4_verifikasi/p256.py`, `tools/3_analisis/analisis_sensitivitas.py`, `tools/3_analisis/dekomposisi_energi.py`, `tools/3_analisis/proyeksi_baterai.py`, `tools/4_verifikasi/diag_long.py`, `tools/4_verifikasi/cek_biner.py`, `tools/4_verifikasi/manifes_firmware.py`, `tools/2_kalibrasi/kalibrasi_shunt.py` (peran masing-masing satu baris). |
 
 ---
 
@@ -297,14 +297,14 @@ Catatan di bawah tabel: "t dihitung sebagai perangkat lunak dikurangi hardware o
 
 | Kode | Butir | Tempat di naskah | Yang dibutuhkan |
 |---|---|---|---|
-| M1 | **A1 kalibrasi shunt INA226** (`docs/prosedur_kalibrasi_bagian_A.md`) | Tabel 5.3 baris "Kalibrasi shunt" (`[diisi setelah pengukuran]`), Tabel 5.4 baris terakhir (`[...]`), paragraf sesudah Tabel 5.4, 5.2.4, 5.12 butir 1, 6.1 paragraf 2 dan kekurangan, 6.2 saran 1 | `data/kalibrasi/titik.csv`, spesifikasi multimeter, nilai resistor; saya jalankan ulang `analisis_d.py --stop --rshunt --offset --u-rel`, `dekomposisi_energi.py`, `proyeksi_baterai.py`, `gambar_bab4_stop.py --shunt`. Semua angka mutlak (Tabel 5.8, 5.6.1, 5.6.2, 5.6.4, 5.11.9) berubah. |
+| M1 | **A1 kalibrasi shunt INA226** (`docs/prosedur/prosedur_kalibrasi_bagian_A.md`) | Tabel 5.3 baris "Kalibrasi shunt" (`[diisi setelah pengukuran]`), Tabel 5.4 baris terakhir (`[...]`), paragraf sesudah Tabel 5.4, 5.2.4, 5.12 butir 1, 6.1 paragraf 2 dan kekurangan, 6.2 saran 1 | `data/kalibrasi/titik.csv`, spesifikasi multimeter, nilai resistor; saya jalankan ulang `analisis_d.py --stop --rshunt --offset --u-rel`, `dekomposisi_energi.py`, `proyeksi_baterai.py`, `gambar_bab4_stop.py --shunt`. Semua angka mutlak (Tabel 5.8, 5.6.1, 5.6.2, 5.6.4, 5.11.9) berubah. |
 | M2 | **A2 offset nol INA226** | 3.4.5 atau 4.6 (belum disebut di naskah) | Setelah diukur, tambahkan kalimat: "Offset nol INA226 ditetapkan sebesar [nilai] satuan (2,5 µV per satuan) berdasarkan pembacaan beban nol; analisis memakai [−2,0] satuan." |
 | M3 | **A3 pull-up 1-Wire** | 4,7 kΩ tertulis sebagai fakta di Tabel 3.3 baris 1, 3.2.2, 3.3.3 b, 4.2.1, Tabel 3.5 butir 7 | Nilai terukur PA15-3V3 (DS9121 dicabut dan terpasang). Bila tidak diukur, tulis "nominal 4,7 kΩ (tidak diukur)". |
 | M4 | **A4 osiloskop dan Jamovi** | Dihapus dari Tabel 3.3 dan 3.4 (T8) | Konfirmasi bahwa keduanya memang tidak dipakai. |
 | M5 | **C2 angka literatur** | Tabel 2.1 dan Tabel 5.14 | Cek langsung ke makalah: Noseda dkk. (27-50 % waktu, 51-87 % energi), Schläpfer dan Rüst (60 ms-1 s), Peradeniya (336 ms). Hasil Anda 17,7 % dan 7,3 % konsisten dengan rentang itu. |
 | M6 | **C7 asumsi baterai** | Subbab 5.11.9 (T7) | **Selesai**: asumsi 1000 mAh, 3,7 V disetujui. |
 | M7 | **E4 gambar ulang** | Gambar 2.1, 3.1, 3.2, 3.4; Gambar 5.x baru (T5) | Digambar ulang; saya tidak dapat memeriksa tampilan gambar. |
-| M8 | **Persiapan sidang** | `laporan/antisipasi_pertanyaan_penguji_2026-11-18.md` | **Selesai**: butir 19 ditambahkan (jawaban untuk pertanyaan B2/comb). Butir 3 sengaja tidak diubah. |
+| M8 | **Persiapan sidang** | `laporan/4_sidang/antisipasi_pertanyaan_penguji_2026-11-18.md` | **Selesai**: butir 19 ditambahkan (jawaban untuk pertanyaan B2/comb). Butir 3 sengaja tidak diubah. |
 | M9 | Bagian pembuka | Pembimbing dan penguji (halaman pengesahan, prakata), Prakata butir 4, daftar isi/tabel/gambar | Isi nama; Update Field. |
 | M10 | Demo sidang | Arus demo K2S.A 3,12 vs 2,55 mA di skripsi; penyebab belum diuji | Tidak masuk naskah; uji dengan ST-Link dicabut dan POR bersih bila ingin dijelaskan. |
 
@@ -323,12 +323,12 @@ Catatan di bawah tabel: "t dihitung sebagai perangkat lunak dikurangi hardware o
 
 | Angka | Sumber |
 |---|---|
-| B1 30/30, DIAG_SIG, kalimat naskah | `docs/hasil_B1_verifikasi_tanda_tangan_2026-11-18.md` |
+| B1 30/30, DIAG_SIG, kalimat naskah | `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md` |
 | Sidik firmware, ukuran, build-id logger | `data/manifes_firmware_stop.md` dan `.json` |
-| Ambang 0 / 0,25 / 0,35 / 1,0 %; 17 / 30 / 36 / 41 run | `docs/bahan_pembahasan_bab4_2026-11-18.md` bagian 1; `sensitivitas/toleransi_k4.csv` |
-| Frame hilang 42, tanda tangan lambat 31, 210,20 ms; 8 lawan 8 | `docs/diagnosis_frame_hilang_K2S_2026-11-18.md` |
+| Ambang 0 / 0,25 / 0,35 / 1,0 %; 17 / 30 / 36 / 41 run | `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` bagian 1; `sensitivitas/toleransi_k4.csv` |
+| Frame hilang 42, tanda tangan lambat 31, 210,20 ms; 8 lawan 8 | `laporan/2_hasil_dan_pembahasan/bukti_pendukung_B1_B2_C5_2026-11-18.md` |
 | Dekomposisi energi | `data/analisis/stop_final/dekomposisi_energi.md` |
 | Proyeksi baterai | `data/analisis/stop_final/proyeksi_baterai.csv` dan `.md` |
 | t, df, p | `data/analisis/stop_final/sensitivitas/p_nilai.csv` |
-| Batas waktu respons 2 x latensi | `docs/bahan_pembahasan_bab4_2026-11-18.md` bagian 7 (dari struktur kode, belum diukur) |
+| Batas waktu respons 2 x latensi | `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` bagian 7 (dari struktur kode, belum diukur) |
 | Proposal | `paper/[ttd]Proposal Skripsi_...pdf`, Bab 1.3, 3.1, 3.2, 3.4, 3.5 |
