@@ -15,7 +15,8 @@ Data yang sah untuk skripsi hanya data **deep sleep (Stop mode)**; jangan menyeb
 
 ## Mana yang berlaku
 - Menulis ulang naskah: mulai dari `3_revisi_naskah/perubahan_skripsi_v4_kalibrasi_2026-11-21.md` (angka mutlak setelah kalibrasi 21 Nov).
-  `perubahan_skripsi_v3` sudah dasar naskah v4; `revisi_bab1-3_propo_fix5` untuk proposal (data deep sleep).
+  `perubahan_skripsi_v3` adalah daftar perubahan untuk naskah v3 (20 Nov; naskah v4 dibuat sesudahnya, jadi cek dulu butir mana yang sudah ada di naskah Anda);
+  `revisi_bab1-3_propo_fix5` untuk proposal (data deep sleep).
 - Angka mutlak (mA, mW, mJ) di dokumen bertanggal 18 Nov memakai shunt nominal 0,100 Ohm; nilai terkalibrasi (0,0821 Ohm, offset -2,83)
   ada di `data/analisis/stop_final/` dan `data/kalibrasi/kalibrasi_final_2026-11-21.md`.
 
