@@ -1,0 +1,9 @@
+host=>ID,K2S,8,47808558,1
+seed=1795767756
+secs=60
+plan=B,A,A,A,A,A,B
+rshunt=0.0821
+offset=-2.83
+elf_K2S=.pio/build/host_k2_stop/firmware.elf sha256=5d32d74195c1
+bin_K2S=.pio/build/host_k2_stop/firmware.bin sha256=5b4e017827e39e17a213bf972b8f3346c15142ec0e02576bb8847680e6ae2f71
+catatan=skenario C: uji pendahuluan latensi + kalibrasi jam attacker, K2S (27 Nov)

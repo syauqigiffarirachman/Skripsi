@@ -1,0 +1,9 @@
+host=>ID,K1S,8,47798442,1
+seed=1795782884
+secs=60
+plan=C,C,C,C,C,C,C,C,C,C,C,C,C,C,C
+rshunt=0.0821
+offset=-2.83
+elf_K1S=.pio/build/host_k1_stop/firmware.elf sha256=3e9c7595becb
+bin_K1S=.pio/build/host_k1_stop/firmware.bin sha256=2ca6e8d0d86115d09cf9db24b72e511a24f4463b329c0ceaeb76ed485b814a5c
+catatan=skenario C blok1 K1S (ABBA), periode p655095, attacker 17665901c2fa, host_k1_stop 2ca6e8d0d861, ST-Link dicabut

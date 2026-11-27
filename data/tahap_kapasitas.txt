@@ -1,0 +1,9 @@
+# Skenario C (kapasitas, periode attacker = latensi tanda tangan, rho = 1), 27 Nov 2026. Pola ABBA: K1S | K2S | K2S | K1S
+# Periode: data/kapasitas_periode.json (K1S p655095 -> 654,100 ms nyata; K2S p116188 -> 116,154 ms nyata).
+# Biner: host_k1_stop 2ca6e8d0d861, host_k2_stop 5b4e017827e3, attacker 17665901c2fa. IDLE dari data/analisis/stop_final.
+# Toleransi frame hilang skenario C < 1 % (keputusan 27 Nov); blok3b = 3 run tambahan K2S pengganti 2 run gugur.
+blok1   20261127_193446_K1S
+blok2   20261127_195829_K2S
+blok3   20261127_201523_K2S
+blok3b  20261127_203236_K2S
+blok4   20261127_204806_K1S
