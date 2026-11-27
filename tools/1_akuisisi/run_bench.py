@@ -10,6 +10,9 @@ Tiga papan: host (K1/K2, USB-C hanya daya), logger (USB CDC, perintah lewat nila
   5. attacker dihentikan, log mentah disimpan, lalu dianalisis.
 
 Skenario:  A = normal 1 permintaan/s (attacker)      B = barrage 10 permintaan/s (attacker)
+           C = kapasitas rho = 1 (27 Nov): periode attacker = latensi tanda tangan rata-rata arsitektur yang
+               terpasang (data/kapasitas_periode.json, dari periode_kapasitas.py); sesi tanpa IDLE memakai
+               --idle-dari data/analisis/stop_final/runs.csv untuk P_idle
            IDLE = jendela tanpa permintaan (attacker diam) -> P_idle
            WA / WB = permintaan SINTETIS TIM4 host 1 Hz / 10 Hz (tanpa attacker, untuk uji)
 
@@ -53,6 +56,7 @@ from _jalur import ROOT  # noqa: E402,F401  (ROOT repo + semua subfolder tools/ 
 import argparse
 import csv
 import hashlib
+import json
 import random
 import subprocess
 import sys
@@ -67,7 +71,9 @@ import kalibrasi_param as kp   # default --rshunt/--offset = hasil kalibrasi 21 
 TICK_HZ = 72_000_000
 SHUNT_LSB_V = kp.SHUNT_LSB_V
 BUS_LSB_V = 1.25e-3
-SCEN = {"A": (4, "a"), "B": (4, "b"), "IDLE": (4, None), "WA": (5, None), "WB": (6, None)}
+# C (27 Nov 2026) = kapasitas rho = 1: attacker diberi 'p<periode_us>' dari data/kapasitas_periode.json per arsitektur.
+SCEN = {"A": (4, "a"), "B": (4, "b"), "C": (4, "PERIODE"), "IDLE": (4, None), "WA": (5, None), "WB": (6, None)}
+PERIODE_JSON = ROOT / "data" / "kapasitas_periode.json"
 END_COLS = ["arch", "secs", "p_ms", "uart", "t_obs_us", "t_sleep_us", "act_us", "resid_us", "arrived",
             "served", "gagal", "wfi", "spurious", "pin_salah", "rx_ok", "rx_bad", "rx_lost", "lat_n",
             "lat_min", "lat_mean", "lat_max", "lat_drop", "clk_hz"]
@@ -75,6 +81,11 @@ SUM_COLS = ["no", "t_stop", "n", "late", "dt_max", "i2c_err", "rec_ok", "rec", "
             "e_lines", "er_drop", "seq_err", "h_lines", "h_ovf"]
 LATE_RINGAN_US = 5000      # selang cuplik terbesar yang masih sah (1 konversi terlewat = ~4,06 ms)
 LATE_RINGAN_MAX = 10       # jumlah maksimum cuplikan terlambat per run yang masih sah
+# Toleransi frame hilang varian Stop (fraksi dari yang tiba, run >= 100 permintaan). Bawaan 0,25 % (keputusan 18 Nov,
+# A/B). Skenario C 1 % (keputusan 27 Nov): periode serangan ~ siklus host, sehingga fase frame bergeser pelan dan
+# berulang kali jatuh di celah pulih-dari-Stop K2S (1-4 frame/run); frame hilang dilaporkan sebagai temuan.
+TOL_HILANG = {"C": 0.01}
+TOL_HILANG_BAWAAN = 0.0025
 
 
 ELF = {"K1": ROOT / ".pio/build/k1_sw/firmware.elf", "K2": ROOT / ".pio/build/k2_hw/firmware.elf",
@@ -258,25 +269,73 @@ def layanan(en, T, lat_ms_nyata):
     return o
 
 
-def energi_sesi(rows):
+def perintah_attacker(scen, arch, periode):
+    """String yang dikirim ke konsol attacker saat >START: 'a', 'b', None (tanpa attacker), atau 'p<us>\\n' (C).
+
+    periode: isi data/kapasitas_periode.json ({arch: {periode_kirim_us, ...}}). Skenario C tanpa periode untuk
+    arsitektur itu -> SystemExit (sesi berhenti, bukan memakai laju lain diam-diam).
+    """
+    mode = SCEN[scen][1]
+    if mode != "PERIODE":
+        return mode
+    if not periode or arch not in periode:
+        raise SystemExit(f"skenario C: periode untuk {arch} tidak ada di {PERIODE_JSON.relative_to(ROOT)} "
+                         f"(jalankan tools/1_akuisisi/periode_kapasitas.py dulu)")
+    return f"p{int(periode[arch]['periode_kirim_us'])}\n"
+
+
+def tambah_kapasitas(r, periode):
+    """Run skenario C: tambahkan periode_us (periode NYATA yang dituju) dan rho_nyata = lambda_eff x t_sign."""
+    if r.get("scen") != "C" or not periode or r.get("arch") not in periode or "lambda_eff_rps" not in r:
+        return
+    p = periode[r["arch"]]
+    r["periode_us"] = p["periode_nyata_us"]
+    r["rho_nyata"] = r["lambda_eff_rps"] * p["t_sign_ms"] / 1000
+
+
+def idle_luar(path):
+    """P_idle/I_idle dari run IDLE sah di runs.csv analisis lain (mis. stop_final), per arsitektur.
+
+    runs.csv analisis_d menulis arsitektur 'K1'/'K2' untuk sesi Stop; kunci dinormalkan ke 'K1S'/'K2S'.
+    Mengembalikan {arch: (P_avg_mW rerata, I_avg_mA rerata)}.
+    """
+    acc = {}
+    with Path(path).open(encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            if r.get("scen") != "IDLE" or r.get("masalah"):
+                continue
+            a = r["arch"] if r["arch"].endswith("S") else r["arch"] + "S"
+            acc.setdefault(a, []).append((float(r["P_avg_mW"]), float(r["I_avg_mA"])))
+    return {a: (sum(p for p, _ in v) / len(v), sum(i for _, i in v) / len(v)) for a, v in acc.items()}
+
+
+def energi_sesi(rows, idle_luar=None):
     """Tambahkan P_idle, P_dyn, E_dyn, E_lyn ke tiap run non-IDLE (rows: hasil analyse, diubah di tempat).
 
     P_idle = rerata P_avg run IDLE yang lolos pemeriksaan, arsitektur sama, dalam sesi yang sama (diapit
     di awal dan akhir blok), sehingga pergeseran antar sesi (tegangan USB, suhu) ikut terkoreksi.
+    idle_luar ({arch: (P_idle_mW, I_idle_mA)}, skenario C 27 Nov): dipakai HANYA bila sesi tidak punya IDLE
+    arsitektur itu. Sumber dicatat di kolom P_idle_sumber ('sesi' / 'stop_final').
     """
     idle, idle_i = {}, {}
     for r in rows:
         if r.get("scen") == "IDLE" and not r.get("masalah") and "P_avg_mW" in r:
             idle.setdefault(r["arch"], []).append(r["P_avg_mW"])
             idle_i.setdefault(r["arch"], []).append(r["I_avg_mA"])
+    sumber = {a: "sesi" for a in idle}
+    for a, (p, i) in (idle_luar or {}).items():
+        if a not in idle:
+            idle[a], idle_i[a], sumber[a] = [p], [i], "stop_final"
     for r in rows:
-        for k in ("P_idle_mW", "P_dyn_mW", "E_dyn_mJ", "E_lyn_mJ", "I_idle_mA", "I_dyn_mA", "Q_lyn_mC"):
+        for k in ("P_idle_mW", "P_dyn_mW", "E_dyn_mJ", "E_lyn_mJ", "I_idle_mA", "I_dyn_mA", "Q_lyn_mC",
+                  "P_idle_sumber"):
             r.pop(k, None)
         a = r.get("arch")
         if r.get("scen") == "IDLE" or a not in idle or "P_avg_mW" not in r:
             continue
         p_idle = sum(idle[a]) / len(idle[a])
         r["P_idle_mW"] = p_idle
+        r["P_idle_sumber"] = sumber[a]
         r["P_dyn_mW"] = r["P_avg_mW"] - p_idle
         r["E_dyn_mJ"] = r["P_dyn_mW"] * r["T_obs_log_s"]
         # Versi berbasis arus/muatan (15 Nov malam): tidak terpengaruh turunnya tegangan USB saat beban
@@ -298,8 +357,9 @@ def tulis_ringkasan(path, rows):
 
 
 KELOMPOK = {("K1", "A"): "K1", ("K2", "A"): "K2", ("K1", "B"): "K3", ("K2", "B"): "K4",
-            ("K1S", "A"): "K1S", ("K2S", "A"): "K2S", ("K1S", "B"): "K3S", ("K2S", "B"): "K4S"}
-METRIK = ["S_cpu_log", "TL_pct", "R_lwt_pct", "TL_model_pct", "Theta_sps", "lat_mean_ms_nyata", "I_avg_mA",
+            ("K1S", "A"): "K1S", ("K2S", "A"): "K2S", ("K1S", "B"): "K3S", ("K2S", "B"): "K4S",
+            ("K1S", "C"): "K5S", ("K2S", "C"): "K6S"}        # C = kapasitas rho = 1 (27 Nov 2026)
+METRIK = ["rho_nyata", "S_cpu_log", "TL_pct", "R_lwt_pct", "TL_model_pct", "Theta_sps", "lat_mean_ms_nyata", "I_avg_mA",
           "I_dyn_mA", "P_avg_mW", "P_dyn_mW", "E_lyn_mJ", "Q_lyn_mC", "V_avg"]
 
 
@@ -323,8 +383,9 @@ def cetak_kelompok(rows):
         print(f"  {g:8s} n={len(rs)}  " + "  ".join(parts))
 
 
-def analyse(text, rshunt=0.100, offset=-2.0):
-    """Mengembalikan (hasil: dict, masalah: list[str])."""
+def analyse(text, rshunt=0.100, offset=-2.0, scen=None):
+    """Mengembalikan (hasil: dict, masalah: list[str]). `scen` hanya menentukan toleransi frame hilang (TOL_HILANG);
+    CSV tidak memuat skenario karena A/B/C memakai perintah logger yang sama."""
     r = parse(text)
     out, bad = {}, []
     out["status"] = r["status"]
@@ -394,8 +455,10 @@ def analyse(text, rshunt=0.100, offset=-2.0):
     if abs(en["resid_us"]) > 2000:
         bad.append(f"sisa konsistensi host {en['resid_us']} us")
     # Toleransi varian Stop (keputusan user 18 Nov): barrage (>= 100 permintaan) boleh kehilangan frame < 0,25 % dari
-    # yang tiba (frame yang mulai tepat saat host pulih dari Stop). Frame RUSAK tetap tidak boleh. N_rusak tetap dicatat.
-    lost_ok = en["arch"].endswith("S") and en["arrived"] >= 100 and 0 < en["rx_lost"] < 0.0025 * en["arrived"]
+    # yang tiba (frame yang mulai tepat saat host pulih dari Stop); skenario C < 1 % (TOL_HILANG, 27 Nov).
+    # Frame RUSAK tetap tidak boleh. N_rusak tetap dicatat.
+    tol = TOL_HILANG.get(scen, TOL_HILANG_BAWAAN)
+    lost_ok = en["arch"].endswith("S") and en["arrived"] >= 100 and 0 < en["rx_lost"] < tol * en["arrived"]
     if lost_ok:
         out["rx_lost_toleransi"] = en["rx_lost"]
     if en["rx_bad"] or (en["rx_lost"] and not lost_ok) or en["pin_salah"] or en["gagal"] or en["lat_drop"]:
@@ -468,8 +531,9 @@ def fmt(res, bad):
 
 
 # --------------------------------------------------------------------------- run
-def do_run(lg, at, scen, secs, out_path, args):
-    cmd, mode = SCEN[scen]
+def do_run(lg, at, scen, secs, out_path, args, arch=None):
+    cmd = SCEN[scen][0]
+    mode = perintah_attacker(scen, arch, args.periode_data)
     at.stop()
     started = []
 
@@ -483,10 +547,11 @@ def do_run(lg, at, scen, secs, out_path, args):
     at_status = at.status() if mode else ""
     at.stop()
     out_path.write_bytes(raw)
-    res, bad = analyse(raw.decode(errors="replace"), args.rshunt, args.offset)
+    res, bad = analyse(raw.decode(errors="replace"), args.rshunt, args.offset, scen)
     if mode and "berjalan=ya" not in at_status:
         bad.append(f"attacker tidak berjalan di akhir run: {at_status!r}")
     res["scen"], res["file"] = scen, out_path.name
+    tambah_kapasitas(res, args.periode_data)
     return res, bad
 
 
@@ -506,7 +571,14 @@ def main():
     ap.add_argument("--catatan", default="")
     ap.add_argument("--stlink", default="$", help="nomor seri ST-Link host (untuk flash/reset)")
     ap.add_argument("--kering", action="store_true", help="plan: cetak urutan saja, tanpa menjalankan")
+    ap.add_argument("--periode", default=str(PERIODE_JSON),
+                    help="skenario C: berkas periode attacker per arsitektur (tools/1_akuisisi/periode_kapasitas.py)")
+    ap.add_argument("--idle-dari", default=None,
+                    help="runs.csv berisi IDLE pengganti bila sesi tanpa IDLE (mis. data/analisis/stop_final/runs.csv)")
     args = ap.parse_args()
+    pj = Path(args.periode)
+    args.periode_data = json.loads(pj.read_text(encoding="utf-8")) if pj.exists() else None
+    args.idle_luar = idle_luar(args.idle_dari) if args.idle_dari else None
 
     if args.aksi == "analyse":
         for f in args.arg:
@@ -518,11 +590,13 @@ def main():
         for d in map(Path, args.arg):
             rows = []
             for i, f in enumerate(sorted(d.glob("[0-9][0-9][0-9]_*.csv")), 1):
-                res, bad = analyse(f.read_text(errors="replace"), args.rshunt, args.offset)
-                res["scen"], res["file"] = f.stem.split("_", 2)[2], f.name
+                scen = f.stem.split("_", 2)[2]
+                res, bad = analyse(f.read_text(errors="replace"), args.rshunt, args.offset, scen)
+                res["scen"], res["file"] = scen, f.name
                 res["urut"], res["masalah"] = i, "; ".join(bad)
+                tambah_kapasitas(res, args.periode_data)
                 rows.append(res)
-            energi_sesi(rows)
+            energi_sesi(rows, args.idle_luar)
             tulis_ringkasan(d / "ringkasan_ulang.csv", rows)
             print(f"{d}  ({len(rows)} run, rshunt={args.rshunt}, offset={args.offset}, "
                   f"bermasalah {sum(1 for r in rows if r['masalah'])})")
@@ -577,6 +651,10 @@ def main():
         if not campur and ident.split(",")[4] != "1":
             print("host belum siap (grup P-256 / DS28E38 tidak ditemukan)")
             return
+        # Skenario C: periode untuk SEMUA arsitektur di rencana harus ada sebelum run pertama (gagal lebih awal).
+        for a in {(w or arch) for w, sc in plan if sc == "C"}:
+            print(f"skenario C {a}: kirim {perintah_attacker('C', a, args.periode_data).strip()} "
+                  f"(periode nyata {args.periode_data[a]['periode_nyata_us']} us)")
         at = Attacker(args.attacker)
         print("attacker:", at.status())
         tag = "K1K2" if campur else arch
@@ -609,7 +687,7 @@ def main():
             f = sesi / f"{i:03d}_{arch}_{scen}.csv"
             print(f"[{i}/{len(plan)}] {arch} {scen} {secs} s ...", flush=True)
             try:
-                r2, bad = do_run(lg, at, scen, secs, f, args)
+                r2, bad = do_run(lg, at, scen, secs, f, args, arch)
                 res.update(r2)
             except Exception as ex:                       # run gagal: catat, lanjut ke berikutnya
                 res["file"], bad = f.name, [f"pengecualian: {ex}"]
@@ -622,14 +700,14 @@ def main():
             res["urut"], res["masalah"] = i, "; ".join(bad)
             rows.append(res)
             print("  " + fmt(res, bad), flush=True)
-            energi_sesi(rows)                             # P_idle dari IDLE yang sudah ada; final di akhir
+            energi_sesi(rows, args.idle_luar)             # P_idle dari IDLE yang sudah ada; final di akhir
             tulis_ringkasan(sesi / "ringkasan.csv", rows)
             if bad and wait_host(lg, maks=5) is None:     # host diam setelah run gagal: jangan buang run
                 print("  host tidak menjawab; sesi dihentikan (cek host, atau 'nodebug' untuk reset)")
                 break
             time.sleep(args.jeda)
         at.close()
-        energi_sesi(rows)
+        energi_sesi(rows, args.idle_luar)
         tulis_ringkasan(sesi / "ringkasan.csv", rows)
         print(f"sesi: {sesi}   run bermasalah: {sum(1 for r in rows if r['masalah'])}/{len(rows)}")
         if len(rows) > 1:

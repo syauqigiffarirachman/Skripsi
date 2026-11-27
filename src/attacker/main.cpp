@@ -56,8 +56,17 @@ static volatile uint32_t g_tickCount = 0;
 // Tick palsu pertama ini dibuang agar frame pertama benar-benar terkirim setelah 1 periode.
 static volatile bool g_skipFirstTick = false;
 
-enum Mode : uint8_t { MODE_IDLE = 0, MODE_A = 1, MODE_B = 2 };
+enum Mode : uint8_t { MODE_IDLE = 0, MODE_A = 1, MODE_B = 2, MODE_C = 3 };
 static Mode g_mode = MODE_IDLE;
+
+// Mode C (27 Nov 2026, skenario kapasitas rho = 1): periode bebas dalam mikrodetik, perintah "p<periode_us>" + Enter.
+// Periode = latensi tanda tangan rata-rata arsitektur yang diserang (dikoreksi galat jam HSI attacker oleh PC).
+static const uint32_t PERIOD_MIN_US = 1000UL;       // 1 ms (1000/s): batas bawah wajar untuk frame 36 B @115200 (~3,1 ms)
+static const uint32_t PERIOD_MAX_US = 10000000UL;   // 10 s
+static uint32_t g_period_us = 0;
+static bool     g_pEntry = false;                   // sedang mengetik "p<angka>"
+static uint32_t g_pVal = 0;
+static uint8_t  g_pDigits = 0;
 static uint32_t g_startMillis = 0;   // waktu mulai mode, dipakai utk hitung laju asli di board
 
 // --- Pembangun frame -----------------------------------------------------------------
@@ -91,6 +100,15 @@ static void timerStart(uint32_t freqHz) {
   Ticker.resume();
 }
 
+// Mode C: HardwareTimer memilih prescaler sendiri (TIM3 16-bit), resolusi < 2 us untuk periode 100 ms - 1 s.
+static void timerStartUs(uint32_t periodUs) {
+  Ticker.pause();
+  Ticker.setOverflow(periodUs, MICROSEC_FORMAT);
+  Ticker.attachInterrupt(onTick);
+  Ticker.refresh();
+  Ticker.resume();
+}
+
 static void timerStop() {
   Ticker.pause();
 }
@@ -108,6 +126,32 @@ static void modeStart(Mode m) {
   Console.print("[attacker] mulai mode ");
   Console.print(m == MODE_B ? "B (10/s)" : "A (1/s)");
   Console.println();
+}
+
+// Mode C dibuat terpisah dari modeStart() agar jalur mode A/B tidak berubah sama sekali.
+static void modeStartPeriod(uint32_t periodUs) {
+  g_mode = MODE_C;
+  g_period_us = periodUs;
+  g_seq = 0;
+  g_tickCount = 0;
+  g_sendFlag = false;
+  g_skipFirstTick = true;
+  g_startMillis = millis();
+  timerStartUs(periodUs);
+  g_running = true;
+  Console.print("[attacker] mulai mode C (");
+  Console.print(periodUs);
+  Console.println(" us)");
+}
+
+// Menutup pengetikan "p<angka>": mulai mode C bila angka dalam rentang, selain itu tolak tanpa mengubah mode.
+static void periodEntryFinish() {
+  g_pEntry = false;
+  if (g_pDigits > 0 && g_pVal >= PERIOD_MIN_US && g_pVal <= PERIOD_MAX_US) {
+    modeStartPeriod(g_pVal);
+  } else {
+    Console.println("[attacker] periode ditolak (1000..10000000 us)");
+  }
 }
 
 static void modeStop() {
@@ -129,17 +173,23 @@ static void printFrameHex() {
 
 static void printStatus() {
   Console.print("[attacker] mode=");
-  Console.print(g_mode == MODE_A ? "A" : (g_mode == MODE_B ? "B" : "idle"));
+  Console.print(g_mode == MODE_A ? "A" : (g_mode == MODE_B ? "B" : (g_mode == MODE_C ? "C" : "idle")));
   Console.print(" berjalan=");
   Console.print(g_running ? "ya" : "tidak");
   Console.print(" seq=");
   Console.print(g_seq);
   Console.print(" t_ms=");   // waktu sejak mode dimulai, diukur di board (ground truth)
-  Console.println(g_running ? (millis() - g_startMillis) : 0);
+  if (g_mode == MODE_C) {
+    Console.print(g_running ? (millis() - g_startMillis) : 0);
+    Console.print(" periode_us=");
+    Console.println(g_period_us);
+  } else {
+    Console.println(g_running ? (millis() - g_startMillis) : 0);
+  }
 }
 
 static void printHelp() {
-  Console.println(F("a = mode A (1/s) | b = mode B (10/s) | x = berhenti | s = status | f = cetak frame"));
+  Console.println(F("a = mode A (1/s) | b = mode B (10/s) | p<us>+Enter = mode C (periode bebas) | x = berhenti | s = status | f = cetak frame"));
 }
 
 void setup() {
@@ -168,7 +218,18 @@ void loop() {
 
   if (Console.available()) {
     char c = (char)Console.read();
+    if (g_pEntry) {                                   // sedang mengetik "p<angka>"
+      if (c >= '0' && c <= '9' && g_pDigits < 8) {
+        g_pVal = g_pVal * 10 + (uint32_t)(c - '0');
+        g_pDigits++;
+        return;
+      }
+      if (c == '\r' || c == '\n') { periodEntryFinish(); return; }
+      g_pEntry = false;                               // karakter lain: batalkan, lalu proses seperti biasa
+      Console.println("[attacker] periode dibatalkan");
+    }
     switch (c) {
+      case 'p': case 'P': g_pEntry = true; g_pVal = 0; g_pDigits = 0; break;
       case 'a': case 'A': modeStart(MODE_A); break;
       case 'b': case 'B': modeStart(MODE_B); break;
       case 'x': case 'X': modeStop();        break;

@@ -17,3 +17,4 @@ Catatan kronologis apa yang dikerjakan, apa yang gagal, dan mengapa. Ditulis apa
 | [2026-11-18](2026-11-18.md) | Overdrive DS28E38 (192 ke 116 ms), Stop mode K1S/K2S lulus, data final diambil |
 | 19-23 Nov | Tidak ada logbook; lihat `docs/belajar/harian/` dan `laporan/3_revisi_naskah/` |
 | [2026-11-24](2026-11-24.md) | Pemisahan kode FINAL dan PENGEMBANGAN; peta dokumen |
+| [2026-11-27](2026-11-27.md) | Skenario C (serangan di kapasitas, rho = 1) revisi dosen: K5S 30 / K6S 31 run sah |

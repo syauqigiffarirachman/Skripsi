@@ -1,13 +1,13 @@
 {
-  "commit": "9b518e27b497+ubah",
-  "diperbarui": "2026-11-18T22:31:20",
+  "commit": "bca5b71e8a96+ubah",
+  "diperbarui": "2026-11-27T15:26:20",
   "env": {
     "attacker": {
-      "bss": 3160,
+      "bss": 3176,
       "data": 120,
-      "sha256": "faf092a1fff6f2def7e93b690bfd9eca41a92137d3d33ed6ee66fe77d53cbde9",
-      "text": 15448,
-      "ukuran": 15568
+      "sha256": "17665901c2fa221ae26fc15415c38e450f222f13db0f3ebca3c8b52392da8a91",
+      "text": 15968,
+      "ukuran": 16088
     },
     "genericSTM32F103C8": {
       "bss": 5460,
