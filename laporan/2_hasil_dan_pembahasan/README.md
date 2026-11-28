@@ -8,6 +8,7 @@ Folder ini berisi semua bahan untuk Bab 4 (Hasil dan Pembahasan) dan Bab 5 (Kesi
 | 2 | `laporan/2_hasil_dan_pembahasan/bahan_pembahasan_bab4_2026-11-18.md` | Bahan pembahasan per tabel dan skrip pembangkitnya |
 | 3 | `laporan/2_hasil_dan_pembahasan/panduan_grafik_bab4_2026-11-18.md` | Lembar kerja tiap gambar (data, sumbu, keterangan) |
 | 4 | `bukti_pendukung_B1_B2_C5_2026-11-18.md` | Bukti tambahan: tanda tangan sah, sensitivitas konfigurasi, diagnosis frame hilang |
+| 5 | `bukti_pendukung_dan_pembahasan_skenario_c_2026-11-28.md` | Skenario C (K5, K6): bukti, pembahasan, dan daftar gambar yang diubah/ditambah |
 
 Bagian di bawah memetakan tiap sub-bab naskah ke berkas sumbernya (dulu `laporan/2_hasil_dan_pembahasan/README.md`).
 
